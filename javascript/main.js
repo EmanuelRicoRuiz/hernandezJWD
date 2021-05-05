@@ -6,13 +6,13 @@ function RegistrarUsuario(){
 
     <div class="form" id="registroPermiso">
         <div class="cabecera">
-            <h1>Registrar</h1>
+            <h4>datos del nuevo usuario</h4>
         </div>
         <form class="login-form">
             <input class="input" id="correo" type="text" placeholder="correo electrónico" />
             <input class="input" id="contraseña" type="password" placeholder="contraseña" />
             <input class="input" id="confirmarContra" type="password" placeholder="confirmar contraseña" />
-            <h1>Datos del gerente</h1>
+            <h4>Tus datos</h4>
             <input class="input" id="correoAdmin" type="text" placeholder="correo electrónico del gerente" />
             <input class="input" id="contraseñaAdmin" type="password" placeholder="contraseña del gerente" />
             <div id="sugerencias" class="form-gruop">
@@ -34,35 +34,16 @@ function gestionarusuario(){
     main.innerHTML=`<div class="wrap">
     <center>
     <ul class="tabs">
-        <li><a href="#tab1"><span class="fa fa-home"></span><span class="tab-text">gestionar tipos
+        <li><a href="#tab1"><span class="fa fa-home"></span><span class="tab-text">Tipos
                     de usuario</span></a></li>
-        <li><a href="#tab2"><span class="fa fa-group"></span><span class="tab-text">agregar tipo de
-                    usuario</span></a></li>
+        <li><a href="#tab2"><span class="fa fa-group"></span><span class="tab-text">Agregar o editar</span></a></li>
     </ul>
     </center>
     <div class="secciones">
         <article id="tab1">
 
             <div id="tabOne">
-            <table>
-            <tr>
-              <td>
-                <select class="form-control" id="selectT1">
-                  <option value="">seleccione el tipo de usuario<option>
-                </select> 
-              </td>
-            </tr>
-            <tr>
-              <td>
-                <br>
-              </td>
-            </tr>
-            <tr>
-              <td>
-                <button class="btn btn-success" onclick="buscarTU()">Gestionar<button>
-              </td>
-            </tr>
-        </table>  
+              
         
             <div id="nombre">
 
@@ -124,7 +105,8 @@ function gestionarusuario(){
     </div>
 </div>`;
 cargarTabs();
-gestionPerfiles();
+
+buscarTU();
 }
 function inicio(){
     event.preventDefault();
@@ -132,4 +114,29 @@ function inicio(){
     login.innerHTML="";
     var main=document.getElementById("main");
     main.innerHTML=`<h1>estadísticas</h1>`;
+}
+function menuInicio(permisos){
+    var menu=document.getElementById("accciones");
+    var validado=false;
+    for (let i=0; i<permisos.length;i++){
+        if(permisos[i]){
+            validado=true;
+        }
+    }
+    if( validado){
+        menu.innerHTML="";
+
+    }
+    
+    if(permisos[0]){
+        menu.innerHTML+=`<a class="list-group-item list-group-item-action bg-light" onclick="gestionarusuario()"
+        href="#">Gestión de Usuario</a>`;
+    }
+    if(permisos[1]){
+        menu.innerHTML+=`<a class="list-group-item list-group-item-action bg-light" onclick="RegistrarUsuario()"
+        href="#">Registrar Usuario</a>`;
+        menu.innerHTML+=`<a class="list-group-item list-group-item-action bg-light" onclick="listaDeUsuarios()" 
+                    href="#">Lista de usuarios</a>`;
+    }
+    
 }

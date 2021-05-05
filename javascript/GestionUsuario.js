@@ -83,8 +83,9 @@ function registrar() {
                     firebase.auth().signInWithEmailAndPassword(correoAdmin, contraAdmin)
                       .then((user) => {
                         console.log("validado");
+                        LlenarDatos(email);
                       })
-                    LlenarDatos();
+
                   })
                   .catch((error) => {
                     var errorCode = error.code;
@@ -124,7 +125,7 @@ function registrar() {
     .catch((error) => {
       var errorCode = error.code;
       var errorMessage = error.message;
-      console.log(errorCode," ",errorMessage);
+      console.log(errorCode, " ", errorMessage);
       if (errorCode == "auth/wrong-password") {
         aviso = document.getElementById("sugerencias");
         aviso.innerHTML = `<div>
@@ -162,7 +163,7 @@ function cerrarS() {
 
     })
 }
-function LlenarDatos() {
+function LlenarDatos(email) {
 
   event.preventDefault();
   var LlenarDatos = document.getElementById("registroPermiso");
@@ -196,30 +197,40 @@ function LlenarDatos() {
         tipoDeUsuario.appendChild(option);
       })
     })
+  db.collection("usuarios").doc(uid).set({
+    email,
 
+    uid
+  })
 
 
 
 }
 function GuardarDatos() {
   var nombre = document.getElementById("Nombre").value;
-  var Apellido = document.getElementById("Apellido").value;
+  var apellido = document.getElementById("Apellido").value;
   var tipoDeUsuario = document.getElementById("tipoDeUsuario").value;
-  if (nombre != "" && Apellido != "" && tipoDeUsuario != "" && (uid != "" || uid != undefined)) {
-    db.collection("usuarios").doc().set({
-      nombre,
-      Apellido,
-      tipoDeUsuario,
-      uid
-    })
-    nombre = document.getElementById("Nombre");
-    Apellido = document.getElementById("Apellido");
-    tipoDeUsuario = document.getElementById("tipoDeUsuario");
-    nombre.value = "";
-    Apellido.value = "";
-    tipoDeUsuario.value = "";
+  if (nombre != "" && apellido != "" && tipoDeUsuario != "" && (uid != "" || uid != undefined)) {
+    console.log(uid);
+    db.collection("usuarios").where("uid", "==", uid)
+      .get()
+      .then((querySnapshot) => {
+        querySnapshot.forEach((doc) => {
+          datos = doc.data();
+          email = datos.email;
+          console.log(uid);
+          db.collection("usuarios").doc(uid).set({
+            nombre,
+            apellido,
+            tipoDeUsuario,
+            uid,
+            email,
+
+          })
+        })
+      });
+
     Swal.fire('Guardado!', '', 'success');
-    uid = "";
     var LlenarDatos = document.getElementById("registroPermiso");
     LlenarDatos.innerHTML = `<div class="cabecera">
   <h1>Registrar</h1>
@@ -247,29 +258,15 @@ function GuardarDatos() {
 }
 
 
-function gestionPerfiles() {
 
-
-
-  var selectT1 = document.getElementById("selectT1");
-  db.collection("tiposUsuario")
-    .get()
-    .then((querySnapshot) => {
-      querySnapshot.forEach((doc) => {
-        var datos = doc.data();
-        selectT1.innerHTML += `<option value="${datos.usuario}" onclick="buscarTU()">${datos.usuario}</option>`;
-      })
-    })
-
-}
 function buscarTU() {
-  
+
   var feeder1 = document.getElementById("nombre");
   var permisos = document.getElementById("permisos");
   var select = document.getElementById("selectT1");
   var encontrado = false;
-  var permisos1=[]
-  var ListaPermisos=["especificar tipos de usuarios",
+  var permisos1 = []
+  var ListaPermisos = ["especificar tipos de usuarios",
     "registro de nuevos usuarios",
     "Montaje de pedidos",
     "Registro de pagos",
@@ -280,31 +277,50 @@ function buscarTU() {
     "vender",
     "Registro de clientes",
     "Administración de clientes"];
-    
-  db.collection("tiposUsuario").where("usuario", "==", select.value)
+
+  db.collection("tiposUsuario")
     .get()
     .then((querySnapshot) => {
       querySnapshot.forEach((doc) => {
-        
-        encontrado = true;
+        if (!encontrado) {
+          encontrado = true;
+          feeder1.innerHTML = "";
+        }
+
         var datos = doc.data();
-        feeder1.innerHTML = `<h1>${datos.usuario}:</h1>`;
+        feeder1.innerHTML += `
+        <table class="table table-striped table-bordered" id="${doc.id}">
+        <tr><th><h4>${datos.usuario}</h4></th><td><button id="${doc.id}" onclick="eliminarTipoDeUsuario(this)" class="btn btn-danger">Eliminar</button></td></tr>
+        <tr><th>Tarea</th><th>Permiso</th></tr>
+        </table>`;
         console.log(datos.permisos);
-        var cont=0;
-        for (let i=0; i<datos.permisos.length;i++){
-          if(datos.permisos[i]){
-            cont+=1;
-            feeder1.innerHTML+=cont+". "+ListaPermisos[i]};
-            feeder1.innerHTML+=`<br>`;
+        var cont = 0;
+        var tabla = document.getElementById(doc.id);
+        var imgs = [];
+        for (let i = 0; i < datos.permisos.length; i++) {
+          if (datos.permisos[i]) {
+            imgs[i] = "img/checked.png";
+          } else {
+            imgs[i] = "img/remove.png";
           }
-          
-        
+        }
+        for (let i = 0; i < datos.permisos.length; i++) {
+          cont += 1;
+          tabla.innerHTML += `<tr>
+                                <td>
+                                ${ListaPermisos[i]}
+                                </td>
+                                <td>
+                                <img width="30" src="${imgs[i]}">
+                              </tr>`;
+        }
+        feeder1.innerHTML += `<br><br>`;
       })
     })
   if (!encontrado) {
-
-    feeder1.innerHTML = `<br><br><h3>tipo de usuario no encontrado, debe seleccionar uno válido</h3>`;
+    feeder1.innerHTML = `<h4>No se encontró ningún tipo de usuario</h4>`;
   }
+
 }
 observador();
 function observador() {
@@ -404,7 +420,7 @@ function guardarTipoDeUsuario() {
       <div id="aviso">
       </div>`;
 
-        
+        buscarTU();
 
 
 
@@ -415,7 +431,7 @@ function guardarTipoDeUsuario() {
     } else if (result.isDenied) {
       Swal.fire('No se guardó la información.', '', 'info')
       var tabTwo = document.getElementById("tabTwo");
-        tabTwo.innerHTML = `<input class="form-control" type="text" id="NombreUsuario" placeholder="ingrese el tipo de usuario*">
+      tabTwo.innerHTML = `<input class="form-control" type="text" id="NombreUsuario" placeholder="ingrese el tipo de usuario*">
        <br>
        <input  type="checkbox" id="permiso1">
        <label  for="permiso1">especificar tipos de usuarios</label>
@@ -462,4 +478,223 @@ function guardarTipoDeUsuario() {
 
 
 
+}
+function eliminarTipoDeUsuario(Tusuario) {
+  Swal.fire({
+    title: '¡Estás seguro?',
+    text: "No podrás revertir esto!",
+    icon: 'warning',
+    showCancelButton: true,
+    confirmButtonColor: '#3085d6',
+    cancelButtonColor: '#d33',
+    confirmButtonText: 'Sí, borrar!'
+  }).then((result) => {
+    if (result.isConfirmed) {
+      var idTS = Tusuario.id;
+      console.log(idTS);
+      db.collection("tiposUsuario").doc(idTS).delete();
+
+      Swal.fire(
+        'Borrado!',
+        'el tipo de usuario ha sido borrado.',
+        'success'
+      )
+    }
+  })
+
+}
+function listaDeUsuarios() {
+  var feed = document.getElementById("main");
+  var login = document.getElementById("login-page");
+  login.innerHTML = "";
+  feed.innerHTML = `<br>`;
+  feed.innerHTML = `<table id="tabla2" class="table table-striped table-bordered">
+    <thead>
+      <tr>
+        <th>Nombre</th>
+        <th>Apellido</th>
+        <th>Tipo de usuario</th>
+        <th>Correo electrónico</th>
+        <th colspan=3>Acciones</th>
+      </tr>
+    </thead>
+  </table>`;
+  var tabla2 = document.getElementById("tabla2");
+  db.collection("usuarios")
+    .get()
+    .then((querySnapshot) => {
+      querySnapshot.forEach((doc) => {
+        datos = doc.data();
+        if(datos.nombre==undefined){
+          nombreP="no tiene nombre";
+        }else{
+          nombreP=datos.nombre;
+        }
+        if(datos.apellido==undefined){
+          apellidoP="no tiene apellido";
+        }else{
+          apellidoP=datos.apellido;
+        }
+        if(datos.tipoDeUsuario==undefined){
+          tipoDeUsuarioP="no tiene tipo de usuario";
+        }else{
+          tipoDeUsuarioP=datos.tipoDeUsuario;
+        }
+        tabla2.innerHTML +=
+          `<tr>
+            <td>${nombreP}</td>
+            <td>${apellidoP}</td>
+            <td>${tipoDeUsuarioP}</td>
+            <td>${datos.email}</td>
+            <th><button class="btn btn-danger" id="${doc.id}" onclick="recuperarContraseña(this)">Recuperar Contraseña</button></th>
+            <th><button class="btn btn-danger" id="${doc.id}" onclick="Editar(this)">Editar</button></th>
+            
+          </tr>`;
+      })
+    });
+}
+function Editar(element) {
+  var feed = document.getElementById("main");
+  
+  console.log(element.id);
+  db.collection("usuarios").where("uid", "==", element.id)
+    .get()
+    .then((querySnapshot) => {
+      querySnapshot.forEach((doc) => {
+        datos = doc.data();
+        feed.innerHTML = `<br><h3>Datos del usuario: ${datos.email}</h3>`;
+        if(datos.nombre==undefined){
+          nombreP="";
+        }else{
+          nombreP=datos.nombre;
+        }
+        if(datos.apellido==undefined){
+          apellidoP="";
+        }else{
+          apellidoP=datos.apellido;
+        }
+        if(datos.tipoDeUsuario==undefined){
+          tipoDeUsuarioP="";
+        }else{
+          tipoDeUsuarioP=datos.tipoDeUsuario;
+        }
+        feed.innerHTML += `<div class="col-md-8"><form class="form-gruop">
+        <br>
+        <input class="form-control " type="text" id="nombreP" value=${nombreP}>
+        <br>
+        <input class="form-control " type="text" id="apellidoP" value=${apellidoP}>
+        <br>
+        <select class="form-control" id="tipoDeUsuario">
+          <option value="">seleccione el tipo de usuario</option>
+        </select>
+        <br>
+        <button class="btn btn-success" id=${doc.id} onclick="GuardarCambios(this)">Guardar</button>
+        </form></div>
+        `;
+        var tipoDeUsuario=document.getElementById("tipoDeUsuario");
+         
+        db.collection("tiposUsuario")
+          .get()
+          .then((querySnapshot) => {
+            querySnapshot.forEach((doc) => {
+              var option = document.createElement("option");
+              option.value = doc.id;
+              option.text = doc.id;
+              tipoDeUsuario.appendChild(option);
+              tipoDeUsuario.value=tipoDeUsuarioP; 
+            })
+          })
+        
+      })
+    })
+
+}
+function GuardarCambios(element){
+  event.preventDefault();
+  Swal.fire({
+    title: '¿Quiere guardar o actualizar el usuario?',
+    showDenyButton: true,
+    showCancelButton: true,
+    confirmButtonText: `Guardar`,
+    denyButtonText: `No guardar`,
+  }).then((result) => {
+    var idP=element.id;
+  db.collection("usuarios").where("uid","==",idP).get().then((querySnapshot)=>{
+    querySnapshot.forEach((doc)=>{
+        datos=doc.data();
+        apellido=document.getElementById("apellidoP").value;
+        email=datos.email;
+        nombre=document.getElementById("nombreP").value;
+        tipoDeUsuario=document.getElementById("tipoDeUsuario").value;
+        uid=datos.uid;
+        console.log(datos);
+        if(apellido!=""&&nombre!=""&&tipoDeUsuario!=""){
+          db.collection("usuarios").doc(uid).set({
+            apellido,
+            email,
+            nombre,
+            tipoDeUsuario,
+            uid
+          })
+          Swal.fire('Guardado!', '', 'success');
+          listaDeUsuarios();
+        }else{
+          Swal.fire({
+            icon: 'error',
+            title: 'datos en blanco',
+            text: 'debes llenar todos los campos',
+            
+          })
+        }
+        
+    })
+  })
+  })
+  
+  
+
+  
+}
+
+function recuperarContraseña(element){
+  var id=element.id;
+  db.collection("usuarios").where("uid","==",id).get().then((querySnapshot)=>{
+    querySnapshot.forEach((doc)=>{
+      datos=doc.data();
+      correoUsuario=datos.email;
+      firebase.auth().sendPasswordResetEmail(correoUsuario).then(function() {
+        Swal.fire('correo enviado correctamente!', '', 'success');
+      }).catch(function(error) {
+        Swal.fire({
+          icon: 'error',
+          title: 'datos en blanco',
+          text: 'ha ocurrido algún error.',
+          
+        })
+      });
+    })
+  })
+  
+}
+cargarFunciones();
+function cargarFunciones(){
+  var user = firebase.auth().currentUser;
+  firebase.auth().onAuthStateChanged((user) => {
+    console.log(user);
+    db.collection("usuarios").where("uid","==",user.uid).get().then((querySnapshot)=>{
+      querySnapshot.forEach((doc)=>{
+          datos=doc.data();
+          tipoDeUsuario=datos.tipoDeUsuario;
+          db.collection("tiposUsuario").where("usuario","==",tipoDeUsuario).get().then((querySnapshot)=>{
+            querySnapshot.forEach((doc)=>{
+              datos2=doc.data();
+              permisos=datos2.permisos;
+              menuInicio(permisos);
+            })
+          });
+          
+      })
+    })
+  })
+  
 }
