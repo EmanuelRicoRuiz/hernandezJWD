@@ -62,7 +62,13 @@ function registrar() {
         .then((querySnapshot) => {
           querySnapshot.forEach((doc) => {
             datos = doc.data();
-            if (datos.tipoDeUsuario == "admin") {
+            db.collection("tiposUsuario").where("usuario", "==", datos.tipoDeUsuario)
+        .get()
+        .then((querySnapshot) => {
+          querySnapshot.forEach((doc) => {
+            datos2=doc.data();
+            permisos=datos2.permisos;
+            if (permisos[1]) {
               var email = document.getElementById('correo').value;
               var contraseña = document.getElementById('contraseña').value;
               var confirmarContraseña = document.getElementById('confirmarContra').value;
@@ -119,6 +125,10 @@ function registrar() {
               <p id="sugerencia">este usuario no tiene permitido hacer este tipo de operaciones</p>
               </div>`;
             }
+          })
+        })
+            
+            
           });
         })
     })
@@ -507,8 +517,8 @@ function listaDeUsuarios() {
   var feed = document.getElementById("main");
   var login = document.getElementById("login-page");
   login.innerHTML = "";
-  feed.innerHTML = `<br>`;
-  feed.innerHTML = `<table id="tabla2" class="table table-striped table-bordered">
+  feed.innerHTML = ``;
+  feed.innerHTML = `<br><h3>Lista de usuarios:</h3><br><table id="tabla2" class="table table-striped table-bordered">
     <thead>
       <tr>
         <th>Nombre</th>
