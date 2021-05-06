@@ -88,7 +88,7 @@ function registrar() {
 
                     firebase.auth().signInWithEmailAndPassword(correoAdmin, contraAdmin)
                       .then((user) => {
-                        console.log("validado");
+                        
                         LlenarDatos(email);
                       })
 
@@ -163,7 +163,7 @@ function registrar() {
 
 }
 function cerrarS() {
-  console.log("holis");
+
   firebase.auth().signOut()
     .then(function () {
 
@@ -221,14 +221,14 @@ function GuardarDatos() {
   var apellido = document.getElementById("Apellido").value;
   var tipoDeUsuario = document.getElementById("tipoDeUsuario").value;
   if (nombre != "" && apellido != "" && tipoDeUsuario != "" && (uid != "" || uid != undefined)) {
-    console.log(uid);
+    
     db.collection("usuarios").where("uid", "==", uid)
       .get()
       .then((querySnapshot) => {
         querySnapshot.forEach((doc) => {
           datos = doc.data();
           email = datos.email;
-          console.log(uid);
+          
           db.collection("usuarios").doc(uid).set({
             nombre,
             apellido,
@@ -303,7 +303,7 @@ function buscarTU() {
         <tr><th><h4>${datos.usuario}</h4></th><td><button id="${doc.id}" onclick="eliminarTipoDeUsuario(this)" class="btn btn-danger">Eliminar</button></td></tr>
         <tr><th>Tarea</th><th>Permiso</th></tr>
         </table>`;
-        console.log(datos.permisos);
+        
         var cont = 0;
         var tabla = document.getElementById(doc.id);
         var imgs = [];
@@ -336,7 +336,7 @@ observador();
 function observador() {
   firebase.auth().onAuthStateChanged((user) => {
     if (user) {
-      console.log("usuario activo");
+      
     } else {
       try {
         var main = document.getElementById("wrapper");
@@ -501,7 +501,7 @@ function eliminarTipoDeUsuario(Tusuario) {
   }).then((result) => {
     if (result.isConfirmed) {
       var idTS = Tusuario.id;
-      console.log(idTS);
+      
       db.collection("tiposUsuario").doc(idTS).delete();
 
       Swal.fire(
@@ -525,7 +525,7 @@ function listaDeUsuarios() {
         <th>Apellido</th>
         <th>Tipo de usuario</th>
         <th>Correo electrónico</th>
-        <th colspan=3>Acciones</th>
+        <th colspan=2>Acciones</th>
       </tr>
     </thead>
   </table>`;
@@ -566,7 +566,7 @@ function listaDeUsuarios() {
 function Editar(element) {
   var feed = document.getElementById("main");
   
-  console.log(element.id);
+  
   db.collection("usuarios").where("uid", "==", element.id)
     .get()
     .then((querySnapshot) => {
@@ -637,7 +637,7 @@ function GuardarCambios(element){
         nombre=document.getElementById("nombreP").value;
         tipoDeUsuario=document.getElementById("tipoDeUsuario").value;
         uid=datos.uid;
-        console.log(datos);
+       
         if(apellido!=""&&nombre!=""&&tipoDeUsuario!=""){
           db.collection("usuarios").doc(uid).set({
             apellido,
@@ -690,7 +690,7 @@ cargarFunciones();
 function cargarFunciones(){
   var user = firebase.auth().currentUser;
   firebase.auth().onAuthStateChanged((user) => {
-    console.log(user);
+    
     db.collection("usuarios").where("uid","==",user.uid).get().then((querySnapshot)=>{
       querySnapshot.forEach((doc)=>{
           datos=doc.data();

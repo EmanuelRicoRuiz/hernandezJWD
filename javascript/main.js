@@ -151,6 +151,9 @@ function menuInicio(permisos) {
     } if (permisos[5]) {
         menu.innerHTML += `<a class="list-group-item list-group-item-action bg-light" onclick="ingresarProductosInterface()" 
                     href="#">Gestión de productos</a>`;
+    }if(permisos[2]){
+        menu.innerHTML += `<a class="list-group-item list-group-item-action bg-light" onclick="VentasInterface()" 
+                    href="#">Ventas</a>`;
     }
 
 }
@@ -201,8 +204,8 @@ function ingresarProductosInterface() {
 function cargarLasTabs() {
     var tabOne = document.getElementById("tabOne");
     var tabTwo = document.getElementById("tabTwo");
-    var tabTree = document.getElementById("tabTree");
-    tabOne.innerHTML = `<center><div class="col-md-6" >
+    
+    tabOne.innerHTML = `<center><div class="col-md-10" >
     <div class="card">
         <div class="card-body" id="contenido3">
             <form>
@@ -257,7 +260,62 @@ function cargarLasTabs() {
     </div>
 </div>
 <br><hr><br></center>`;
-    tabTwo.innerHTML = `<input id="archivoXLSX" class="form-control" type="file">
-    <button class="btn btn-primary" onclick="SubirXLSX()">Subir archivo</button>`;
-    tabTree.innerHTML = ``;
+    tabTwo.innerHTML = `<center><input id="archivoXLSX" class="form-control" type="file" accept=".xls,.xlsx"><br>
+    <button class="btn btn-primary" onclick="SubirXLSX()">Subir archivo</button><center>
+    <div id="carga"></div>`;
+    cargarProductosLista();
+   
+}
+function VentasInterface(){
+    var main = document.getElementById("main");
+    main.innerHTML = `<br><h2>Montar pedido</h2>`;
+    var login = document.getElementById("login-page");
+    login.innerHTML = "";
+    main.innerHTML+=`<br><center>
+    <table class="table">
+        <tr>
+            <td>
+                <input list="productos" id="productos1" class="form-control" placeholder="Nombre del producto">
+            <td>
+            
+            <td>
+                <input  id="cantidadVenta" class="form-control col-md-5" placeholder="cantidad">
+            </td>
+        </tr>
+    <table></center>
+        <datalist class="form-select" id="productos">
+        </datalist>
+        <br><button class="btn btn-primary" onclick="Emitir()">Emitir</button>
+        <br><br><h3>Lista de productos:</h3><br><table  class="table table-striped table-bordered">
+    <thead>
+      <tr>
+        <th>Código del producto</th>
+        <th>Nombre del producto</th>
+        <th>stock</th>
+        <th>precio del producto</th>
+        <th>Cantidad</th>
+        <th colspan=2>Acciones</th>
+      </tr>
+    </thead>
+    <tbody id="tabla5">
+    <tbody id="tabla4"></tbody>
+    <tr>
+        <td colspan=7><center><div id="botonGuadar"></div></center></td>
+    </tr>
+    </tbody>
+    
+  </table>
+  `;
+    var listaProductos=document.getElementById("productos")
+    db.collection("productos").get().then((querySnapshot)=>{
+        querySnapshot.forEach((doc) => {
+            var datos=doc.data();
+            var option=document.createElement("option");
+            option.value=doc.id;
+            option.text=`Nombre: ${datos.nombreProducto}\n Cantidad: ${datos.inventarioProd}`;
+            listaProductos.appendChild(option);
+        });
+    })
+    
+        
 }
