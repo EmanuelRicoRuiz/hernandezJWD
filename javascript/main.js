@@ -285,8 +285,9 @@ function VentasInterface(){
                 <input  id="cantidadVenta" class="form-control col-md-5" placeholder="cantidad">
             </td>
         </tr>
+        </center>
         <div class="overflow-auto">
-    <table></center>
+    <table>
         <datalist class="form-select" id="productos">
         </datalist>
         <br><button class="btn btn-primary" onclick="Emitir()">Emitir</button>
