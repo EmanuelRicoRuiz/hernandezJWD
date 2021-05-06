@@ -154,6 +154,9 @@ function menuInicio(permisos) {
     }if(permisos[2]){
         menu.innerHTML += `<a class="list-group-item list-group-item-action bg-light" onclick="VentasInterface()" 
                     href="#">Ventas</a>`;
+    }if(permisos[7]){
+        menu.innerHTML += `<a class="list-group-item list-group-item-action bg-light" onclick="IngresarComprasinterface()" 
+                    href="#">Ingresar compras</a>`;
     }
 
 }
@@ -319,3 +322,4 @@ function VentasInterface(){
     
         
 }
+
