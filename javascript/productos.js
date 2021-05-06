@@ -193,12 +193,15 @@ function eliminarProducto(element) {
         confirmButtonText: `Borrar`,
         denyButtonText: `No borrar`,
     }).then((result) => {
-        var id = element.id;
-        console.log(id);
-        db.collection("productos").doc(id).delete();
-        Swal.fire('Borrado!', '', 'success');
-
-        cargarProductosLista();
+        if(result.isConfirmed){
+            var id = element.id;
+            console.log(id);
+            db.collection("productos").doc(id).delete();
+            Swal.fire('Borrado!', '', 'success');
+    
+            cargarProductosLista();
+        }
+        
     })
 
 }

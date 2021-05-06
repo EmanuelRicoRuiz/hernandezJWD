@@ -628,6 +628,9 @@ function GuardarCambios(element){
     confirmButtonText: `Guardar`,
     denyButtonText: `No guardar`,
   }).then((result) => {
+    if(result.isConfirmed){
+
+   
     var idP=element.id;
   db.collection("usuarios").where("uid","==",idP).get().then((querySnapshot)=>{
     querySnapshot.forEach((doc)=>{
@@ -659,6 +662,7 @@ function GuardarCambios(element){
         
     })
   })
+}
   })
   
   

@@ -274,42 +274,54 @@ function VentasInterface(){
     main.innerHTML = `<br><h2>Montar pedido</h2>`;
     var login = document.getElementById("login-page");
     login.innerHTML = "";
-    main.innerHTML+=`<br><center>
-    <table class="table">
-        <tr>
-            <td>
-                <input list="productos" id="productos1" class="form-control" placeholder="Nombre del producto">
-            <td>
-            
-            <td>
-                <input  id="cantidadVenta" class="form-control col-md-5" placeholder="cantidad">
-            </td>
-        </tr>
-        </center>
-        <div class="overflow-auto">
-    <table>
-        <datalist class="form-select" id="productos">
-        </datalist>
+    main.innerHTML+=`<br>
+    <center>
+        <table class="table">
+            <tr>
+                <td>
+                    <input list="productos" id="productos1" class="form-control"
+                        placeholder="Nombre del producto">
+                </td>
+
+                <td>
+                    <input id="cantidadVenta" class="form-control col-md-5" placeholder="cantidad">
+                </td>
+            </tr>
+        </table>
         <br><button class="btn btn-primary" onclick="Emitir()">Emitir</button>
-        <br><br><h3>Lista de productos:</h3><br><table  class="table table-striped table-bordered">
-    <thead>
-      <tr>
-        <th>Código del producto</th>
-        <th>Nombre del producto</th>
-        <th>stock</th>
-        <th>precio del producto</th>
-        <th>Cantidad</th>
-        <th colspan=2>Acciones</th>
-      </tr>
-    </thead>
-    <tbody id="tabla5">
-    <tbody id="tabla4"></tbody>
-    <tr>
-        <td colspan=7><center><div id="botonGuadar"></div></center></td>
-    </tr>
-    </tbody>
-    
-  </table></div>
+            <br><br>
+    </center>
+    <div class="overflow-auto">
+        <table>
+            <datalist class="form-select" id="productos">
+            </datalist>
+            
+            <h3>Lista de productos:</h3><br>
+            <table class="table table-striped table-bordered">
+                <thead>
+                    <tr>
+                        <th>Código del producto</th>
+                        <th>Nombre del producto</th>
+                        <th>stock</th>
+                        <th>precio del producto</th>
+                        <th>Cantidad</th>
+                        <th colspan=2>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody id="tabla5"></tbody>
+                <tbody id="tabla4"></tbody>
+                <tr>
+                    <td colspan=7>
+                        <center>
+                            <div id="botonGuadar"></div>
+                        </center>
+                    </td>
+                </tr>
+                </tbody>
+
+            </table>
+        </table>
+    </div>
   `;
     var listaProductos=document.getElementById("productos")
     db.collection("productos").get().then((querySnapshot)=>{
