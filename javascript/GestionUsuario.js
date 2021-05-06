@@ -518,7 +518,7 @@ function listaDeUsuarios() {
   var login = document.getElementById("login-page");
   login.innerHTML = "";
   feed.innerHTML = ``;
-  feed.innerHTML = `<br><h3>Lista de usuarios:</h3><br><table id="tabla2" class="table table-striped table-bordered">
+  feed.innerHTML = `<br><h3>Lista de usuarios:</h3><br><div class="overflow-auto"><table id="tabla2" class="table table-striped table-bordered">
     <thead>
       <tr>
         <th>Nombre</th>
@@ -528,7 +528,7 @@ function listaDeUsuarios() {
         <th colspan=2>Acciones</th>
       </tr>
     </thead>
-  </table>`;
+  </table></div>`;
   var tabla2 = document.getElementById("tabla2");
   db.collection("usuarios")
     .get()

@@ -285,6 +285,7 @@ function VentasInterface(){
                 <input  id="cantidadVenta" class="form-control col-md-5" placeholder="cantidad">
             </td>
         </tr>
+        <div class="overflow-auto">
     <table></center>
         <datalist class="form-select" id="productos">
         </datalist>
@@ -307,7 +308,7 @@ function VentasInterface(){
     </tr>
     </tbody>
     
-  </table>
+  </table></div>
   `;
     var listaProductos=document.getElementById("productos")
     db.collection("productos").get().then((querySnapshot)=>{
