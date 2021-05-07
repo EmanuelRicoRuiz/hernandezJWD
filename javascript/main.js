@@ -391,7 +391,7 @@ function VentasInterface() {
     db.collection("ventas").get().then((querySnapshot)=>{
         querySnapshot.forEach((doc)=>{
             var datos=doc.data();
-            tabTwo.innerHTML+=`<table  class="table table-striped table-bordered" id="Cabecera${doc.id}">
+            tabTwo.innerHTML+=`<div class="overflow-auto"><table  class="table table-striped table-bordered" id="Cabecera${doc.id}">
                 <tr>
                     <th>Cliente</th>
                     <th>Estado de entrega</th>
@@ -401,7 +401,7 @@ function VentasInterface() {
                     <th>fecha</th>
                     <th colspan=4>Acciones</th>
                 </tr>
-            </table>`;
+            </table></div>`;
             
             var tablaPedidos=document.getElementById("Cabecera"+doc.id);
             tablaPedidos.innerHTML+=`
