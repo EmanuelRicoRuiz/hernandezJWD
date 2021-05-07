@@ -28,6 +28,8 @@ function RegistrarUsuario() {
 `;
 }
 function gestionarusuario() {
+
+
     var login = document.getElementById("login-page");
     login.innerHTML = "";
     var main = document.getElementById("main");
@@ -151,12 +153,15 @@ function menuInicio(permisos) {
     } if (permisos[5]) {
         menu.innerHTML += `<a class="list-group-item list-group-item-action bg-light" onclick="ingresarProductosInterface()" 
                     href="#">Gestión de productos</a>`;
-    }if(permisos[2]){
+    } if (permisos[2]) {
         menu.innerHTML += `<a class="list-group-item list-group-item-action bg-light" onclick="VentasInterface()" 
                     href="#">Ventas</a>`;
-    }if(permisos[7]){
-        menu.innerHTML += `<a class="list-group-item list-group-item-action bg-light" onclick="IngresarComprasinterface()" 
-                    href="#">Ingresar compras</a>`;
+    } if (permisos[7]) {
+        menu.innerHTML += `<a class="list-group-item list-group-item-action bg-light" onclick="VerCompras()" 
+                    href="#">Lista de compras</a>`;
+    }if(permisos[10]){
+        menu.innerHTML += `<a class="list-group-item list-group-item-action bg-light" onclick="cargarClientes()" 
+                    href="#">Clientes</a>`;
     }
 
 }
@@ -207,7 +212,7 @@ function ingresarProductosInterface() {
 function cargarLasTabs() {
     var tabOne = document.getElementById("tabOne");
     var tabTwo = document.getElementById("tabTwo");
-    
+
     tabOne.innerHTML = `<center><div class="col-md-10" >
     <div class="card">
         <div class="card-body" id="contenido3">
@@ -267,14 +272,14 @@ function cargarLasTabs() {
     <button class="btn btn-primary" onclick="SubirXLSX()">Subir archivo</button><center>
     <div id="carga"></div>`;
     cargarProductosLista();
-   
+
 }
-function VentasInterface(){
+function VentasInterface() {
     var main = document.getElementById("main");
     main.innerHTML = `<br><h2>Montar pedido</h2>`;
     var login = document.getElementById("login-page");
     login.innerHTML = "";
-    main.innerHTML+=`<br>
+    main.innerHTML += `<br>
     <center>
         <table class="table">
             <tr>
@@ -323,17 +328,168 @@ function VentasInterface(){
         </table>
     </div>
   `;
-    var listaProductos=document.getElementById("productos")
-    db.collection("productos").get().then((querySnapshot)=>{
+    var listaProductos = document.getElementById("productos")
+    db.collection("productos").get().then((querySnapshot) => {
         querySnapshot.forEach((doc) => {
-            var datos=doc.data();
-            var option=document.createElement("option");
-            option.value=doc.id;
-            option.text=`Nombre: ${datos.nombreProducto}\n Cantidad: ${datos.inventarioProd}`;
+            var datos = doc.data();
+            var option = document.createElement("option");
+            option.value = doc.id;
+            option.text = `Nombre: ${datos.nombreProducto}\n Cantidad: ${datos.inventarioProd}`;
             listaProductos.appendChild(option);
         });
     })
-    
-        
-}
 
+
+}
+function VerCompras() {
+    var feed = document.getElementById("main");
+    var login = document.getElementById("login-page");
+    login.innerHTML = "";
+    feed.innerHTML = ``;
+    feed.innerHTML = `<br><h3>Lista de compras:</h3><br><div class="overflow-auto" id="tabla6"></div>`;
+    var tabla6 = document.getElementById("tabla6");
+    db.collection("compras")
+        .get()
+        .then((querySnapshot) => {
+            querySnapshot.forEach((doc) => {
+                datos = doc.data();
+
+                tabla6.innerHTML +=
+                    `<table  class="table table-striped table-bordered" id="${doc.id}"><tr>
+            <td colspan=4>Número de factura:${doc.id}</td>
+            </tr>
+            <tr>
+            <th>Codigo producto</th>
+            <th>cantidad</th>
+            <th>costo</th>
+            <th>fecha</th>
+            
+          </tr></table>`;
+                costos = datos.costos;
+                var suma = 0;
+
+                for (let i = 0; i < costos.length; i++) {
+                    suma += costos[i];
+                }
+                var tabla7 = document.getElementById(doc.id);
+                for (let i = 0; i < costos.length; i++) {
+                    tabla7.innerHTML += `
+                    <tr>
+                    <td>${datos.productos[i]}</td>
+                    <td>${datos.cantidades[i]}</td>
+                    <td>${datos.costos[i]}</td>
+                    <td>${datos.fecha1[0]}/${datos.fecha1[1]}/${datos.fecha1[2]}</td>
+                    </tr>`;
+                }
+                tabla7.innerHTML += `
+                    <tr>
+                        <td colspan=4 id="tablaSuma">
+                            suma de la compra:${suma}
+                        </td>
+                    </tr>`
+
+            })
+        });
+}
+function cargarClientes(){
+    var login = document.getElementById("login-page");
+    login.innerHTML = "";
+    var main = document.getElementById("main");
+    main.innerHTML = `<div class="wrap">
+    <center>
+    <ul class="tabs">
+        <li><a href="#tab1"><span class="fa fa-home"></span><span class="tab-text">Lista de clientes</span></a></li>
+        <li><a href="#tab2"><span class="fa fa-group"></span><span class="tab-text">Registrar nuevo cliente</span></a></li>
+        
+    </ul>
+    </center>
+    <div class="secciones">
+        <article id="tab1">
+
+            <div id="tabOne">
+              <h3>Lista de clientes</h3>
+                <div id="ListaClientes"></div>
+            <div id="nombre">
+
+            
+        </article>
+        <article id="tab2">
+            <div id="tabTwo">
+            
+            <div id="RegistroClientes">
+            
+            </div>
+            </div>
+        </article>
+        
+
+        
+    </div>
+</div>`;
+    cargarTabs();
+    var ListaClientes=document.getElementById("ListaClientes");
+    ListaClientes.innerHTML=`<table class="table table-striped table-bordered" id="tabla8">
+        <tr>
+            <th>Nit</th>
+            <th>Razón social</th>
+            <th>Direccion</th>
+            <th>Cartera</th>
+            <th colspan=2>Acciones</th>
+        </tr>
+    </table>`;
+    db.collection("clientes").get().then((querySnapshot)=>{
+        querySnapshot.forEach((doc)=>{
+            var datos=doc.data();
+            var RazonSocial=datos.RazonSocial
+            var nit=datos.nit;
+            var Direccion=datos.Direccion;
+            var Cartera=datos.Cartera;
+            var tabla8=document.getElementById("tabla8");
+            tabla8.innerHTML+=`
+            <tr>
+                <td>${nit}</td>
+                <td>${RazonSocial}</td>
+                <td>${Direccion}</td>
+                <td>${Cartera}</td>
+                <td><button id="${doc.id}" class="btn btn-success" onclick="EditarCliente(this)">Editar</button></td>
+                <td><button id="${doc.id}" class="btn btn-danger" onclick="EliminarCliente(this)">Eliminar</button></td>
+            </tr>`;
+        })
+    })
+    var RegistroClientes=document.getElementById("RegistroClientes");
+    RegistroClientes.innerHTML=`<center><div class="col-md-10" >
+    <div class="card">
+        <div class="card-body" id="contenido3">
+            <form>
+                <div class="form-gruop">
+                    <h3>Registrar Cliente</h3>
+                    <br><hr><br>
+                </div>
+                <div class="form-group">
+                    <h5>Nit del cliente*</h5>
+                    <input type="text" id="nit" class="form-control" placeholder="Nit*">
+                </div>
+                <div class="form-group">
+                    <h5>Razón Social*</h5>
+                    <input type="text" id="RazonSocial" class="form-control" placeholder="Razon Social*">
+                </div>
+                <div class="form-group">
+                    <h5>Direccion*</h5>
+                    <input type="text" id="Direccion" class="form-control" placeholder="Direccion*">
+                </div>
+                
+                
+                <br>
+                <div id="botonE">
+                    <button onclick="hacerRegistroCliente()" class="btn btn-danger" id="btn-task-form">
+                        Registrar cliente
+                    </button>
+                </div>
+
+            </form>
+        </div>
+    </div>
+</div>
+<br><hr><br></center>`;
+    
+}

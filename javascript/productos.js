@@ -370,6 +370,7 @@ function GuardarPedido() {
         idProducto[i] = ventaGarray[i].idProducto;
     }
     var entrada = true;
+    var suma=0
     db.collection("productos").get().then((querySnapshot) => {
         querySnapshot.forEach((doc) => {
             datos = doc.data();
@@ -377,6 +378,8 @@ function GuardarPedido() {
                 if (datos.codigoProducto == idProducto[i]) {
                     if (datos.inventarioProd < cantidades[i]) {
                         entrada = false;
+                    }else{
+                        suma=suma+(cantidades[i]*datos.precioProducto)
                     }
                 }
             }
@@ -386,13 +389,18 @@ function GuardarPedido() {
                 var vendedor = user.uid;
                 var date = new Date();
                 var fecha = [date.getDate(), date.getMonth() + 1, date.getFullYear()]
-                var estado = false;
+                var entregado = false;
+                var pagado=false;
+                var debe=suma;
                 db.collection("ventas").doc().set({
                     cantidades,
                     idProducto,
-                    estado,
+                    entregado,
                     vendedor,
-                    fecha
+                    fecha,
+                    pagado,
+                    suma,
+                    debe
                 })
                 for (let i = 0; i < idProducto.length; i++) {
 
@@ -473,25 +481,30 @@ function GuardarCambiosProducto() {
 
             var productos = [];
             var cantidades = [];
+            var costos=[];
             db.collection("compras").get().then((querySnapshot) => {
                 querySnapshot.forEach((doc) => {
                     if (doc.id == NumeroFactura) {
                         datos = doc.data();
                         productos = datos.productos;
                         cantidades = datos.cantidades;
+                        costos=datos.costos;
                     }
 
                 })
 
                 productos.push(codidoPR);
                 cantidades.push(NuevaCantidad);
+                costos.push(costoPr);
                 var fecha = new Date();
                 var fecha1 = [fecha.getDate(), fecha.getMonth() + 1, fecha.getFullYear()];
                 console.log(fecha1);
                 db.collection('compras').doc(NumeroFactura).set({
                     productos,
                     cantidades,
-                    fecha1
+                    fecha1,
+                    NumeroFactura,
+                    costos
                 })
                 db.collection("productos").where("codigoProducto", "==", codidoPR).get()
                     .then((querySnapshot) => {
@@ -547,7 +560,7 @@ function GuardarCambiosProducto() {
                             var datos = doc1.data();
                             var codigoProducto = datos.codigoProducto;
                             var nombreProducto = nombrePR;
-                            var inventarioProd = datos.inventarioProd;
+                            var inventarioProd = stockPr;
                             var precioProducto = precioPr;
                             var proveedor = datos.proveedor;
                             var CostoProducto = costoPr;
