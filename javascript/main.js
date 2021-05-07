@@ -276,57 +276,96 @@ function cargarLasTabs() {
 }
 function VentasInterface() {
     var main = document.getElementById("main");
-    main.innerHTML = `<br><h2>Montar pedido</h2>`;
+    main.innerHTML = ``;
     var login = document.getElementById("login-page");
     login.innerHTML = "";
-    main.innerHTML += `<br>
+    main.innerHTML += `<div class="wrap">
     <center>
-        <table class="table">
-            <tr>
-                <td>
-                    <input list="productos" id="productos1" class="form-control"
-                        placeholder="Nombre del producto">
-                </td>
-
-                <td>
-                    <input id="cantidadVenta" class="form-control col-md-5" placeholder="cantidad">
-                </td>
-            </tr>
-        </table>
-        <br><button class="btn btn-primary" onclick="Emitir()">Emitir</button>
-            <br><br>
+    <ul class="tabs">
+        <li><a href="#tab1"><span class="fa fa-home"></span><span class="tab-text">Hacer pedido</span></a></li>
+        <li><a href="#tab2"><span class="fa fa-group"></span><span class="tab-text">Lista de pedidos</span></a></li>
+        
+    </ul>
     </center>
-    <div class="overflow-auto">
-        <table>
-            <datalist class="form-select" id="productos">
-            </datalist>
-            
-            <h3>Lista de productos:</h3><br>
-            <table class="table table-striped table-bordered">
-                <thead>
-                    <tr>
-                        <th>Código del producto</th>
-                        <th>Nombre del producto</th>
-                        <th>stock</th>
-                        <th>precio del producto</th>
-                        <th>Cantidad</th>
-                        <th colspan=2>Acciones</th>
-                    </tr>
-                </thead>
-                <tbody id="tabla5"></tbody>
-                <tbody id="tabla4"></tbody>
-                <tr>
-                    <td colspan=7>
-                        <center>
-                            <div id="botonGuadar"></div>
-                        </center>
-                    </td>
-                </tr>
-                </tbody>
+    <div class="secciones">
+        <article id="tab1">
 
-            </table>
-        </table>
+            <div id="tabOne">
+            <br>
+            <center><h2>Montar pedido</h2></center>
+            <center>
+                <table class="table">
+                    <tr>
+                        <td>
+                            <input list="productos" id="productos1" class="form-control"
+                                placeholder="Nombre del producto">
+                        </td>
+        
+                        <td>
+                            <input id="cantidadVenta" class="form-control col-md-5" placeholder="cantidad">
+                        </td>
+                        <td>
+                            <input list="clientes" id="clientes1" class="form-control"
+                                placeholder="Nombre del cliente">
+                        </td>
+                    </tr>
+                </table>
+                <br><button class="btn btn-primary" onclick="Emitir()">Emitir</button>
+                    <br><br>
+            </center>
+            <div class="overflow-auto">
+                <table>
+                    <datalist class="form-select" id="productos">
+                    </datalist>
+                    <datalist class="form-select" id="clientes">
+                    </datalist>
+                    
+                    <h3>Lista de productos:</h3><br>
+                    <table class="table table-striped table-bordered">
+                        <thead>
+                            <tr>
+                                <th>Código del producto</th>
+                                <th>Nombre del producto</th>
+                                <th>stock</th>
+                                <th>precio del producto</th>
+                                <th>Cantidad</th>
+                                <th colspan=2>Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tabla5"></tbody>
+                        <tbody id="tabla4"></tbody>
+                        <tr>
+                            <td colspan=7>
+                                <center>
+                                    <div id="botonGuadar"></div>
+                                </center>
+                            </td>
+                        </tr>
+                        </tbody>
+        
+                    </table>
+                </table>
+            </div>
+        
+            <div id="nombre">
+
+            <div>
+            <br>
+            <div id="permisos">
+            
+            </div>
+            </div>
+        </article>
+        <article id="tab2">
+            <div id="tabTwo">
+            <h3>Lista de pedidos: </h3>
+            </div>
+        </article>
+        
+
+        
     </div>
+</div>
   `;
     var listaProductos = document.getElementById("productos")
     db.collection("productos").get().then((querySnapshot) => {
@@ -338,8 +377,69 @@ function VentasInterface() {
             listaProductos.appendChild(option);
         });
     })
-
-
+    var clientes = document.getElementById("clientes")
+    db.collection("clientes").get().then((querySnapshot) => {
+        querySnapshot.forEach((doc) => {
+            var datos = doc.data();
+            var option = document.createElement("option");
+            option.value = doc.id;
+            option.text = `Nombre: ${datos.RazonSocial}`;
+            clientes.appendChild(option);
+        });
+    })
+    var tabTwo=document.getElementById("tabTwo");
+    db.collection("ventas").get().then((querySnapshot)=>{
+        querySnapshot.forEach((doc)=>{
+            var datos=doc.data();
+            tabTwo.innerHTML+=`<table  class="table table-striped table-bordered" id="Cabecera${doc.id}">
+                <tr>
+                    <th>Cliente</th>
+                    <th>Estado de entrega</th>
+                    <th>Estado de pago</th>
+                    <th>Valor</th>
+                    <th>debe</th>
+                    <th>fecha</th>
+                    <th colspan=4>Acciones</th>
+                </tr>
+            </table>`;
+            
+            var tablaPedidos=document.getElementById("Cabecera"+doc.id);
+            tablaPedidos.innerHTML+=`
+                <tr>
+                    <td>${datos.cliente}</td>
+                    <td>${datos.entregado}</td>
+                    <td>${datos.pagado}</td>
+                    <td>${datos.suma}</td>
+                    <td>${datos.debe}</td>
+                    <td>${datos.fecha[0]}/${datos.fecha[1]}/${datos.fecha[2]}</td>
+                    <td>
+                    <button class="btn btn-success btn-block" id="${doc.id}" onclick="AbonarPedido(this)">Abonar</button><br>
+                    
+                    <button class="btn btn-success btn-block" id="${doc.id}" onclick="facturaPdf(this)">Generar factura</button></center></td>
+                </tr>
+                
+                    <td colspan=10>
+                    <table  class="table table-striped table-bordered" id="contenido${doc.id}">
+                        <tr>
+                            <th>Código del producto</th>
+                            <th>Cantidad</th>
+                        </tr>
+                    </table>
+                    </td>
+                
+            `
+            var contenido=document.getElementById("contenido"+doc.id);
+            for(let i=0; i<datos.cantidades.length;i++){
+                contenido.innerHTML+=`
+                        <tr>
+                            <th>${datos.idProducto[i]}</th>
+                            <th>${datos.cantidades[i]}</th>
+                        </tr>
+                `;
+            }
+        })
+    })
+    cargarTabs();
 }
 function VerCompras() {
     var feed = document.getElementById("main");

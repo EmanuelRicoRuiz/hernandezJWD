@@ -193,15 +193,15 @@ function eliminarProducto(element) {
         confirmButtonText: `Borrar`,
         denyButtonText: `No borrar`,
     }).then((result) => {
-        if(result.isConfirmed){
+        if (result.isConfirmed) {
             var id = element.id;
             console.log(id);
             db.collection("productos").doc(id).delete();
             Swal.fire('Borrado!', '', 'success');
-    
+
             cargarProductosLista();
         }
-        
+
     })
 
 }
@@ -323,6 +323,7 @@ function pintarTabla(ventaGarray) {
     }
     var cantidad = document.getElementById("cantidadVenta");
     var idProducto = document.getElementById("productos1");
+
     cantidad.value = "";
     idProducto.value = "";
 }
@@ -331,6 +332,7 @@ function EliminarItem(element) {
     for (let i = 0; i < ventaGarray.length; i++) {
         if (idElemento == ventaGarray[i].idProducto) {
             ventaGarray.splice(i);
+            console.log(ventaGarray);
         }
     }
     pintarTabla(ventaGarray);
@@ -370,7 +372,7 @@ function GuardarPedido() {
         idProducto[i] = ventaGarray[i].idProducto;
     }
     var entrada = true;
-    var suma=0
+    var suma = 0
     db.collection("productos").get().then((querySnapshot) => {
         querySnapshot.forEach((doc) => {
             datos = doc.data();
@@ -378,8 +380,8 @@ function GuardarPedido() {
                 if (datos.codigoProducto == idProducto[i]) {
                     if (datos.inventarioProd < cantidades[i]) {
                         entrada = false;
-                    }else{
-                        suma=suma+(cantidades[i]*datos.precioProducto)
+                    } else {
+                        suma = suma + (cantidades[i] * datos.precioProducto)
                     }
                 }
             }
@@ -390,8 +392,9 @@ function GuardarPedido() {
                 var date = new Date();
                 var fecha = [date.getDate(), date.getMonth() + 1, date.getFullYear()]
                 var entregado = false;
-                var pagado=false;
-                var debe=suma;
+                var pagado = false;
+                var debe = suma;
+                var cliente = document.getElementById("clientes1").value;
                 db.collection("ventas").doc().set({
                     cantidades,
                     idProducto,
@@ -400,7 +403,8 @@ function GuardarPedido() {
                     fecha,
                     pagado,
                     suma,
-                    debe
+                    debe,
+                    cliente
                 })
                 for (let i = 0; i < idProducto.length; i++) {
 
@@ -434,7 +438,23 @@ function GuardarPedido() {
                             ventaGarray.splice(i);
                             var botonGuadar = document.getElementById("botonGuadar");
                             botonGuadar.innerHTML = "";
+                            db.collection("clientes").where("nit", "==", cliente).get().then((querySnapshot) => {
+                                querySnapshot.forEach((doc) => {
+                                    datos = doc.data();
+                                    var Cartera = datos.Cartera;
+                                    var Direccion = datos.Direccion;
+                                    var RazonSocial = datos.RazonSocial;
+                                    var nit = datos.nit;
+                                    Cartera += suma;
+                                    db.collection("clientes").doc(nit).set({
+                                        Cartera,
+                                        Direccion,
+                                        RazonSocial,
+                                        nit
+                                    })
+                                })
 
+                            })
                             pintarTabla(ventaGarray)
                         })
 
@@ -473,7 +493,7 @@ function GuardarCambiosProducto() {
 
     NuevaCantidad = parseInt(NuevaCantidad, 10);
     entrada = !Number.isNaN(NuevaCantidad)
-    entrada2=false;
+    entrada2 = false;
     console.log(entrada);
 
     if (codidoPR != "" && nombrePR != "" && precioPr != NaN && costoPr != NaN && stockPr != NaN && limiteM != NaN) {
@@ -481,14 +501,14 @@ function GuardarCambiosProducto() {
 
             var productos = [];
             var cantidades = [];
-            var costos=[];
+            var costos = [];
             db.collection("compras").get().then((querySnapshot) => {
                 querySnapshot.forEach((doc) => {
                     if (doc.id == NumeroFactura) {
                         datos = doc.data();
                         productos = datos.productos;
                         cantidades = datos.cantidades;
-                        costos=datos.costos;
+                        costos = datos.costos;
                     }
 
                 })
@@ -552,37 +572,37 @@ function GuardarCambiosProducto() {
                 confirmButtonText: `Guardar`,
                 denyButtonText: `No Guardar`,
             }).then((result) => {
-                if(result.isConfirmed){
+                if (result.isConfirmed) {
                     db.collection("productos").where("codigoProducto", "==", codidoPR).get()
-                    .then((querySnapshot) => {
-                        querySnapshot.forEach((doc1) => {
+                        .then((querySnapshot) => {
+                            querySnapshot.forEach((doc1) => {
 
-                            var datos = doc1.data();
-                            var codigoProducto = datos.codigoProducto;
-                            var nombreProducto = nombrePR;
-                            var inventarioProd = stockPr;
-                            var precioProducto = precioPr;
-                            var proveedor = datos.proveedor;
-                            var CostoProducto = costoPr;
-                            var registradoPor = datos.registradoPor;
-                            db.collection("productos").doc(doc1.id).set({
-                                codigoProducto,
-                                nombreProducto,
-                                inventarioProd,
-                                limiteM,
-                                precioProducto,
-                                proveedor,
-                                CostoProducto,
-                                registradoPor
+                                var datos = doc1.data();
+                                var codigoProducto = datos.codigoProducto;
+                                var nombreProducto = nombrePR;
+                                var inventarioProd = stockPr;
+                                var precioProducto = precioPr;
+                                var proveedor = datos.proveedor;
+                                var CostoProducto = costoPr;
+                                var registradoPor = datos.registradoPor;
+                                db.collection("productos").doc(doc1.id).set({
+                                    codigoProducto,
+                                    nombreProducto,
+                                    inventarioProd,
+                                    limiteM,
+                                    precioProducto,
+                                    proveedor,
+                                    CostoProducto,
+                                    registradoPor
+                                })
+                                Swal.fire('Guardado!', '', 'success');
+
                             })
-                            Swal.fire('Guardado!', '', 'success');
+
 
                         })
-
-
-                    })
                 }
-                
+
             })
         }
     } else {
@@ -593,4 +613,73 @@ function GuardarCambiosProducto() {
             timer: 1500
         })
     }
+}
+function AbonarPedido(element) {
+    var entrada = true;
+    Swal.fire({
+        title: 'Ingrese el dinero a abonar',
+        input: 'text',
+        inputAttributes: {
+            autocapitalize: 'off'
+        },
+        showCancelButton: true,
+        confirmButtonText: 'Ingresar',
+        showLoaderOnConfirm: true,
+        CancelButtonText: 'Cancelar'
+
+    }).then((result) => {
+        if (result.isConfirmed) {
+            cantidad_abono = result.value;
+            cantidad_abono = parseInt(cantidad_abono, 10);
+            db.collection("ventas").get().then((querySnapshot) => {
+                querySnapshot.forEach((doc) => {
+                    if (element.id == doc.id) {
+                        var datos = doc.data();
+                        cantidades = datos.cantidades;
+                        idProducto = datos.idProducto;
+                        entregado = datos.entregado;
+                        vendedor = datos.vendedor;
+                        fecha = datos.fecha
+                        pagado = datos.pagado
+                        suma = datos.suma
+                        debe = datos.debe;
+                        cliente = datos.cliente;
+                        if (cantidad_abono > suma || cantidad_abono>debe) {
+                            Swal.fire({
+                                icon: 'info',
+                                title: 'el abono no puede superar la suma',
+                                showConfirmButton: false,
+                                timer: 1500
+                            })
+                            entrada = false;
+                        } else if (cantidad_abono == suma) {
+                            pagado = true;
+                            debe = 0;
+                        } else {
+                            debe = debe - cantidad_abono;
+                            if(debe==0){
+                                pagado=true;
+                            }
+                        }
+
+                        if (entrada) {
+                            db.collection("ventas").doc(doc.id).set({
+                                cantidades,
+                                idProducto,
+                                entregado,
+                                vendedor,
+                                fecha,
+                                pagado,
+                                suma,
+                                debe,
+                                cliente
+                            })
+                        }
+
+                    }
+
+                })
+            })
+        }
+    })
 }
