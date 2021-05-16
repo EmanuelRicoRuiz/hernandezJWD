@@ -137,3 +137,6 @@ body {
   text-align: right;
   color: #D42F3D;
 }
+.cursor:hover{
+  cursor: pointer;
+}

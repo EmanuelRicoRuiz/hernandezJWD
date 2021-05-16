@@ -54,7 +54,7 @@ function registrar() {
     .then((user) => {
       var entrada = false;
       var idPrincipal;
-      var user = firebase.auth().currentUser;
+     
       idPrincipal = user.uid;
       console.log(idPrincipal);
       db.collection("usuarios").where("uid", "==", idPrincipal)
@@ -277,16 +277,18 @@ function buscarTU() {
   var encontrado = false;
   var permisos1 = []
   var ListaPermisos = ["especificar tipos de usuarios",
-    "registro de nuevos usuarios",
-    "Montaje de pedidos",
-    "Registro de pagos",
-    "generación de facturas",
-    "ingreso de productos",
-    "Gestión de bodega e inventarios",
-    "Ingresar compras",
-    "vender",
-    "Registro de clientes",
-    "Administración de clientes"];
+        "registro de nuevos usuarios",
+        "Montaje de pedidos",
+        "Registro de pagos",
+        "generación de facturas",
+        "ingreso de productos",
+        "Gestión de bodega e inventarios",
+        "Ingresar compras",
+        "vender",
+        "Registro de clientes",
+        "Administración de clientes",
+        "Realizar devoluciones"
+];
 
   db.collection("tiposUsuario")
     .get()
@@ -373,6 +375,7 @@ function guardarTipoDeUsuario() {
       permisos[8] = document.getElementById("permiso9").checked;
       permisos[9] = document.getElementById("permiso10").checked;
       permisos[10] = document.getElementById("permiso11").checked;
+      permisos[11] = document.getElementById("permiso12").checked;
       var usuario = document.getElementById("NombreUsuario").value;
       var sugerencia = document.getElementById("sugerencia");
       var aviso = document.getElementById("aviso");
@@ -525,7 +528,7 @@ function listaDeUsuarios() {
         <th>Apellido</th>
         <th>Tipo de usuario</th>
         <th>Correo electrónico</th>
-        <th colspan=2>Acciones</th>
+        <th colspan=3>Acciones</th>
       </tr>
     </thead>
   </table></div>`;
@@ -558,10 +561,16 @@ function listaDeUsuarios() {
             <td>${datos.email}</td>
             <th><button class="btn btn-danger" id="${doc.id}" onclick="recuperarContraseña(this)">Recuperar Contraseña</button></th>
             <th><button class="btn btn-danger" id="${doc.id}" onclick="Editar(this)">Editar</button></th>
+            <th><button class="btn btn-danger" id="${doc.id}" onclick="EliminarUsuario(this)">Eliminar</button></th>
             
           </tr>`;
       })
     });
+}
+function EliminarUsuario(element){
+  var userUid=element.id;
+  db.collection("usuarios").doc(userUid).delete();
+  listaDeUsuarios();
 }
 function Editar(element) {
   var feed = document.getElementById("main");
