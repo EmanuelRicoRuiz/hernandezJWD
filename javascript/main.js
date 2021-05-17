@@ -887,7 +887,7 @@ function contenidoFactura(element) {
 
                 var datos = doc.data();
                 container.innerHTML =
-                    `<center><button class="btn btn-success btn-block" id="${element.id}" onclick="ocultarPedido(this)">Ocultar contenido</button></td></center>
+                    `<center><button class="btn btn-success btn-block" id="${element.id}" onclick="ocultarFactura(this)">Ocultar contenido</button></td></center>
                     <td colspan=10>
                     <table  class="table table-striped table-bordered" id="tablaV${element.id}">
                         <tr>
@@ -916,8 +916,13 @@ function contenidoFactura(element) {
 }
 function ocultarPedido(element) {
     console.log(element.id);
-    var container = document.getElementById(`contenido1${element.id}`);
+    var container = document.getElementById(`contenido${element.id}`);
     container.innerHTML = "";
+}
+function ocultarFactura(element){
+    console.log(element.id);
+    var container = document.getElementById(`contenido1${element.id}`);
+    container.innerHTML = "";  
 }
 function InventarioGlobal() {
 
