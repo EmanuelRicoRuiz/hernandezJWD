@@ -44,18 +44,20 @@ function ingreso() {
 var uid;
 
 function registrar() {
+  console.log("entró");
   aviso = document.getElementById("sugerencias");
   aviso.innerHTML = `<div>
           <p id="segerencia">Registrando...</p>
           </div>`;
   var correoAdmin = document.getElementById("correoAdmin").value;
   var contraAdmin = document.getElementById("contraseñaAdmin").value;
+  
   firebase.auth().signInWithEmailAndPassword(correoAdmin, contraAdmin)
     .then((user) => {
       var entrada = false;
       var idPrincipal;
-     
-      idPrincipal = user.uid;
+      console.log(user);
+      idPrincipal = user.user.uid;
       console.log(idPrincipal);
       db.collection("usuarios").where("uid", "==", idPrincipal)
         .get()

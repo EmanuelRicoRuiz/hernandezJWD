@@ -20,7 +20,7 @@ function facturaPdf(element) {
         return datos;
     }
 
-    doc.setFontSize(12);
+    doc.setFontSize(9);
     db.collection("ventas").get().then((querySnapshot) => {
         querySnapshot.forEach((doc1) => {
             if (doc1.id == IdVenta) {
@@ -75,7 +75,7 @@ function facturaPdf(element) {
                                                     for (let j = 0; j < data.length; j++) {
                                                         aux = data[j]
                                                         xp = 20
-                                                        yp += 10
+                                                        yp += 5
 
                                                         for (let k = 0; k < aux.length; k++) {
 
