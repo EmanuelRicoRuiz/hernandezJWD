@@ -776,24 +776,26 @@ function ventas() {
                 <td>${datos.NumeroFactura}</td>
                 <td>${datos.cantidad_abono}</td>
                 <td>${datos.fecha}</td>
-                <td>${datos.rentabilidad}%</td>
+                <td>${datos.rentabilidad.toFixed(2)}%</td>
             </tr>
             `
         })
         
         var Valor = document.getElementById("ValorRecaudo");
         Valor.innerHTML = `<p>Valor del recaudo: ${suma}</p>`
+        suma1=suma1.toFixed(2);
         Valor.innerHTML+=`<p>Utilidades: ${suma1}</p>`
     })
     var tabTree=document.getElementById("tabTree");
-    tabTree.innerHTML = `Facturas vencidas: `;
+    tabTree.innerHTML = `No hay facturas vencidas.`;
+
     db.collection("ventas").get().then((querySnapshot)=>{
         querySnapshot.forEach((doc)=>{
             var datos=doc.data();
             var fechaVencimiento=new Date(datos.fechaVencimiento[2],datos.fechaVencimiento[1]-1,datos.fechaVencimiento[0])
             var fechaActual=new Date();
             
-            if(fechaActual>=fechaVencimiento){
+            if(fechaActual>=fechaVencimiento&&datos.debe>0){
                 tabTree.innerHTML += `<div class="overflow-auto"><table  class="table table-striped table-bordered" id="Vencido${doc.id}">
                 <tr>
                     <th>Número de factura</th>
