@@ -146,6 +146,8 @@ function menuInicio(permisos) {
         "Administración de clientes",
         "Realizar devoluciones"
     ];
+    menu.innerHTML += `<a class="list-group-item list-group-item-action bg-light" onclick="Proveedores()"
+    href="#">Gestión de proveedores</a>`;
     if (permisos[0]) {
         menu.innerHTML += `<a class="list-group-item list-group-item-action bg-light" onclick="gestionarusuario()"
         href="#">Gestión de Usuarios</a>`;
@@ -163,11 +165,23 @@ function menuInicio(permisos) {
                     href="#">Pedidos</a>`;
         menu.innerHTML += `<a class="list-group-item list-group-item-action bg-light" onclick="ventas()" 
                     href="#">ventas</a>`;
+        menu.innerHTML += `<a class="list-group-item list-group-item-action bg-light" onclick="contabilidad()" 
+                    href="#">Contabilidad</a>`;
+
         menu.innerHTML += `<a class="list-group-item list-group-item-action bg-light" onclick="InventarioGlobal()" 
                     href="#">Inventario Global</a>`;
+        menu.innerHTML += `<a class="list-group-item list-group-item-action bg-light" onclick="ListaPosicionVentas()" 
+                    href="#">Posiciones</a>`;
+        menu.innerHTML += `<a class="list-group-item list-group-item-action bg-light" onclick="misClientes()" 
+                    href="#">mis clientes</a>`;
+        menu.innerHTML += `<a class="list-group-item list-group-item-action bg-light" onclick="CalcularNomina()" 
+                    href="#">Nómina</a>`;
+
     } if (permisos[7]) {
-        menu.innerHTML += `<a class="list-group-item list-group-item-action bg-light" onclick="VerCompras()" 
-                    href="#">Lista de compras</a>`;
+        menu.innerHTML += `<a class="list-group-item list-group-item-action bg-light" onclick="comprasInterface()" 
+                    href="#">compras</a>`;
+        menu.innerHTML += `<a class="list-group-item list-group-item-action bg-light" onclick="ventasGenerales()" 
+                    href="#">Ventas generales</a>`;
     } if (permisos[10]) {
         menu.innerHTML += `<a class="list-group-item list-group-item-action bg-light" onclick="cargarClientes()" 
                     href="#">Clientes</a>`;
@@ -178,6 +192,648 @@ function menuInicio(permisos) {
     }
 
 }
+async function misClientes() {
+
+    var login = document.getElementById("login-page");
+    login.innerHTML = "";
+    var main = document.getElementById("main");
+    main.innerHTML = `<div class="wrap">
+        <center>
+        <ul class="tabs">
+            <li><a href="#tab1"><span class="fa fa-home"></span><span class="tab-text">Lista de clientes</span></a></li>
+            <li><a href="#tab2"><span class="fa fa-group"></span><span class="tab-text">Registrar nuevo cliente</span></a></li>
+            
+        </ul>
+        </center>
+        <div class="secciones">
+            <article id="tab1">
+    
+                <div id="tabOne">
+                  <h3>Lista de clientes</h3>
+                    <div id="ListaClientes" class="overflow-auto"></div>
+                <div id="nombre">
+    
+                
+            </article>
+            <article id="tab2">
+                <div id="tabTwo">
+                
+                <div id="RegistroClientes">
+                
+                </div>
+                </div>
+            </article>
+            
+            
+    
+            
+        </div>
+    </div>`;
+    cargarTabs();
+    var ListaClientes = document.getElementById("ListaClientes");
+    ListaClientes.innerHTML = `<table class="table table-striped table-bordered" id="tabla8">
+            <tr>
+                <th>Nit</th>
+                <th>Razón social</th>
+                <th>Direccion</th>
+                <th>Vendedor</th>
+                <th>Ciudad</th>
+                <th>Teléfono</th>
+                <th>Barrio</th>
+                <th>Plazo de pago</th>
+                <th colspan=4>Acciones</th>
+            </tr>
+        </table>`;
+    var user = firebase.auth().currentUser;
+    user = user.uid;
+
+    db.collection("clientes").where("vendedor", "==", user).get().then((querySnapshot) => {
+        querySnapshot.forEach(async (doc) => {
+            var datos = doc.data();
+            var RazonSocial = datos.RazonSocial
+            var nit = datos.nit;
+            var Direccion = datos.Direccion;
+
+            var tabla8 = document.getElementById("tabla8");
+
+            var doc2 = await obtenerVendedor(datos.vendedor);
+
+            vendedor = doc2.data();
+            tabla8.innerHTML += `
+                <tr>
+                    <td>${nit}</td>
+                    <td>${RazonSocial}</td>
+                    <td>${Direccion}</td>
+                    <td>${vendedor.nombre} ${vendedor.apellido}</td>
+                    <td>${datos.ciudad}</td>
+                    <td>${datos.telefono}</td>
+                    <td>${datos.barrio}</td>
+                    <td>${datos.plazo}</td>
+                    <td><a id="${doc.id}" class="cursor" onclick="cartera(this)"><img src="img/cartera.png" width=30></a></td>
+                    <td><a class="cursor" id="${doc.id}" onclick="historialCompra(this)"><img src="img/cuadrado.png" width=30></a></td>
+                </tr>`;
+        })
+    })
+    var RegistroClientes = document.getElementById("RegistroClientes");
+    RegistroClientes.innerHTML = `<center><div class="col-md-10" >
+        <div class="card">
+            <div class="card-body" id="contenido3">
+                <form>
+                    <div class="form-gruop">
+                        <h3>Registrar Cliente</h3>
+                        <br><hr><br>
+                    </div>
+                    <div class="form-group">
+                        <h5>Nit del cliente*</h5>
+                        <input type="text" id="nit" class="form-control" placeholder="Nit*">
+                    </div>
+                    <div class="form-group">
+                        <h5>Razón Social*</h5>
+                        <input type="text" id="RazonSocial" class="form-control" placeholder="Razon Social*">
+                    </div>
+                    <div class="form-group">
+                        <h5>Direccion*</h5>
+                        <input type="text" id="Direccion" class="form-control" placeholder="Direccion*">
+                    </div>
+                    <div class="form-group">
+                        <h5>Teléfono*</h5>
+                        <input type="text" id="telefono" class="form-control" placeholder="teléfono*">
+                    </div>
+                    <div class="form-group">
+                        <h5>Ciudad*</h5>
+                        <input type="text" id="ciudad" class="form-control" placeholder="Ciudad*">
+                    </div>
+                    <div class="form-group">
+                        <h5>Barrio*</h5>
+                        <input type="text" id="barrio" class="form-control" placeholder="Barrio*">
+                    </div>
+                    <div class="form-group">
+                        <h5>Plazo de pago*</h5>
+                        <input type="number" id="plazo" class="form-control" placeholder="Plazo de pago en días*">
+                    </div>
+                    
+                    
+                    
+                    <br>
+                    <div id="botonE">
+                        <button onclick="hacerRegistroMiCliente()" class="btn btn-danger" id="btn-task-form">
+                            Registrar cliente
+                        </button>
+                    </div>
+    
+                </form>
+            </div>
+        </div>
+    </div>
+    <br><hr><br></center>`;
+
+}
+
+function ventasGenerales() {
+    event.preventDefault();
+
+    var login = document.getElementById("login-page");
+    login.innerHTML = "";
+    var main = document.getElementById("main");
+    main.innerHTML = `<div class="wrap">
+    <center>
+    <ul class="tabs">
+        <li><a href="#tab1"><span class="fa fa-home"></span><span class="tab-text">Lista de ventas</span></a></li>
+        <li><a href="#tab2"><span class="fa fa-group"></span><span class="tab-text">Recaudo</span></a></li>
+        <li><a href="#tab3"><span class="fa fa-group"></span><span class="tab-text">Lista de vencidas</span></a></li>
+    </ul>
+    </center>
+    <div class="secciones">
+        <article id="tab1">
+
+            <div id="tabOne">
+            </div>
+        </article>
+        <article id="tab2">
+            <div id="tabTwo">
+            
+            </div>
+        </article>
+        <article id="tab3">
+            <div id="tabTree">
+            
+            </div>
+        </article>
+        
+
+        
+    </div>
+</div>`;
+    cargarTabs();
+    var hoy = new Date();
+
+    tabOneVentasG(hoy.getMonth() + 1, hoy.getFullYear());
+    tabTwoVentasG(hoy.getMonth() + 1, hoy.getFullYear());
+    tabTreeVentasG(hoy.getMonth() + 1, hoy.getFullYear());
+    LlenarFechas(true, true, true);
+}
+function tabTreeVentasG(mes, año) {
+    var tabTree = document.getElementById("tabTree");
+    tabTree.innerHTML = `
+    <div >
+    <h3>Filtros:</h3>
+    <div class="OuterMostClass row">
+    <div class="outerClass col-md-4">
+        <select id="meses3" class="form-control">
+            <option value="" >Seleccione el mes</option>
+        </select>
+    </div>
+    <div class="outerClass2 col-md-4">
+        <select id="años3" class="form-control">
+            <option value="" >Seleccione el año</option>
+        </select><br>
+    </div>
+    <div class="outerClass3 col-md-4">
+        <button class="btn btn-danger" id="3" onclick="FiltrarG(this)">Filtrar</button>
+    </div>
+    </div>
+    </div>
+    <hr>
+    <div id="aviso3">No hay facturas vencidas.</div>
+    `
+    var meses = document.getElementById("meses3");
+    var años = document.getElementById("años3");
+    meses.value = mes;
+    años.value = año;
+
+    db.collection("ventas").get().then((querySnapshot) => {
+        querySnapshot.forEach((doc) => {
+            var datos = doc.data();
+
+            db.collection("usuarios").doc(datos.vendedor).get().then(doc2 => {
+                var datos2 = doc2.data();
+                nombre = datos2.nombre;
+                apellido = datos2.apellido;
+                var fechaVencimiento = new Date(datos.fechaVencimiento[2], datos.fechaVencimiento[1] - 1, datos.fechaVencimiento[0])
+                var fechaActual = new Date();
+
+                if (fechaActual >= fechaVencimiento && datos.entregado && mes == datos.fecha[1] && año == datos.fecha[2]) {
+
+
+                    tabTree.innerHTML += `<div class="overflow-auto"><table  class="table table-striped table-bordered" id="Cabecera2${doc.id}">
+                <tr>
+                    <th>Número de factura</th>
+                    <th>Cliente</th>
+                    <th>Estado de entrega</th>
+                    <th>Estado de pago</th>
+                    <th>Valor</th>
+                    <th>debe</th>
+                    <th>fecha</th>
+                    <th>plazo</th>
+                    <th>fecha de vencimiento</th>
+                    <th>vendedor</th>
+                    <th colspan=3>Acciones</th>
+                </tr>
+            </table></div>`;
+
+                    var tablaPedidos1 = document.getElementById("Cabecera2" + doc.id);
+
+
+                    tablaPedidos1.innerHTML += `
+                <tr>
+                    <td>${datos.NumeroFactura}</td>
+                    <td id="${datos.cliente}1${datos.NumeroFactura}"></td>
+                    <td>${datos.entregado}</td>
+                    <td>${datos.pagado}</td>
+                    <td>${datos.suma}</td>
+                    <td>${datos.debe}</td>
+                    <td>${datos.fecha[0]}/${datos.fecha[1]}/${datos.fecha[2]}</td>
+                    <td>${datos.plazo} dias</td>
+                    <td>${datos.fechaVencimiento[0]}/${datos.fechaVencimiento[1]}/${datos.fechaVencimiento[2]}</td>
+                    <td>${nombre} ${apellido}</td>
+                    <td><a class="cursor" id="${doc.id}" onclick="AbonarPedido(this)"><img src="img/abono.png" width=30></a><br>
+                    <a class="cursor" id="${doc.id}" onclick="facturaPdf(this)"><img src="img/factura.png" width=30></a><br>
+                    <a class="cursor" id="${doc.id}" onclick="contenidoPedido(this)"><img src="img/contenido.png" width=30></a></td>
+                    
+                </tr>
+                <tr>
+                    <td colspan=9>
+                         <div id="contenido${doc.id}"></div>
+                    </td>
+                </tr>
+                
+                    `
+                    db.collection("clientes").where("nit", "==", datos.cliente).get().then((querySnapshot) => {
+                        querySnapshot.forEach((doc2) => {
+                            var datosCliente = document.getElementById(`${datos.cliente}1${datos.NumeroFactura}`);
+                            datos2 = doc2.data();
+                            datosCliente.innerHTML = `${datos2.RazonSocial}`
+                        })
+                    })
+                }
+            })
+
+
+        })
+    })
+}
+function tabTwoVentasG(mes, año) {
+
+    var tabTwo = document.getElementById("tabTwo");
+    tabTwo.innerHTML = `
+    <div >
+    <h3>Filtros:</h3>
+    <div class="OuterMostClass row">
+    <div class="outerClass col-md-4">
+        <select id="meses2" class="form-control">
+            <option value="" >Seleccione el mes</option>
+        </select>
+    </div>
+    <div class="outerClass2 col-md-4">
+        <select id="años2" class="form-control">
+            <option value="" >Seleccione el año</option>
+        </select><br>
+    </div>
+    <div class="outerClass3 col-md-4">
+        <button class="btn btn-danger" id="2" onclick="FiltrarG(this)">Filtrar</button>
+    </div>
+    </div>
+    </div>
+    <hr>
+    `
+    var meses = document.getElementById("meses2");
+    var años = document.getElementById("años2");
+    meses.value = mes;
+    años.value = año;
+
+    tabTwo.innerHTML += `
+    
+    <div id="ValorRecaudo"></div>
+    <h5 id="aviso"></h5>
+    
+    <div>
+    <p id="aviso1">no hay abonos este mes.</p>
+        <table id="tablaRecaudo" class="table table-striped table-bordered">
+        <tr><th colspan=6><center>Lista de Abonos</center></th></tr>
+            <tr>
+                <th>Número de factura</th>
+                <th>Cantidad del abono</th>
+                <th>Fecha</th>
+                <th>Rentabilidad</th>
+                <th>Vendedor</th>
+                <th>Ganacia</th>
+            </tr>
+        </table>
+    </div>`;
+    var suma = 0;
+    var promedio = 0;
+    var suma1 = 0;
+    var entrada = false;
+    var user = firebase.auth().currentUser;
+    user = user.uid;
+    comision = 0
+    db.collection("abonos").get().then((querySnapshot) => {
+        querySnapshot.forEach((doc) => {
+            var datos = doc.data();
+            db.collection("ventas").where("NumeroFactura", "==", datos.NumeroFactura).get().then((querySnapshot) => {
+                querySnapshot.forEach((doc2) => {
+                    var datos2 = doc2.data();
+                    db.collection("usuarios").doc(datos2.vendedor).get().then(doc3 => {
+                        vendedor = doc3.data();
+                        nombre = vendedor.nombre;
+                        apellido = vendedor.apellido;
+                        if (mes == datos.fecha[1] && año == datos.fecha[2]) {
+                            entrada = true;
+                            var avis = document.getElementById("aviso1");
+                            avis.innerHTML = "";
+                            suma += datos.cantidad_abono;
+
+
+                            var tablaRecaudo = document.getElementById("tablaRecaudo");
+
+
+                            tablaRecaudo.innerHTML += `
+                                    <tr>
+                                        <td>${datos.NumeroFactura}</td>
+                                        <td>${datos.cantidad_abono}</td>
+                                        <td>${datos.fecha}</td>
+                                        <td>${datos.rentabilidad.toFixed(2)}</td>
+                                        <td>${nombre} ${apellido}</td>
+                                        <td>${(datos.rentabilidad / 100 * datos.cantidad_abono).toFixed(2)}</td>
+                                    </tr>
+                                    `
+                        }
+                        var recaudo1 = document.getElementById("ValorRecaudo");
+                        recaudo1.innerHTML = `
+                        <center>
+                        <div class="col-md-6">
+                            <table class="table table-striped table-bordered">
+                                <tr>
+                                    <td>Mes/Año: ${mes}/${año}</td>
+                                </tr>
+                                <tr>
+                                    <td>Recaudo: $${suma}</td>
+                                </tr>
+                                
+                            </table>
+                        </div>
+                        </center>`
+                    })
+
+
+                })
+
+            })
+
+
+
+
+        })
+
+    })
+
+
+
+
+
+
+
+}
+function tabOneVentasG(mes, año) {
+    var tabOne = document.getElementById("tabOne");
+    tabOne.innerHTML = `
+    <div >
+    <h3>Filtros:</h3>
+    <div class="OuterMostClass row">
+    <div class="outerClass col-md-4">
+        <select id="meses1" class="form-control">
+            <option value="" >Seleccione el mes</option>
+        </select>
+    </div>
+    <div class="outerClass2 col-md-4">
+        <select id="años1" class="form-control">
+            <option value="" >Seleccione el año</option>
+        </select><br>
+    </div>
+    <div class="outerClass3 col-md-4">
+        <button class="btn btn-danger" id="1" onclick="FiltrarG(this)">Filtrar</button>
+    </div>
+    </div>
+    </div>
+    <hr>
+    `
+
+    db.collection("ventas").get().then((querySnapshot) => {
+        querySnapshot.forEach((doc) => {
+            var datos = doc.data();
+            db.collection("usuarios").doc(datos.vendedor).get().then(doc2 => {
+                var datos2 = doc2.data();
+                nombre = datos2.nombre;
+                apellido = datos2.apellido;
+                var fechaVencimiento = new Date(datos.fechaVencimiento[2], datos.fechaVencimiento[1] - 1, datos.fechaVencimiento[0])
+                var fechaActual = new Date();
+
+                if (fechaActual < fechaVencimiento && datos.entregado && mes == datos.fecha[1] && año == datos.fecha[2]) {
+
+
+                    tabOne.innerHTML += `<div class="overflow-auto"><table  class="table table-striped table-bordered" id="Cabecera${doc.id}">
+                <tr>
+                    <th>Número de factura</th>
+                    <th>Cliente</th>
+                    <th>Estado de entrega</th>
+                    <th>Estado de pago</th>
+                    <th>Valor</th>
+                    <th>debe</th>
+                    <th>fecha</th>
+                    <th>plazo</th>
+                    <th>fecha de vencimiento</th>
+                    <th>vendedor</th>
+                    <th colspan=3>Acciones</th>
+                </tr>
+            </table></div>`;
+
+                    var tablaPedidos = document.getElementById("Cabecera" + doc.id);
+
+
+                    tablaPedidos.innerHTML += `
+                <tr>
+                    <td>${datos.NumeroFactura}</td>
+                    <td id="${datos.cliente}${datos.NumeroFactura}"></td>
+                    <td>${datos.entregado}</td>
+                    <td>${datos.pagado}</td>
+                    <td>${datos.suma}</td>
+                    <td>${datos.debe}</td>
+                    <td>${datos.fecha[0]}/${datos.fecha[1]}/${datos.fecha[2]}</td>
+                    <td>${datos.plazo} dias</td>
+                    <td>${datos.fechaVencimiento[0]}/${datos.fechaVencimiento[1]}/${datos.fechaVencimiento[2]}</td>
+                    <td>${nombre} ${apellido}</td>
+                    <td><a class="cursor" id="${doc.id}" onclick="AbonarPedido(this)"><img src="img/abono.png" width=30></a><br>
+                    <a class="cursor" id="${doc.id}" onclick="facturaPdf(this)"><img src="img/factura.png" width=30></a><br>
+                    <a class="cursor" id="${doc.id}" onclick="contenidoPedido(this)"><img src="img/contenido.png" width=30></a></td>
+                    
+                </tr>
+                <tr>
+                    <td colspan=9>
+                         <div id="contenido${doc.id}"></div>
+                    </td>
+                </tr>
+                
+                    `
+                    db.collection("clientes").where("nit", "==", datos.cliente).get().then((querySnapshot) => {
+                        querySnapshot.forEach((doc2) => {
+                            var datosCliente = document.getElementById(`${datos.cliente}${datos.NumeroFactura}`);
+                            datos2 = doc2.data();
+                            datosCliente.innerHTML = `${datos2.RazonSocial}`
+                        })
+                    })
+                }
+            })
+
+
+
+
+        })
+    })
+}
+function FiltrarG(element) {
+    var id = element.id;
+    if (id == "1") {
+        var meses = document.getElementById("meses1").value;
+        var años = document.getElementById("años1").value;
+        if (meses != "" && años != "") {
+            tabOneVentas(meses, años);
+            LlenarFechas(true, false, false);
+        }
+
+    } else if (id == "2") {
+        var meses = document.getElementById("meses2").value;
+        var años = document.getElementById("años2").value;
+        if (meses != "" && años != "") {
+            tabTwoVentas(meses, años);
+            LlenarFechas(false, true, false);
+        }
+    } else if (id == "3") {
+        var meses = document.getElementById("meses3").value;
+        var años = document.getElementById("años3").value;
+        if (meses != "" && años != "") {
+            tabTreeVentas(meses, años);
+            LlenarFechas(false, false, true);
+        }
+    }
+}
+function Proveedores() {
+    var login = document.getElementById("login-page");
+    login.innerHTML = "";
+    var main = document.getElementById("main");
+    main.innerHTML = `<div class="wrap">
+    <center>
+    <ul class="tabs">
+        <li><a href="#tab1"><span class="fa fa-home"></span><span class="tab-text">Registro de proveedores</span></a></li>
+        <li><a href="#tab2"><span class="fa fa-group"></span><span class="tab-text">Lista de proveedores</span></a></li>
+    </ul>
+    </center>
+    <div class="secciones">
+        <article id="tab1">
+
+            <div id="tabOne">
+            <center>
+                <form class="form-group col-md-8">
+                    <div class="form-group">
+                        <input type="text" placeholder="Nombre del proveedor*" id="NombreP" class="form-control">
+                    </div>
+                    <div class="form-group">
+                        <input type="text" placeholder="Código del proveedor*" id="codigoP" class="form-control">
+                    </div>
+                    <div class="form-group">
+                        <button class="btn btn-danger" onclick="RegistrarProveedor()">Registrar</button>
+                    </div>
+                </form>
+            </center>
+            </div>
+        </article>
+        <article id="tab2">
+            <div id="tabTwo">
+            
+            </div>
+        </article>
+    </div>
+</div>`;
+    cargarTabs();
+    ListarProveedores();
+}
+function ListarProveedores() {
+    var tabTwo = document.getElementById("tabTwo");
+    tabTwo.innerHTML = `
+        <table class="table table-striped table-bordered" id="tablaP">
+            <thead>
+                <tr>
+                    <th>Código</th>
+                    <th>Nombre proveedor</th>
+                    <th>Deuda</th>
+                <tr>
+            <thead>
+        </table>
+    
+    `
+    var tablaP = document.getElementById("tablaP");
+    db.collection("proveedores").get().then((querySnapshot) => {
+        querySnapshot.forEach((doc) => {
+            var datos = doc.data();
+            tablaP.innerHTML += `
+                <tr>
+                    <td>${datos.codigo}</td>
+                    <td>${datos.nombre}</td>
+                    <td>$${datos.deuda}</td>
+                    <td><a id="${doc.id}" onclick="verProveedor(this)"><img src="img/ojo.png" width=30 class="cursor"></a></td>
+                </tr>    
+            
+        `
+        })
+    })
+}
+function comprasInterface() {
+    var login = document.getElementById("login-page");
+    login.innerHTML = "";
+    var main = document.getElementById("main");
+    main.innerHTML = `
+        <center>
+            <h2>Registrar Compra</h2>
+            <div class="col-md-8">
+                <form class="form-group">
+                    <div class="form-group">
+                        <input type="text" placeholder="Número de la factura" class="form-control" id="Nfactura">
+                    </div>
+                    <div class="form-group">
+                        <input list="proveedores" placeholder="Proveedor" class="form-control" id="proveedor">
+                        <datalist id="proveedores"></datalist>
+                    </div>
+                    <div class="form-group">
+                        <input type="number" placeholder="Valor de la factura" class="form-control" id="valorFactura">
+                    </div>
+                    <div class="form-group">
+                        <input type="radio" id="si" name="drone" value="si"
+                                checked class="form-check-input">
+                        <label for="si" class="form-check-label">Pagado</label>
+                    </div>
+
+                    <div class="form-group">
+                        <input type="radio" id="no" name="drone" value="no" class="form-check-input">
+                        <label for="no" class="form-check-label">No pagado</label>
+                    </div>
+                    <div class="form-group">
+                        <button onclick="RegistrarCompra()" class="btn btn-danger">Registrar compra</button>
+                    </div>
+                </form>
+            </div>
+        </center>
+        `
+    var ListaProveedores = document.getElementById("proveedores");
+    db.collection("proveedores").get().then((querySnapshot) => {
+        querySnapshot.forEach((doc) => {
+            var datos = doc.data();
+            var option = document.createElement("option");
+            option.value = datos.codigo;
+            option.text = datos.nombre;
+            ListaProveedores.appendChild(option);
+        })
+    })
+}
+
 function ingresarProductosInterface() {
     var login = document.getElementById("login-page");
     login.innerHTML = "";
@@ -266,6 +922,14 @@ function cargarLasTabs() {
                     <h5>categoría</h5>
                     <input type="text" id="categoria" class="form-control" placeholder="categoria">
                 </div>
+                <div class="form-group">
+                    <h5>categoría</h5>
+                    <input type="file" id="photo" class="form-control" accept="image/png, image/jpeg, image/gif">
+                </div>
+                <div class="form-group">
+                <input type="button" class="btn btn-secondary" onclick="uploadImage()"
+                    value="subir imagen">
+                </div>
                 <hr>
                 <div id="sugerencias" class="form-gruop">
 
@@ -289,6 +953,7 @@ function cargarLasTabs() {
 
 }
 function VentasInterface() {
+
     var main = document.getElementById("main");
     main.innerHTML = ``;
     var login = document.getElementById("login-page");
@@ -393,7 +1058,9 @@ function VentasInterface() {
         });
     })
     var clientes = document.getElementById("clientes")
-    db.collection("clientes").get().then((querySnapshot) => {
+    var user = firebase.auth().currentUser;
+    user = user.uid
+    db.collection("clientes").where("vendedor", "==", user).get().then((querySnapshot) => {
         querySnapshot.forEach((doc) => {
             var datos = doc.data();
             var option = document.createElement("option");
@@ -403,114 +1070,80 @@ function VentasInterface() {
         });
     })
     cargarTabs();
+
     var tabTwo = document.getElementById("tabTwo");
+    var user = firebase.auth().currentUser;
+    user = user.uid;
     db.collection("ventas").get().then((querySnapshot) => {
         querySnapshot.forEach((doc) => {
             var datos = doc.data();
-            if (!datos.entregado) {
+            if (user == datos.vendedor) {
+                if (!datos.entregado) {
 
 
-                tabTwo.innerHTML += `<div class="overflow-auto"><table  class="table table-striped table-bordered" id="Cabecera${doc.id}">
-                <tr>
-                    <th>Número de factura</th>
-                    <th>Cliente</th>
-                    <th>Estado de entrega</th>
-                    <th>Estado de pago</th>
-                    <th>Valor</th>
-                    <th>debe</th>
-                    <th>fecha</th>
-                    <th>Rentabilidad</th>
-                    <th>Plazo</th>
-                   
-                </tr>
-            </table></div>`;
+                    tabTwo.innerHTML += `<div class="overflow-auto"><table  class="table table-striped table-bordered" id="Cabecera${doc.id}">
+                    <tr>
+                        <th>Número de factura</th>
+                        <th>Cliente</th>
+                        <th>Estado de entrega</th>
+                        <th>Estado de pago</th>
+                        <th>Valor</th>
+                        <th>debe</th>
+                        <th>fecha</th>
+                        <th>Rentabilidad</th>
+                        <th>Plazo</th>
+                       
+                    </tr>
+                </table></div>`;
 
-                var tablaPedidos = document.getElementById("Cabecera" + doc.id);
+                    var tablaPedidos = document.getElementById("Cabecera" + doc.id);
 
 
-                tablaPedidos.innerHTML += `
-                <tr>
-                    <td>${datos.NumeroFactura}</td>
-                    <td><button onclick="verDatosCliente(this)" class="btn btn-secundary" id=${datos.cliente}>${datos.cliente}</button></td>
-                    <td>${datos.entregado}</td>
-                    <td>${datos.pagado}</td>
-                    <td>${datos.suma}</td>
-                    <td>${datos.debe}</td>
-                    <td>${datos.fecha[0]}/${datos.fecha[1]}/${datos.fecha[2]}</td>
-                    <td>${datos.rentabilidad}%</td>
-                    <td>${datos.plazo} Dias</td>
-                    <td><a class="cursor" id="${doc.id}" onclick="AbonarPedido(this)"><img src="img/abono.png" width=30></a>
-                    <a class="cursor" id="${doc.id}" onclick="cambiarEstado(this)"><img src="img/envio.png" width=30></a>
-                    <a class="cursor" id="${doc.id}" onclick="facturaPdf(this)"><img src="img/factura.png" width=30></a>
-                    <a class="cursor" id="${doc.id}" onclick="contenidoPedido(this)"><img src="img/contenido.png" width=30></a></td>
+                    tablaPedidos.innerHTML += `
+                    <tr>
+                        <td>${datos.NumeroFactura}</td>
+                        <td id="${datos.cliente}${datos.NumeroFactura}"></td>
+                        <td>${datos.entregado}</td>
+                        <td>${datos.pagado}</td>
+                        <td>${datos.suma}</td>
+                        <td>${datos.debe}</td>
+                        <td>${datos.fecha[0]}/${datos.fecha[1]}/${datos.fecha[2]}</td>
+                        <td>${datos.rentabilidad.toFixed(2)}%</td>
+                        <td>${datos.plazo} Dias</td>
+                        <td><a class="cursor" id="${doc.id}" onclick="AbonarPedido(this)"><img src="img/abono.png" width=30></a>
+                        <a class="cursor" id="${doc.id}" onclick="cambiarEstado(this)"><img src="img/envio.png" width=30></a>
+                        <a class="cursor" id="${doc.id}" onclick="facturaPdf(this)"><img src="img/factura.png" width=30></a>
+                        <a class="cursor" id="${doc.id}" onclick="contenidoPedido(this)"><img src="img/contenido.png" width=30></a></td>
+                        
+                    </tr>
                     
-                </tr>
-                
-                <tr>
-                    <td colspan=8   >
-                         <div id="contenido${doc.id}"></div>
-                    </td>
-                </tr>
-                
-                    `
+                    <tr>
+                        <td colspan=8   >
+                             <div id="contenido${doc.id}"></div>
+                        </td>
+                    </tr>
+                    
+                        `
+
+                    db.collection("clientes").where("nit", "==", datos.cliente).get().then((querySnapshot) => {
+                        querySnapshot.forEach((doc2) => {
+
+                            var datosCliente = document.getElementById(`${datos.cliente}${datos.NumeroFactura}`);
+                            datos2 = doc2.data();
+                            datosCliente.innerHTML = `${datos2.RazonSocial}`
+                        })
+                    })
 
 
+                }
             }
+
         })
     })
 
 }
-function VerCompras() {
-    var feed = document.getElementById("main");
-    var login = document.getElementById("login-page");
-    login.innerHTML = "";
-    feed.innerHTML = ``;
-    feed.innerHTML = `<br><h3>Lista de compras:</h3><br><div class="overflow-auto" id="tabla6"></div>`;
-    var tabla6 = document.getElementById("tabla6");
-    db.collection("compras")
-        .get()
-        .then((querySnapshot) => {
-            querySnapshot.forEach((doc) => {
-                datos = doc.data();
 
-                tabla6.innerHTML +=
-                    `<table  class="table table-striped table-bordered" id="${doc.id}"><tr>
-            <td colspan=4>Número de factura:${doc.id}</td>
-            </tr>
-            <tr>
-            <th>Codigo producto</th>
-            <th>cantidad</th>
-            <th>costo</th>
-            <th>fecha</th>
-            
-          </tr></table>`;
-                costos = datos.costos;
-                var suma = 0;
-
-                for (let i = 0; i < costos.length; i++) {
-                    suma += costos[i] * datos.cantidades[i];
-                }
-                var tabla7 = document.getElementById(doc.id);
-                for (let i = 0; i < costos.length; i++) {
-                    tabla7.innerHTML += `
-                    <tr>
-                    <td>${datos.productos[i]}</td>
-                    <td>${datos.cantidades[i]}</td>
-                    <td>${datos.costos[i]}</td>
-                    <td>${datos.fecha1[0]}/${datos.fecha1[1]}/${datos.fecha1[2]}</td>
-                    </tr>`;
-                }
-                tabla7.innerHTML += `
-                    <tr>
-                        <td colspan=4 id="tablaSuma">
-                            suma de la compra:${suma}
-                        </td>
-                    </tr>`
-
-            })
-        });
-}
-function cargarClientes() {
+async function cargarClientes() {
     var login = document.getElementById("login-page");
     login.innerHTML = "";
     var main = document.getElementById("main");
@@ -553,34 +1186,40 @@ function cargarClientes() {
             <th>Nit</th>
             <th>Razón social</th>
             <th>Direccion</th>
-            <th>Cartera</th>
+            <th>Vendedor</th>
             <th>Ciudad</th>
             <th>Teléfono</th>
             <th>Barrio</th>
             <th>Plazo de pago</th>
-            <th colspan=2>Acciones</th>
+            <th colspan=4>Acciones</th>
         </tr>
     </table>`;
     db.collection("clientes").get().then((querySnapshot) => {
-        querySnapshot.forEach((doc) => {
+        querySnapshot.forEach(async (doc) => {
             var datos = doc.data();
             var RazonSocial = datos.RazonSocial
             var nit = datos.nit;
             var Direccion = datos.Direccion;
-            var Cartera = datos.Cartera;
+
             var tabla8 = document.getElementById("tabla8");
+
+            var doc2 = await obtenerVendedor(datos.vendedor);
+
+            vendedor = doc2.data();
             tabla8.innerHTML += `
             <tr>
                 <td>${nit}</td>
                 <td>${RazonSocial}</td>
                 <td>${Direccion}</td>
-                <td>${Cartera}</td>
+                <td>${vendedor.nombre} ${vendedor.apellido}</td>
                 <td>${datos.ciudad}</td>
                 <td>${datos.telefono}</td>
                 <td>${datos.barrio}</td>
                 <td>${datos.plazo}</td>
-                <td><button id="${doc.id}" class="btn btn-success" onclick="EditarCliente(this)">Editar</button></td>
-                <td><button id="${doc.id}" class="btn btn-danger" onclick="EliminarCliente(this)">Eliminar</button></td>
+                <td><a id="${doc.id}" class="cursor" onclick="EditarCliente(this)"><img src="img/editar.png" width=30></a></td>
+                <td><a id="${doc.id}" class="cursor" onclick="EliminarCliente(this)"><img src="img/delete.png" width=30></a></td>
+                <td><a id="${doc.id}" class="cursor" onclick="cartera(this)"><img src="img/cartera.png" width=30></a></td>
+                <td><a class="cursor" id="${doc.id}" onclick="historialCompra(this)"><img src="img/cuadrado.png" width=30></a></td>
             </tr>`;
         })
     })
@@ -621,6 +1260,13 @@ function cargarClientes() {
                     <h5>Plazo de pago*</h5>
                     <input type="number" id="plazo" class="form-control" placeholder="Plazo de pago en días*">
                 </div>
+                <div class="form-group">
+                    <h5>Vendedor*</h5>
+                    <input list="vendedores" id="vendedor" class="form-control" placeholder="Vendedor*">
+                    <datalist id="vendedores">
+                        <option>Seleccione el vendedor</option>
+                    </datalist>
+                </div>
                 
                 
                 <br>
@@ -635,30 +1281,18 @@ function cargarClientes() {
     </div>
 </div>
 <br><hr><br></center>`;
-
+    var querySnapshot = await obtenerVendedores1();
+    var vendedores = document.getElementById("vendedores");
+    querySnapshot.forEach(doc => {
+        var datos = doc.data();
+        var option = document.createElement("option");
+        option.value = doc.id;
+        option.text = `${datos.nombre}` + ` ` + `${datos.apellido}`
+        vendedores.appendChild(option);
+    })
 }
-function verDatosCliente(element) {
-    console.log("holis");
-    event.preventDefault();
-    var nit = element.id;
-    console.log(nit);
-    db.collection("clientes").where("nit", "==", nit).get()
-        .then((querySnapshot) => {
-            querySnapshot.forEach((doc) => {
-                console.log("holis");
-                var datos = doc.data();
-                var data = `Razón social: ${datos.RazonSocial}<br>` + `Nit: ${datos.nit}<br>` + `Dirección: ${datos.Direccion}<br>` + `Cartera: ${datos.Cartera}`;
-                console.log(data);
-                Swal.fire({
-
-                    title: 'Datos del cliente:',
-                    html: '<p>' + data + '</p>'
-
-
-                })
-            })
-        })
-}
+const obtenerVendedor = (id) => db.collection("usuarios").doc(id).get();
+const obtenerVendedores1 = () => db.collection("usuarios").where("tipoDeUsuario", "==", "vendedor").get();
 function ventas() {
     event.preventDefault();
 
@@ -695,16 +1329,53 @@ function ventas() {
     </div>
 </div>`;
     cargarTabs();
-    var tabOne = document.getElementById("tabOne");
+    var hoy = new Date();
+
+    tabOneVentas(hoy.getMonth() + 1, hoy.getFullYear());
+    tabTwoVentas(hoy.getMonth() + 1, hoy.getFullYear());
+    tabTreeVentas(hoy.getMonth() + 1, hoy.getFullYear());
+    LlenarFechas(true, true, true);
+}
+function tabTreeVentas(mes, año) {
+    var tabTree = document.getElementById("tabTree");
+    tabTree.innerHTML = `
+    <div >
+    <h3>Filtros:</h3>
+    <div class="OuterMostClass row">
+    <div class="outerClass col-md-4">
+        <select id="meses3" class="form-control">
+            <option value="" >Seleccione el mes</option>
+        </select>
+    </div>
+    <div class="outerClass2 col-md-4">
+        <select id="años3" class="form-control">
+            <option value="" >Seleccione el año</option>
+        </select><br>
+    </div>
+    <div class="outerClass3 col-md-4">
+        <button class="btn btn-danger" id="3" onclick="Filtrar(this)">Filtrar</button>
+    </div>
+    </div>
+    </div>
+    <hr>
+    <div id="aviso3">No hay facturas vencidas.</div>
+    `
+    var meses = document.getElementById("meses3");
+    var años = document.getElementById("años3");
+    meses.value = mes;
+    años.value = año;
 
     db.collection("ventas").get().then((querySnapshot) => {
         querySnapshot.forEach((doc) => {
             var datos = doc.data();
-            console.log("entró")
-            if (datos.entregado) {
-
-
-                tabOne.innerHTML += `<div class="overflow-auto"><table  class="table table-striped table-bordered" id="Cabecera${doc.id}">
+            var fechaVencimiento = new Date(datos.fechaVencimiento[2], datos.fechaVencimiento[1] - 1, datos.fechaVencimiento[0])
+            var fechaActual = new Date();
+            var user = firebase.auth().currentUser;
+            user = user.uid;
+            if (fechaActual >= fechaVencimiento && datos.debe > 0 && datos.entregado && mes == datos.fecha[1] && año == datos.fecha[2] && datos.vendedor == user) {
+                var aviso3 = document.getElementById("aviso3");
+                aviso3.innerHTML = "";
+                tabTree.innerHTML += `<div class="overflow-auto"><table  class="table table-striped table-bordered" id="Vencido${doc.id}">
                 <tr>
                     <th>Número de factura</th>
                     <th>Cliente</th>
@@ -719,13 +1390,212 @@ function ventas() {
                 </tr>
             </table></div>`;
 
-                var tablaPedidos = document.getElementById("Cabecera" + doc.id);
-                
+                var tablaPedidos = document.getElementById("Vencido" + doc.id);
+
 
                 tablaPedidos.innerHTML += `
                 <tr>
                     <td>${datos.NumeroFactura}</td>
-                    <td><button onclick="verDatosCliente(this)" class="btn btn-secundary" id=${datos.cliente}>${datos.cliente}</button></td>
+                    <td id="${datos.cliente}${datos.NumeroFactura}"></td>
+                    <td>${datos.entregado}</td>
+                    <td>${datos.pagado}</td>
+                    <td>${datos.suma}</td>
+                    <td>${datos.debe}</td>
+                    <td>${datos.fecha[0]}/${datos.fecha[1]}/${datos.fecha[2]}</td>
+                    <td>${datos.plazo} dias</td>
+                    <td>${datos.fechaVencimiento[0]}/${datos.fechaVencimiento[1]}/${datos.fechaVencimiento[2]}</td>
+                    <td><a class="cursor" id="${doc.id}" onclick="AbonarPedido(this)"><img src="img/abono.png" width=30></a><br>
+                    <a class="cursor" id="${doc.id}" onclick="facturaPdf(this)"><img src="img/factura.png" width=30></a><br>
+                    <a class="cursor" id="${doc.id}" onclick="contenidoFactura(this)"><img src="img/contenido.png" width=30></a></td>
+                    
+                </tr>
+                <tr>
+                    <td colspan=9>
+                         <div id="contenido1${doc.id}"></div>
+                    </td>
+                </tr>
+                
+                    `;
+                db.collection("clientes").where("nit", "==", datos.cliente).get().then((querySnapshot) => {
+                    querySnapshot.forEach((doc2) => {
+                        var datosCliente = document.getElementById(`${datos.cliente}${datos.NumeroFactura}`);
+                        datos2 = doc2.data();
+                        datosCliente.innerHTML = `${datos2.RazonSocial}`
+                    })
+                })
+            }
+
+
+        })
+    })
+}
+function tabTwoVentas(mes, año) {
+
+    var tabTwo = document.getElementById("tabTwo");
+    tabTwo.innerHTML = `
+    <div >
+    <h3>Filtros:</h3>
+    <div class="OuterMostClass row">
+    <div class="outerClass col-md-4">
+        <select id="meses2" class="form-control">
+            <option value="" >Seleccione el mes</option>
+        </select>
+    </div>
+    <div class="outerClass2 col-md-4">
+        <select id="años2" class="form-control">
+            <option value="" >Seleccione el año</option>
+        </select><br>
+    </div>
+    <div class="outerClass3 col-md-4">
+        <button class="btn btn-danger" id="2" onclick="Filtrar(this)">Filtrar</button>
+    </div>
+    </div>
+    </div>
+    <hr>
+    `
+    var meses = document.getElementById("meses2");
+    var años = document.getElementById("años2");
+    meses.value = mes;
+    años.value = año;
+
+    tabTwo.innerHTML += `
+    
+    <div id="ValorRecaudo"></div>
+    <h5 id="aviso"></h5>
+    
+    <div>
+    <p id="aviso1">no hay abonos este mes.</p>
+        <table id="tablaRecaudo" class="table table-striped table-bordered">
+        <tr><th colspan=4><center>Lista de Abonos</center></th></tr>
+            <tr>
+                <th>Número de factura</th>
+                <th>Cantidad del abono</th>
+                <th>Fecha</th>
+                <th>Comisión</th>
+            </tr>
+        </table>
+    </div>`;
+    var suma = 0;
+    var promedio = 0;
+    var suma1 = 0;
+    var entrada = false;
+    var user = firebase.auth().currentUser;
+    user = user.uid;
+    comision = 0
+    db.collection("abonos").get().then((querySnapshot) => {
+        querySnapshot.forEach((doc) => {
+            var datos = doc.data();
+            db.collection("ventas").where("NumeroFactura", "==", datos.NumeroFactura).get().then((querySnapshot) => {
+                querySnapshot.forEach((doc2) => {
+                    var datos2 = doc2.data();
+                    if (datos2.vendedor == user) {
+                        if (mes == datos.fecha[1] && año == datos.fecha[2]) {
+                            entrada = true;
+                            var avis = document.getElementById("aviso1");
+                            avis.innerHTML = "";
+                            suma += datos.cantidad_abono;
+
+
+                            var tablaRecaudo = document.getElementById("tablaRecaudo");
+                            comision = (datos.cantidad_abono * 0.03)
+                            suma1 += comision
+                            tablaRecaudo.innerHTML += `
+                        <tr>
+                            <td>${datos.NumeroFactura}</td>
+                            <td>${datos.cantidad_abono}</td>
+                            <td>${datos.fecha}</td>
+                            <td>$${comision.toFixed(1)}</td>
+                        </tr>
+                        `
+                        }
+                    }
+
+                })
+                var recaudo1 = document.getElementById("ValorRecaudo");
+                recaudo1.innerHTML = `
+                <center>
+                <div class="col-md-6">
+                    <table class="table table-striped table-bordered">
+                        <tr>
+                            <td>Mes/Año: ${mes}/${año}</td>
+                        </tr>
+                        <tr>
+                            <td>Recaudo: $${suma}</td>
+                        </tr>
+                        <tr>
+                            <td>Comsion: $${suma1}</td>
+                        </tr>
+                    </table>
+                </div>
+                </center>`
+            })
+
+
+        })
+
+
+    })
+
+}
+function tabOneVentas(mes, año) {
+    var tabOne = document.getElementById("tabOne");
+    tabOne.innerHTML = `
+    <div >
+    <h3>Filtros:</h3>
+    <div class="OuterMostClass row">
+    <div class="outerClass col-md-4">
+        <select id="meses1" class="form-control">
+            <option value="" >Seleccione el mes</option>
+        </select>
+    </div>
+    <div class="outerClass2 col-md-4">
+        <select id="años1" class="form-control">
+            <option value="" >Seleccione el año</option>
+        </select><br>
+    </div>
+    <div class="outerClass3 col-md-4">
+        <button class="btn btn-danger" id="1" onclick="Filtrar(this)">Filtrar</button>
+    </div>
+    </div>
+    </div>
+    <hr>
+    `
+    var user = firebase.auth().currentUser;
+    user = user.uid;
+    db.collection("ventas").where("vendedor", "==", user).get().then((querySnapshot) => {
+        querySnapshot.forEach((doc) => {
+            var datos = doc.data();
+
+            if (user == datos.vendedor) {
+
+                var fechaVencimiento = new Date(datos.fechaVencimiento[2], datos.fechaVencimiento[1] - 1, datos.fechaVencimiento[0])
+                var fechaActual = new Date();
+
+                if (fechaActual < fechaVencimiento && datos.entregado && mes == datos.fecha[1] && año == datos.fecha[2]) {
+
+
+                    tabOne.innerHTML += `<div class="overflow-auto"><table  class="table table-striped table-bordered" id="Cabecera${doc.id}">
+                <tr>
+                    <th>Número de factura</th>
+                    <th>Cliente</th>
+                    <th>Estado de entrega</th>
+                    <th>Estado de pago</th>
+                    <th>Valor</th>
+                    <th>debe</th>
+                    <th>fecha</th>
+                    <th>plazo</th>
+                    <th>fecha de vencimiento</th>
+                    <th colspan=3>Acciones</th>
+                </tr>
+            </table></div>`;
+
+                    var tablaPedidos = document.getElementById("Cabecera" + doc.id);
+
+
+                    tablaPedidos.innerHTML += `
+                <tr>
+                    <td>${datos.NumeroFactura}</td>
+                    <td id="${datos.cliente}${datos.NumeroFactura}"></td>
                     <td>${datos.entregado}</td>
                     <td>${datos.pagado}</td>
                     <td>${datos.suma}</td>
@@ -745,104 +1615,136 @@ function ventas() {
                 </tr>
                 
                     `
+                    db.collection("clientes").where("nit", "==", datos.cliente).get().then((querySnapshot) => {
+                        querySnapshot.forEach((doc2) => {
+                            var datosCliente = document.getElementById(`${datos.cliente}${datos.NumeroFactura}`);
+                            datos2 = doc2.data();
+                            datosCliente.innerHTML = `${datos2.RazonSocial}`
+                        })
+                    })
+                }
             }
+
+
         })
     })
-    var tabTwo = document.getElementById("tabTwo");
-    tabTwo.innerHTML = `<h5 id="aviso">Lista de Abonos: </h5>
-    <div id="ValorRecaudo"></div>
-    <div>
-        <table id="tablaRecaudo" class="table table-striped table-bordered">
-            <tr>
-                <th>Número de factura</th>
-                <th>Cantidad del abono</th>
-                <th>Fecha</th>
-                <th>Rentabilidad</th>
-            </tr>
-        </table>
-    </div>`;
-    var suma = 0;
-    var promedio=0;
-    var suma1=0;
-    db.collection("abonos").get().then((querySnapshot) => {
-        querySnapshot.forEach((doc) => {
-            var datos = doc.data();
-            suma += datos.cantidad_abono;
-           
-            suma1+=datos.cantidad_abono*(datos.rentabilidad/100)
-            var tablaRecaudo = document.getElementById("tablaRecaudo");
-            tablaRecaudo.innerHTML+=`
-            <tr>
-                <td>${datos.NumeroFactura}</td>
-                <td>${datos.cantidad_abono}</td>
-                <td>${datos.fecha}</td>
-                <td>${datos.rentabilidad.toFixed(2)}%</td>
-            </tr>
-            `
-        })
-        
-        var Valor = document.getElementById("ValorRecaudo");
-        Valor.innerHTML = `<p>Valor del recaudo: ${suma}</p>`
-        suma1=suma1.toFixed(2);
-        Valor.innerHTML+=`<p>Utilidades: ${suma1}</p>`
-    })
-    var tabTree=document.getElementById("tabTree");
-    tabTree.innerHTML = `No hay facturas vencidas.`;
+}
+function Filtrar(element) {
+    var id = element.id;
+    if (id == "1") {
+        var meses = document.getElementById("meses1").value;
+        var años = document.getElementById("años1").value;
+        if (meses != "" && años != "") {
+            tabOneVentas(meses, años);
+            LlenarFechas(true, false, false);
+        }
 
-    db.collection("ventas").get().then((querySnapshot)=>{
-        querySnapshot.forEach((doc)=>{
-            var datos=doc.data();
-            var fechaVencimiento=new Date(datos.fechaVencimiento[2],datos.fechaVencimiento[1]-1,datos.fechaVencimiento[0])
-            var fechaActual=new Date();
-            
-            if(fechaActual>=fechaVencimiento&&datos.debe>0){
-                tabTree.innerHTML += `<div class="overflow-auto"><table  class="table table-striped table-bordered" id="Vencido${doc.id}">
-                <tr>
-                    <th>Número de factura</th>
-                    <th>Cliente</th>
-                    <th>Estado de entrega</th>
-                    <th>Estado de pago</th>
-                    <th>Valor</th>
-                    <th>debe</th>
-                    <th>fecha</th>
-                    <th>plazo</th>
-                    <th>fecha de vencimiento</th>
-                    <th colspan=3>Acciones</th>
-                </tr>
-            </table></div>`;
+    } else if (id == "2") {
+        var meses = document.getElementById("meses2").value;
+        var años = document.getElementById("años2").value;
+        if (meses != "" && años != "") {
+            tabTwoVentas(meses, años);
+            LlenarFechas(false, true, false);
+        }
+    } else if (id == "3") {
+        var meses = document.getElementById("meses3").value;
+        var años = document.getElementById("años3").value;
+        if (meses != "" && años != "") {
+            tabTreeVentas(meses, años);
+            LlenarFechas(false, false, true);
+        }
+    }
+}
+function FiltrarG(element) {
+    var id = element.id;
+    if (id == "1") {
+        var meses = document.getElementById("meses1").value;
+        var años = document.getElementById("años1").value;
+        if (meses != "" && años != "") {
+            tabOneVentasG(meses, años);
+            LlenarFechas(true, false, false);
+        }
 
-                var tablaPedidos = document.getElementById("Vencido" + doc.id);
-                
+    } else if (id == "2") {
+        var meses = document.getElementById("meses2").value;
+        var años = document.getElementById("años2").value;
+        if (meses != "" && años != "") {
+            tabTwoVentasG(meses, años);
+            LlenarFechas(false, true, false);
+        }
+    } else if (id == "3") {
+        var meses = document.getElementById("meses3").value;
+        var años = document.getElementById("años3").value;
+        if (meses != "" && años != "") {
+            tabTreeVentasG(meses, años);
+            LlenarFechas(false, false, true);
+        }
+    }
+}
+function LlenarFechas(uno, dos, tres) {
+    var meses = document.getElementById("meses1");
+    var años = document.getElementById("años1");
+    var meses2 = document.getElementById("meses2");
+    var años2 = document.getElementById("años2");
+    var meses3 = document.getElementById("meses3");
+    var años3 = document.getElementById("años3");
+    if (uno) {
+        for (let i = 1; i < 13; i++) {
+            var option = document.createElement("option");
+            option.value = i;
+            option.text = i;
+            meses.appendChild(option);
 
-                tablaPedidos.innerHTML += `
-                <tr>
-                    <td>${datos.NumeroFactura}</td>
-                    <td><button onclick="verDatosCliente(this)" class="btn btn-secundary" id=${datos.cliente}>${datos.cliente}</button></td>
-                    <td>${datos.entregado}</td>
-                    <td>${datos.pagado}</td>
-                    <td>${datos.suma}</td>
-                    <td>${datos.debe}</td>
-                    <td>${datos.fecha[0]}/${datos.fecha[1]}/${datos.fecha[2]}</td>
-                    <td>${datos.plazo} dias</td>
-                    <td>${datos.fechaVencimiento[0]}/${datos.fechaVencimiento[1]}/${datos.fechaVencimiento[2]}</td>
-                    <td><a class="cursor" id="${doc.id}" onclick="AbonarPedido(this)"><img src="img/abono.png" width=30></a><br>
-                    <a class="cursor" id="${doc.id}" onclick="facturaPdf(this)"><img src="img/factura.png" width=30></a><br>
-                    <a class="cursor" id="${doc.id}" onclick="contenidoFactura(this)"><img src="img/contenido.png" width=30></a></td>
-                    
-                </tr>
-                <tr>
-                    <td colspan=9>
-                         <div id="contenido1${doc.id}"></div>
-                    </td>
-                </tr>
-                
-                    `
-            }
-            
-            
-        })
-    })
-    
+        }
+        var hoy = new Date();
+        año = hoy.getFullYear();
+        for (let i = año; i > 2000 - 1; i--) {
+            var option = document.createElement("option");
+            option.value = i;
+            option.text = i;
+            años.appendChild(option);
+
+        }
+    }
+    if (dos) {
+        for (let i = 1; i < 13; i++) {
+            var option = document.createElement("option");
+            option.value = i;
+            option.text = i;
+
+            meses2.appendChild(option);
+
+        }
+        var hoy = new Date();
+        año = hoy.getFullYear();
+        for (let i = año; i > 2000 - 1; i--) {
+            var option = document.createElement("option");
+            option.value = i;
+            option.text = i;
+
+            años2.appendChild(option);
+
+        }
+    }
+    if (tres) {
+        for (let i = 1; i < 13; i++) {
+            var option = document.createElement("option");
+            option.value = i;
+            option.text = i;
+
+            meses3.appendChild(option);
+        }
+        var hoy = new Date();
+        año = hoy.getFullYear();
+        for (let i = año; i > 2000 - 1; i--) {
+            var option = document.createElement("option");
+            option.value = i;
+            option.text = i;
+
+            años3.appendChild(option);
+        }
+    }
+
 }
 function contenidoPedido(element) {
     var container = document.getElementById(`contenido${element.id}`);
@@ -858,6 +1760,7 @@ function contenidoPedido(element) {
                     <table  class="table table-striped table-bordered" id="tabla${element.id}">
                         <tr>
                             <th>Código del producto</th>
+                            <th>Nombre del producto</th>
                             <th>Cantidad</th>
                             <th>Descuento</th>
                         </tr>
@@ -870,10 +1773,19 @@ function contenidoPedido(element) {
                     contenido.innerHTML += `
                         <tr>
                             <th>${datos.idProducto[i]}</th>
+                            <th id="${datos.NumeroFactura}${datos.idProducto[i]}"></th>
                             <th>${datos.cantidades[i]}</th>
                             <th>${datos.descuentos[i]}%</th>
                         </tr>
+
                 `;
+                    db.collection("productos").where("CODIGO", "==", datos.idProducto[i]).get().then((querySnapshot) => {
+                        querySnapshot.forEach((doc2) => {
+                            var nombre = document.getElementById(datos.NumeroFactura + datos.idProducto[i]);
+                            datos2 = doc2.data();
+                            nombre.innerHTML = `${datos2.DESCRIPCION}`;
+                        })
+                    })
                 }
             }
         })
@@ -893,9 +1805,10 @@ function contenidoFactura(element) {
                     <td colspan=10>
                     <table  class="table table-striped table-bordered" id="tablaV${element.id}">
                         <tr>
-                            <th>Código del producto</th>
-                            <th>Cantidad</th>
-                            <th>Descuento</th>
+                        <th>Código del producto</th>
+                        <th>Nombre del producto</th>
+                        <th>Cantidad</th>
+                        <th>Descuento</th>
                         </tr>
                     </table>
                     </td>
@@ -906,10 +1819,19 @@ function contenidoFactura(element) {
                     contenido.innerHTML += `
                         <tr>
                             <th>${datos.idProducto[i]}</th>
+                            <th id="${datos.NumeroFactura}${datos.idProducto[i]}"></th>
                             <th>${datos.cantidades[i]}</th>
                             <th>${datos.descuentos[i]}%</th>
                         </tr>
+
                 `;
+                    db.collection("productos").where("CODIGO", "==", datos.idProducto[i]).get().then((querySnapshot) => {
+                        querySnapshot.forEach((doc2) => {
+                            var nombre = document.getElementById(datos.NumeroFactura + datos.idProducto[i]);
+                            datos2 = doc2.data();
+                            nombre.innerHTML = `${datos2.DESCRIPCION}`;
+                        })
+                    })
                 }
             }
         })
@@ -917,14 +1839,14 @@ function contenidoFactura(element) {
 
 }
 function ocultarPedido(element) {
-    console.log(element.id);
+
     var container = document.getElementById(`contenido${element.id}`);
     container.innerHTML = "";
 }
-function ocultarFactura(element){
-    console.log(element.id);
+function ocultarFactura(element) {
+
     var container = document.getElementById(`contenido1${element.id}`);
-    container.innerHTML = "";  
+    container.innerHTML = "";
 }
 function InventarioGlobal() {
 
@@ -938,7 +1860,7 @@ function InventarioGlobal() {
          <th>CODIGO</th>
          <th>DESCRIPCION</th>
          <th>PRECIO DE VENTA</th>
-         <th>PRECIO DE COMPRA</th>
+         
          <th>STOCK</th>
          
         
@@ -963,11 +1885,11 @@ function InventarioGlobal() {
              <td>${datos.CODIGO}</td>
              <td>${datos.DESCRIPCION}</td>
              <td>${datos.PRECIO_VENTA}</td>
-             <td>${datos.PRECIO_COMPRA}</td>
+             
              <td>${datos.STOCK}</td>
              <td><a herf="#main" class="cursor" id="${doc.id}" onclick="observacion(this)"><img src="img/obs.png" width=30></a></td>
              <td><a herf="#main" class="cursor" id="${doc.id}" onclick="mirarObs(this)"><img src="img/ojo.png" width=30></a></td>
-             
+             <td><a herf="#main" class="cursor" id="${doc.id}" onclick="foto(this)"><img src="img/imagen.png" width=30></a></td>
             
              
            </tr>`;
@@ -1152,7 +2074,7 @@ function cargarGarantias() {
                 for (let j = 0; j < datos.tipo.length; j++) {
 
                     if (datos.tipo[j] == "garantia") {
-                        console.log(cantidad, cliente, fecha)
+
                         var tabla = document.getElementById(`tablaG${doc.id}`);
                         tabla.innerHTML +=
                             `

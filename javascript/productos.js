@@ -1,3 +1,37 @@
+var urlProfile = "img/usuario.png";
+
+function uploadImage() {
+    try {
+
+        const ref = firebase.storage().ref();
+        const file = document.getElementById('photo').files[0];
+        var hoy = new Date();
+        hora = hoy.getHours() + ':' + hoy.getSeconds() + ':' + hoy.getMinutes();
+        horaFecha = hoy.getDate() + ':' + (hoy.getMonth() + 1) + ':' + hoy.getFullYear() + ':' + hora;
+        const name = file.name + ':' + horaFecha;
+        if (file == null) {
+
+        } else {
+            const metadata = {
+                contentType: file.type
+            }
+            const task = ref.child(name).put(file, metadata);
+
+            task.then(snapshot => snapshot.ref.getDownloadURL())
+                .then(url => {
+
+
+                    urlProfile = url;
+
+                });
+
+        }
+    } catch {
+
+    }
+
+}
+
 function hacerRegistroProducto() {
     event.preventDefault();
 
@@ -43,7 +77,9 @@ function hacerRegistroProducto() {
                             LIMITE_INFERIOR,
                             registradoPor,
                             VOLUMEN_GANANCIA,
-                            PORCENTAJE
+                            PORCENTAJE,
+                            urlProfile,
+                            proveedor
                         })
                     })
 
@@ -94,7 +130,7 @@ function SubirXLSX() {
             workbook.SheetNames.forEach(sheet => {
                 let rowObject = XLSX.utils.sheet_to_row_object_array(workbook.Sheets[sheet]);
 
-                console.log(rowObject);
+
                 firebase.auth().onAuthStateChanged((user) => {
                     try {
 
@@ -122,7 +158,8 @@ function SubirXLSX() {
                                 LIMITE_INFERIOR,
                                 registradoPor,
                                 VOLUMEN_GANANCIA,
-                                PORCENTAJE
+                                PORCENTAJE,
+                                urlProfile
                             })
                             carga.innerHTML = "";
                             Swal.fire('Guardado!', '', 'success');
@@ -146,7 +183,7 @@ function SubirXLSX() {
         }
 
     } catch (e) {
-        console.log(e);
+
     }
 
 }
@@ -161,7 +198,6 @@ function cargarProductosLista() {
          <th>DESCRIPCION</th>
          <th>PRECIO DE VENTA</th>
          <th>PRECIO DE COMPRA</th>
-         
          <th>STOCK</th>
          <th>VOLUMEN DE GANANCIA</th>
          <th>PORCENTAJE DE GANANCIA</th>
@@ -175,16 +211,16 @@ function cargarProductosLista() {
         tabTree.innerHTML += `<center><div id="aviso">No hay productos registrados</div></center>`;
     }
     var tabla3 = document.getElementById("tabla3");
-    var suma=[];
+    var suma = [];
     db.collection("productos")
         .get()
         .then((querySnapshot) => {
             querySnapshot.forEach((doc) => {
-                
-                    suma.push(datos.STOCK * datos.PRECIO_VENTA);
-                
-                
-                
+
+                suma.push(datos.STOCK * datos.PRECIO_VENTA);
+
+
+
                 datos = doc.data();
                 validado = true;
                 var porcentaje = datos.PORCENTAJE;
@@ -210,11 +246,11 @@ function cargarProductosLista() {
            </tr>`;
             })
             var ValorInventario = document.getElementById("ValorInventario");
-            suma1=0;
-            console.log(suma);
-            for(let i=1;i<suma.length;i++){
-                suma1+=suma[i]
-                console.log(suma1,suma[i]);
+            suma1 = 0;
+
+            for (let i = 1; i < suma.length; i++) {
+                suma1 += suma[i]
+
             }
             ValorInventario.innerHTML = `<p id="Aviso">Valor global del inventario: ${suma1}<br><hr></p>`
         });
@@ -231,7 +267,7 @@ function eliminarProducto(element) {
     }).then((result) => {
         if (result.isConfirmed) {
             var id = element.id;
-            console.log(id);
+
             db.collection("productos").doc(id).delete();
             Swal.fire('Borrado!', '', 'success');
 
@@ -241,20 +277,26 @@ function eliminarProducto(element) {
     })
 
 }
+
 function EditarProducto(element) {
     var feed = document.getElementById("main");
-    console.log(element.id)
+
     db.collection("productos").where("CODIGO", "==", element.id)
         .get()
         .then((querySnapshot) => {
             querySnapshot.forEach((doc) => {
                 datos = doc.data();
+                var urlProfile = datos.urlProfile;
+
                 feed.innerHTML = `<br><h3>Datos del producto</h3>`;
 
                 feed.innerHTML += `<center><div class="col-md-10" >
         <div class="card">
             <div class="card-body" id="contenido3">
                 <form>
+                    <div>
+                        <img src="${urlProfile}" width=150>
+                    </div>
                     <div class="form-group">
                         <h5>Código del producto*</h5>
                         <input type="text" id="codidoPR" readonly class="form-control" placeholder="código*" value="${datos.CODIGO}">
@@ -286,6 +328,14 @@ function EditarProducto(element) {
                     <div class="form-group">
                         <h5>Límite Mínimo del producto*</h5>
                         <input type="text" id="limiteM" class="form-control" placeholder="límite mínimo*" value="${datos.LIMITE_INFERIOR}">
+                    </div>
+                    <div class="form-group">
+                    <h5>categoría</h5>
+                    <input type="file" id="photo" class="form-control" accept="image/png, image/jpeg, image/gif">
+                    </div>
+                    <div class="form-group">
+                    <input type="button" class="btn btn-secondary" onclick="uploadImage()"
+                        value="subir imagen">
                     </div>
                     <div class="form-group">
                         <h5>Nueva cantidad</h5>
@@ -403,7 +453,7 @@ function EliminarItem(element) {
     for (let i = 0; i < ventaGarray.length; i++) {
         if (idElemento == ventaGarray[i].idProducto) {
             ventaGarray.splice(i);
-            console.log(ventaGarray);
+
         }
     }
     pintarTabla(ventaGarray);
@@ -558,7 +608,7 @@ function GuardarPedido() {
                                     var PORCENTAJE = datos.PORCENTAJE;
                                     STOCK = STOCK - cantidades[i];
                                     var CATEGORIA = datos.CATEGORIA;
-                                    console.log(STOCK);
+                                    var urlProfile = datos.urlProfile;
                                     db.collection("productos").doc(doc.id).set({
                                         CODIGO,
                                         DESCRIPCION,
@@ -569,38 +619,15 @@ function GuardarPedido() {
                                         LIMITE_INFERIOR,
                                         registradoPor,
                                         VOLUMEN_GANANCIA,
-                                        PORCENTAJE
+                                        PORCENTAJE,
+                                        urlProfile
                                     })
                                 })
 
                                 ventaGarray.splice(i);
                                 var botonGuadar = document.getElementById("botonGuadar");
                                 botonGuadar.innerHTML = "";
-                                db.collection("clientes").where("nit", "==", cliente).get().then((querySnapshot) => {
-                                    querySnapshot.forEach((doc) => {
-                                        datos = doc.data();
-                                        var Cartera = datos.Cartera;
-                                        var Direccion = datos.Direccion;
-                                        var RazonSocial = datos.RazonSocial;
-                                        var barrio = datos.barrio;
-                                        var ciudad = datos.ciudad;
-                                        var telefono = datos.telefono;
-                                        var nit = datos.nit;
-                                        Cartera += suma;
-                                        var plazo = datos.plazo
-                                        db.collection("clientes").doc(nit).set({
-                                            Cartera,
-                                            Direccion,
-                                            RazonSocial,
-                                            nit,
-                                            barrio,
-                                            ciudad,
-                                            telefono,
-                                            plazo
-                                        })
-                                    })
 
-                                })
                                 pintarTabla(ventaGarray)
                             })
 
@@ -649,7 +676,7 @@ function GuardarCambiosProducto() {
     NuevaCantidad = parseInt(NuevaCantidad, 10);
     entrada = !Number.isNaN(NuevaCantidad)
     entrada2 = false;
-    console.log(entrada);
+
     var VOLUMEN_GANANCIA = PRECIO_VENTA - PRECIO_COMPRA
     if (CODIGO != "" && DESCRIPCION != "" && PRECIO_VENTA != NaN && PRECIO_COMPRA != NaN && stockPr != NaN && LIMITE_INFERIOR != NaN && CATEGORIA != "") {
         if (entrada && NumeroFactura != "") {
@@ -657,56 +684,78 @@ function GuardarCambiosProducto() {
             var productos = [];
             var cantidades = [];
             var costos = [];
-            db.collection("compras").get().then((querySnapshot) => {
+            var fecha1 = [];
+
+            var entrada3 = false;
+            db.collection("compras").where("NumeroFactura", "==", NumeroFactura).get().then((querySnapshot) => {
                 querySnapshot.forEach((doc) => {
-                    if (doc.id == NumeroFactura) {
-                        datos = doc.data();
-                        productos = datos.productos;
-                        cantidades = datos.cantidades;
-                        costos = datos.costos;
-                    }
-
+                    entrada3 = true;
+                    datos = doc.data();
+                    productos = datos.productos;
+                    cantidades = datos.cantidades;
+                    costos = datos.costos;
+                    fecha1 = datos.fecha1;
+                    Proveedor = datos.Proveedor;
+                    valorFactura = datos.valorFactura;
+                    estado = datos.estado;
+                    deuda = datos.deuda;
                 })
+                if (entrada3) {
+                    productos.push(CODIGO);
+                    cantidades.push(NuevaCantidad);
+                    costos.push(PRECIO_COMPRA);
+                    var fecha = new Date();
+                    var fecha2 = `${fecha.getDate()}/${fecha.getMonth() + 1}/${fecha.getFullYear()}`;
+                    fecha1.push(fecha2);
 
-                productos.push(CODIGO);
-                cantidades.push(NuevaCantidad);
-                costos.push(PRECIO_COMPRA);
-                var fecha = new Date();
-                var fecha1 = [fecha.getDate(), fecha.getMonth() + 1, fecha.getFullYear()];
-                console.log(fecha1);
-                db.collection('compras').doc(NumeroFactura).set({
-                    productos,
-                    cantidades,
-                    fecha1,
-                    NumeroFactura,
-                    costos
-                })
-                db.collection("productos").where("CODIGO", "==", CODIGO).get()
-                    .then((querySnapshot) => {
-                        querySnapshot.forEach((doc1) => {
+                    db.collection("compras").doc(NumeroFactura).set({
+                        NumeroFactura,
+                        Proveedor,
+                        valorFactura,
+                        productos,
+                        cantidades,
+                        costos,
+                        fecha1,
+                        estado,
+                        deuda
+                    })
+                    db.collection("productos").where("CODIGO", "==", CODIGO).get()
+                        .then((querySnapshot) => {
+                            querySnapshot.forEach((doc1) => {
 
-                            var datos = doc1.data();
-                            var registradoPor = datos.registradoPor;
-                            STOCK = STOCK + NuevaCantidad;
-                            var PORCENTAJE = (VOLUMEN_GANANCIA / PRECIO_VENTA) * 100
-                            db.collection("productos").doc(doc1.id).set({
-                                CODIGO,
-                                DESCRIPCION,
-                                PRECIO_COMPRA,
-                                PRECIO_VENTA,
-                                STOCK,
-                                CATEGORIA,
-                                LIMITE_INFERIOR,
-                                registradoPor,
-                                VOLUMEN_GANANCIA,
-                                PORCENTAJE
+                                var datos = doc1.data();
+                                var registradoPor = datos.registradoPor;
+                                STOCK = STOCK + NuevaCantidad;
+                                var PORCENTAJE = (VOLUMEN_GANANCIA / PRECIO_VENTA) * 100
+                                var urlProfile = datos.urlProfile;
+                                db.collection("productos").doc(doc1.id).set({
+                                    CODIGO,
+                                    DESCRIPCION,
+                                    PRECIO_COMPRA,
+                                    PRECIO_VENTA,
+                                    STOCK,
+                                    CATEGORIA,
+                                    LIMITE_INFERIOR,
+                                    registradoPor,
+                                    VOLUMEN_GANANCIA,
+                                    PORCENTAJE,
+                                    urlProfile
+                                })
+                                Swal.fire('Guardado!', '', 'success');
+
                             })
-                            Swal.fire('Guardado!', '', 'success');
+
 
                         })
-
-
+                } else {
+                    Swal.fire({
+                        icon: 'info',
+                        title: 'El número de factura no existe.',
+                        showConfirmButton: false,
+                        timer: 1500
                     })
+                }
+
 
 
             })
@@ -727,18 +776,14 @@ function GuardarCambiosProducto() {
                     db.collection("productos").where("CODIGO", "==", CODIGO).get()
                         .then((querySnapshot) => {
                             querySnapshot.forEach((doc1) => {
-                                console.log(CODIGO,
-                                    DESCRIPCION,
-                                    PRECIO_COMPRA,
-                                    PRECIO_VENTA,
-                                    STOCK,
-                                    CATEGORIA,
-                                    LIMITE_INFERIOR,
-                                    registradoPor,
-                                    VOLUMEN_GANANCIA);
+                                var datos = doc1.data()
 
                                 var registradoPor = datos.registradoPor;
                                 var PORCENTAJE = (VOLUMEN_GANANCIA / PRECIO_VENTA) * 100
+
+                                if (urlProfile == undefined) {
+                                    urlProfile = "img/usuario.png";
+                                }
                                 db.collection("productos").doc(doc1.id).set({
                                     CODIGO,
                                     DESCRIPCION,
@@ -749,7 +794,8 @@ function GuardarCambiosProducto() {
                                     LIMITE_INFERIOR,
                                     registradoPor,
                                     VOLUMEN_GANANCIA,
-                                    PORCENTAJE
+                                    PORCENTAJE,
+                                    urlProfile
                                 })
                                 Swal.fire('Guardado!', '', 'success');
 
@@ -840,31 +886,7 @@ function AbonarPedido(element) {
                                 plazo,
                                 fechaVencimiento
                             })
-                            db.collection("clientes").where("nit", "==", cliente).get().then((querySnapshot) => {
-                                querySnapshot.forEach((doc) => {
-                                    var datos = doc.data();
-                                    var Cartera = datos.Cartera
-                                    var Direccion = datos.Direccion;
-                                    var RazonSocial = datos.RazonSocial;
-                                    var telefono = datos.telefono;
-                                    var ciudad = datos.ciudad;
-                                    var barrio = datos.barrio;
-                                    var nit = datos.nit;
-                                    Cartera -= cantidad_abono;
-                                    console.log(ciudad, barrio, telefono);
-                                    var plazo = datos.plazo;
-                                    db.collection("clientes").doc(nit).set({
-                                        Cartera,
-                                        Direccion,
-                                        RazonSocial,
-                                        nit,
-                                        telefono,
-                                        ciudad,
-                                        barrio,
-                                        plazo
-                                    })
-                                })
-                            })
+
                             var hoy = new Date();
                             var fecha = [hoy.getDate(), hoy.getMonth() + 1, hoy.getFullYear()];
                             db.collection("abonos").doc().set({
@@ -885,13 +907,13 @@ function AbonarPedido(element) {
 }
 function cambiarEstado(element) {
     var Ventaid = element.id;
-    console.log(Ventaid)
+
     db.collection("ventas").get().then((querySnapshot) => {
         querySnapshot.forEach((doc) => {
             if (doc.id == Ventaid) {
                 datos = doc.data();
                 var cantidades = datos.cantidades;
-                console.log(cantidades)
+
                 var idProducto = datos.idProducto;
                 var entregado = true;
                 var vendedor = datos.vendedor;
@@ -1020,7 +1042,7 @@ function mirarObs(element) {
                             comentario1 += "\n";
                         }
                     }
-                    console.log(comentario1);
+
                     main.innerHTML += `<div id="fecha${i}${element.id}" class="container text-left border">
                     <br>
                         <div class="col-sm-16">Fecha: ${datos.fecha[i]}<br><p class=" bg-light" id="${i}">${comentario1}</p>
@@ -1060,11 +1082,11 @@ function EliminarComentario(element) {
             var comentarios = datos.comentarios;
             var fecha = datos.fecha;
             var usuario = datos.usuario;
-            console.log(fecha, usuario, comentarios)
+
             comentarios.splice(indice, 1);
             fecha.splice(indice, 1);
             usuario.splice(indice, 1);
-            console.log(fecha.length, usuario.length, comentarios.length)
+
             if (fecha.length == 0 && usuario.length == 0 && comentarios.length == 0) {
                 db.collection("comentarios").doc(CODIGO).delete();
             } else {
@@ -1117,7 +1139,7 @@ function mirarObsAdmin(element) {
                             comentario1 += "\n";
                         }
                     }
-                    console.log(comentario1);
+
                     main.innerHTML += `<div id="fecha${i}${element.id}" class="container text-left border">
                     <br>
                         <div class="col-sm-16">Fecha: ${datos.fecha[i]}<br><p class=" bg-light" id="${i}">${comentario1}</p>
@@ -1138,7 +1160,7 @@ function Devolver() {
     var cantidades1 = document.getElementById("cantidades").value;
 
     if (productos != "" && clientes != "" && tipoDeDevolucion != "") {
-        console.log("entró1")
+
         var CODIGO = productos;
         cantidades1 = parseInt(cantidades1, 10)
         var cliente = [];
@@ -1158,7 +1180,7 @@ function Devolver() {
 
             })
 
-            console.log(cantidades1);
+
             cliente.push(clientes);
             cantidad.push(cantidades1);
 
@@ -1209,10 +1231,10 @@ function Devolver() {
                             var PRECIO_COMPRA = datos2.PRECIO_COMPRA;
                             var registradoPor = datos2.registradoPor;
                             var PORCENTAJE = datos2.PORCENTAJE;
-                            console.log(cantidades1);
+                            var urlProfile = datos2.urlProfile;
                             STOCK = STOCK + cantidades1;
                             var CATEGORIA = datos2.CATEGORIA;
-                            console.log(PORCENTAJE);
+
                             db.collection("productos").doc(doc2.id).set({
                                 CODIGO,
                                 DESCRIPCION,
@@ -1223,7 +1245,8 @@ function Devolver() {
                                 LIMITE_INFERIOR,
                                 registradoPor,
                                 VOLUMEN_GANANCIA,
-                                PORCENTAJE
+                                PORCENTAJE,
+                                urlProfile
                             })
                         })
 

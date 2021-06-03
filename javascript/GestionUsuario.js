@@ -38,13 +38,13 @@ function ingreso() {
         <p id="sugerencia">usted no tiene una cuenta</p>
         </div>`;
       }
-      console.log(errorCode, errorMessage);
+      
     });
 }
 var uid;
 
 function registrar() {
-  console.log("entró");
+ 
   aviso = document.getElementById("sugerencias");
   aviso.innerHTML = `<div>
           <p id="segerencia">Registrando...</p>
@@ -56,9 +56,9 @@ function registrar() {
     .then((user) => {
       var entrada = false;
       var idPrincipal;
-      console.log(user);
+      
       idPrincipal = user.user.uid;
-      console.log(idPrincipal);
+      
       db.collection("usuarios").where("uid", "==", idPrincipal)
         .get()
         .then((querySnapshot) => {
@@ -98,8 +98,7 @@ function registrar() {
                   .catch((error) => {
                     var errorCode = error.code;
                     var errorMessage = error.message;
-                    console.log(errorCode);
-                    console.log(errorMessage)
+                   
                     if (errorCode == "auth/email-already-in-use") {
                       aviso = document.getElementById("sugerencias");
                       aviso.innerHTML = `<div>
@@ -137,7 +136,7 @@ function registrar() {
     .catch((error) => {
       var errorCode = error.code;
       var errorMessage = error.message;
-      console.log(errorCode, " ", errorMessage);
+      
       if (errorCode == "auth/wrong-password") {
         aviso = document.getElementById("sugerencias");
         aviso.innerHTML = `<div>
@@ -154,7 +153,7 @@ function registrar() {
         <p id="sugerencia">correo del gerente inválido</p>
         </div>`;
       }
-      console.log(errorCode, errorMessage);
+      
     });
 
 
@@ -186,7 +185,7 @@ function LlenarDatos(email) {
   <form class="login-form">
       <input class="input" id="Nombre" type="text" placeholder="Nombre" />
       <input class="input" id="Apellido" type="text" placeholder="Apellido"/>
-     
+      <input class="input" id="cuota" type="number" placeholder="cuota"/>
       <select id="tipoDeUsuario" class="form-control">
           <option value="">Elegir tipo de usuario</option>
       </select>
@@ -222,6 +221,8 @@ function GuardarDatos() {
   var nombre = document.getElementById("Nombre").value;
   var apellido = document.getElementById("Apellido").value;
   var tipoDeUsuario = document.getElementById("tipoDeUsuario").value;
+  var cuota=document.getElementById("cuota").value;
+  cuota=parseInt(cuota,10);
   if (nombre != "" && apellido != "" && tipoDeUsuario != "" && (uid != "" || uid != undefined)) {
     
     db.collection("usuarios").where("uid", "==", uid)
@@ -237,7 +238,7 @@ function GuardarDatos() {
             tipoDeUsuario,
             uid,
             email,
-
+            cuota
           })
         })
       });
@@ -349,7 +350,7 @@ function observador() {
         <a href="index.html"><button class="btn btn-danger">Iniciar sesión</button></a>`
           ;
       } catch (E) {
-        console.log(E);
+        
       }
 
     }
@@ -561,9 +562,9 @@ function listaDeUsuarios() {
             <td>${apellidoP}</td>
             <td>${tipoDeUsuarioP}</td>
             <td>${datos.email}</td>
-            <th><button class="btn btn-danger" id="${doc.id}" onclick="recuperarContraseña(this)">Recuperar Contraseña</button></th>
-            <th><button class="btn btn-danger" id="${doc.id}" onclick="Editar(this)">Editar</button></th>
-            <th><button class="btn btn-danger" id="${doc.id}" onclick="EliminarUsuario(this)">Eliminar</button></th>
+            <th><a class="cursor" id="${doc.id}" onclick="recuperarContraseña(this)"><img src="img/contraseña.png" width=30></a></th>
+            <th><a class="cursor" id="${doc.id}" onclick="Editar(this)"><img src="img/editar.png" width=30></a></th>
+            <th><a class="cursor" id="${doc.id}" onclick="EliminarUsuario(this)"><img src="img/delete.png" width=30></a></th>
             
           </tr>`;
       })
@@ -572,6 +573,7 @@ function listaDeUsuarios() {
 function EliminarUsuario(element){
   var userUid=element.id;
   db.collection("usuarios").doc(userUid).delete();
+  
   listaDeUsuarios();
 }
 function Editar(element) {
@@ -599,11 +601,18 @@ function Editar(element) {
         }else{
           tipoDeUsuarioP=datos.tipoDeUsuario;
         }
+        if(datos.cuota==undefined){
+          cuota=0;
+        }else{
+          cuota=datos.cuota;
+        }
         feed.innerHTML += `<div class="col-md-8"><form class="form-gruop">
         <br>
         <input class="form-control " type="text" id="nombreP" value=${nombreP}>
         <br>
         <input class="form-control " type="text" id="apellidoP" value=${apellidoP}>
+        <br>
+        <input class="form-control " type="number" id="apellidoP" value=${cuota}>
         <br>
         <select class="form-control" id="tipoDeUsuario">
           <option value="">seleccione el tipo de usuario</option>
@@ -651,14 +660,15 @@ function GuardarCambios(element){
         nombre=document.getElementById("nombreP").value;
         tipoDeUsuario=document.getElementById("tipoDeUsuario").value;
         uid=datos.uid;
-       
+        cuota=datos.cuota;
         if(apellido!=""&&nombre!=""&&tipoDeUsuario!=""){
           db.collection("usuarios").doc(uid).set({
             apellido,
             email,
             nombre,
             tipoDeUsuario,
-            uid
+            uid,
+            cuota
           })
           Swal.fire('Guardado!', '', 'success');
           listaDeUsuarios();
