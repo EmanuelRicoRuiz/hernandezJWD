@@ -147,7 +147,7 @@ function SubirXLSX() {
                             registradoPor = user.uid
                             var VOLUMEN_GANANCIA = PRECIO_VENTA - PRECIO_COMPRA;
                             var PORCENTAJE = (VOLUMEN_GANANCIA / PRECIO_VENTA) * 100
-
+                            console.log(rowObject[i]);
                             db.collection('productos').doc(CODIGO).set({
                                 CODIGO,
                                 DESCRIPCION,
