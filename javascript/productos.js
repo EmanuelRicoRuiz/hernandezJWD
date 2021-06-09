@@ -229,16 +229,17 @@ function cargarProductosLista() {
                 porcentaje = porcentaje + "%"
                 var aviso = document.getElementById("aviso");
                 aviso.innerHTML = "";
+                
                 tabla3.innerHTML +=
                     `<tr>
              <td>${datos.CODIGO}</td>
              <td>${datos.DESCRIPCION}</td>
-             <td>${datos.PRECIO_VENTA}</td>
-             <td>${datos.PRECIO_COMPRA}</td>
-             <td>${datos.STOCK}</td>
-             <td>${datos.VOLUMEN_GANANCIA}</td>
+             <td>${ingresar(datos.PRECIO_VENTA)}</td>
+             <td>${ingresar(datos.PRECIO_COMPRA)}</td>
+             <td>${ingresar(datos.STOCK)}</td>
+             <td>${ingresar(datos.VOLUMEN_GANANCIA)}</td>
              <td>${porcentaje}</td>
-             <td>${datos.STOCK * datos.PRECIO_VENTA}</td>
+             <td>${ingresar(datos.STOCK * datos.PRECIO_VENTA)}</td>
              <th><a class="cursor" id="${doc.id}" onclick="eliminarProducto(this)"><img src="img/delete.png" width=20 title="Borrar"></a></th>
              <th><a class="cursor" id="${datos.CODIGO}" onclick="EditarProducto(this)"><img src="img/editar.png" width=20 title="Editar"></a></th>
              <td><a class="cursor" id="${doc.id}" onclick="observacion(this)"><img src="img/obs.png" width=20 title="Observación"></a></td>

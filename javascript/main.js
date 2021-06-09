@@ -440,8 +440,8 @@ function tabTreeVentasG(mes, año) {
                     <td id="${datos.cliente}1${datos.NumeroFactura}"></td>
                     <td>${datos.entregado}</td>
                     <td>${datos.pagado}</td>
-                    <td>${datos.suma}</td>
-                    <td>${datos.debe}</td>
+                    <td>${ingresar(datos.suma)}</td>
+                    <td>${ingresar(datos.debe)}</td>
                     <td>${datos.fecha[0]}/${datos.fecha[1]}/${datos.fecha[2]}</td>
                     <td>${datos.plazo} dias</td>
                     <td>${datos.fechaVencimiento[0]}/${datos.fechaVencimiento[1]}/${datos.fechaVencimiento[2]}</td>
@@ -550,7 +550,7 @@ function tabTwoVentasG(mes, año) {
                             tablaRecaudo.innerHTML += `
                                     <tr>
                                         <td>${datos.NumeroFactura}</td>
-                                        <td>${datos.cantidad_abono}</td>
+                                        <td>${ingresar(datos.cantidad_abono)}</td>
                                         <td>${datos.fecha}</td>
                                         <td>${datos.rentabilidad.toFixed(2)}</td>
                                         <td>${nombre} ${apellido}</td>
@@ -567,7 +567,7 @@ function tabTwoVentasG(mes, año) {
                                     <td>Mes/Año: ${mes}/${año}</td>
                                 </tr>
                                 <tr>
-                                    <td>Recaudo: $${suma}</td>
+                                    <td>Recaudo: $${ingresar(suma)}</td>
                                 </tr>
                                 
                             </table>
@@ -656,8 +656,8 @@ function tabOneVentasG(mes, año) {
                     <td id="${datos.cliente}${datos.NumeroFactura}"></td>
                     <td>${datos.entregado}</td>
                     <td>${datos.pagado}</td>
-                    <td>${datos.suma}</td>
-                    <td>${datos.debe}</td>
+                    <td>${ingresar(datos.suma)}</td>
+                    <td>${ingresar(datos.debe)}</td>
                     <td>${datos.fecha[0]}/${datos.fecha[1]}/${datos.fecha[2]}</td>
                     <td>${datos.plazo} dias</td>
                     <td>${datos.fechaVencimiento[0]}/${datos.fechaVencimiento[1]}/${datos.fechaVencimiento[2]}</td>
@@ -1105,8 +1105,8 @@ function VentasInterface() {
                         <td id="${datos.cliente}${datos.NumeroFactura}"></td>
                         <td>${datos.entregado}</td>
                         <td>${datos.pagado}</td>
-                        <td>${datos.suma}</td>
-                        <td>${datos.debe}</td>
+                        <td>${ingresar(datos.suma)}</td>
+                        <td>${ingresar(datos.debe)}</td>
                         <td>${datos.fecha[0]}/${datos.fecha[1]}/${datos.fecha[2]}</td>
                         <td>${datos.rentabilidad.toFixed(2)}%</td>
                         <td>${datos.plazo} Dias</td>
@@ -1399,8 +1399,8 @@ function tabTreeVentas(mes, año) {
                     <td id="${datos.cliente}${datos.NumeroFactura}"></td>
                     <td>${datos.entregado}</td>
                     <td>${datos.pagado}</td>
-                    <td>${datos.suma}</td>
-                    <td>${datos.debe}</td>
+                    <td>${ingresar(datos.suma)}</td>
+                    <td>${ingresar(datos.debe)}</td>
                     <td>${datos.fecha[0]}/${datos.fecha[1]}/${datos.fecha[2]}</td>
                     <td>${datos.plazo} dias</td>
                     <td>${datos.fechaVencimiento[0]}/${datos.fechaVencimiento[1]}/${datos.fechaVencimiento[2]}</td>
@@ -1502,9 +1502,9 @@ function tabTwoVentas(mes, año) {
                             tablaRecaudo.innerHTML += `
                         <tr>
                             <td>${datos.NumeroFactura}</td>
-                            <td>${datos.cantidad_abono}</td>
+                            <td>${ingresar(datos.cantidad_abono)}</td>
                             <td>${datos.fecha}</td>
-                            <td>$${comision.toFixed(1)}</td>
+                            <td>$${ingresar(comision)}</td>
                         </tr>
                         `
                         }
@@ -1520,10 +1520,10 @@ function tabTwoVentas(mes, año) {
                             <td>Mes/Año: ${mes}/${año}</td>
                         </tr>
                         <tr>
-                            <td>Recaudo: $${suma}</td>
+                            <td>Recaudo: $${ingresar(suma)}</td>
                         </tr>
                         <tr>
-                            <td>Comsion: $${suma1}</td>
+                            <td>Comsion: $${ingresar(suma1)}</td>
                         </tr>
                     </table>
                 </div>
@@ -1598,8 +1598,8 @@ function tabOneVentas(mes, año) {
                     <td id="${datos.cliente}${datos.NumeroFactura}"></td>
                     <td>${datos.entregado}</td>
                     <td>${datos.pagado}</td>
-                    <td>${datos.suma}</td>
-                    <td>${datos.debe}</td>
+                    <td>${ingresar(datos.suma)}</td>
+                    <td>${ingresar(datos.debe)}</td>
                     <td>${datos.fecha[0]}/${datos.fecha[1]}/${datos.fecha[2]}</td>
                     <td>${datos.plazo} dias</td>
                     <td>${datos.fechaVencimiento[0]}/${datos.fechaVencimiento[1]}/${datos.fechaVencimiento[2]}</td>

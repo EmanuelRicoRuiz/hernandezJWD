@@ -68,8 +68,8 @@ async function carteraGeneral(){
                 <td>${cliente.RazonSocial}</td>
                 <td>${datos.entregado}</td>
                 <td>${datos.pagado}</td>
-                <td>${datos.suma}</td>
-                <td>${datos.debe}</td>
+                <td>${ingresar(datos.suma)}</td>
+                <td>${ingresar(datos.debe)}</td>
                 <td>${datos.fecha[0]}/${datos.fecha[1]}/${datos.fecha[2]}</td>
                 <td>${datos.plazo} dias</td>
                 <td>${datos.fechaVencimiento[0]}/${datos.fechaVencimiento[1]}/${datos.fechaVencimiento[2]}</td>
@@ -132,8 +132,8 @@ function listarDeudas() {
             deudasTable.innerHTML += `
                 <td>${datos.entidad}</td>
                 <td>${datos.descripcion}</td>
-                <td>${datos.valor}</td>
-                <td>${datos.pendiente}</td>
+                <td>${ingresar(datos.valor)}</td>
+                <td>${ingresar(datos.pendiente)}</td>
                 <td>${datos.fecha[0]}/${datos.fecha[1]}/${datos.fecha[2]}</td>
                 <td>${datos.estado}</td>
                 <td><a id="${doc.id}" onclick="abonarPago(this)" class="cursor"><img src="img/abono.png" width=30></a></td>
@@ -251,7 +251,7 @@ function listarGastos() {
     db['collection']('gastos')['get']()['then']((_0x3ab4xd) => {
         _0x3ab4xd['forEach']((_0x3ab4xe) => {
             var _0x3ab4xf = _0x3ab4xe['data']();
-            _0x3ab4xc['innerHTML'] += `${'\x0D\x0A                <tr>\x0D\x0A                    <td>'}${_0x3ab4xf['descripcion']}${'</td>\x0D\x0A                    <td>'}${_0x3ab4xf['valor']}${'</td>\x0D\x0A                    <td>'}${_0x3ab4xf['fecha'][0]}${'/'}${_0x3ab4xf['fecha'][1]}${'/'}${_0x3ab4xf['fecha'][2]}${'</td>\x0D\x0A                </tr>\x0D\x0A\x0D\x0A            '}`
+            _0x3ab4xc['innerHTML'] += `${'\x0D\x0A                <tr>\x0D\x0A                    <td>'}${_0x3ab4xf['descripcion']}${'</td>\x0D\x0A                    <td>'}${ingresar(_0x3ab4xf['valor'])}${'</td>\x0D\x0A                    <td>'}${_0x3ab4xf['fecha'][0]}${'/'}${_0x3ab4xf['fecha'][1]}${'/'}${_0x3ab4xf['fecha'][2]}${'</td>\x0D\x0A                </tr>\x0D\x0A\x0D\x0A            '}`
         })
     })
 }
@@ -620,7 +620,7 @@ async function ListaPosicionVentas() {
                 tablaPosiciones.innerHTML += `
                     <tr>
                         <td>${i + 1}</td>
-                        <td>${lista[i]}</td>
+                        <td>${ingresar(lista[i])}</td>
                         <td>${nombres[i]}</td>
                     </tr>
                 `
@@ -785,7 +785,7 @@ async function CalcularNomina(){
         selectsalarios.appendChild(option);
         TablaSalarios.innerHTML+=`
             <td>${datos.NombreSalario}</td>
-            <td>${datos.valorSalario}</td>
+            <td>${ingresar(datos.valorSalario)}</td>
             <td id="deducciones${doc.id}"></td>
             <td id="auxilios${doc.id}"></td>
         `
@@ -795,7 +795,7 @@ async function CalcularNomina(){
         }
         auxilios1=document.getElementById("auxilios"+doc.id);
         for (let i=0; i<datos.auxilios.length;i++){
-            auxilios1.innerHTML+=`${datos.auxilios[i]} $${datos.auxiliosValor[i]}<br>`
+            auxilios1.innerHTML+=`${datos.auxilios[i]} $${ingresar(datos.auxiliosValor[i])}<br>`
         }
     })
     
