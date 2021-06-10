@@ -187,7 +187,8 @@ function SubirXLSX() {
     }
 
 }
-function cargarProductosLista() {
+const obtenerProductos = () => db.collection("productos").get();
+async function cargarProductosLista() {
     var tabTree = document.getElementById("tabTree");
     tabTree.innerHTML = "";
     tabTree.innerHTML = `
@@ -212,26 +213,24 @@ function cargarProductosLista() {
     }
     var tabla3 = document.getElementById("tabla3");
     var suma = [];
-    db.collection("productos")
-        .get()
-        .then((querySnapshot) => {
-            querySnapshot.forEach((doc) => {
+    querySnapshot=await obtenerProductos();
+    querySnapshot.forEach((doc) => {
 
-                suma.push(datos.STOCK * datos.PRECIO_VENTA);
+        suma.push(datos.STOCK * datos.PRECIO_VENTA);
 
 
 
-                datos = doc.data();
-                validado = true;
-                var porcentaje = datos.PORCENTAJE;
-                porcentaje = parseInt(porcentaje, 10);
-                porcentaje.toString();
-                porcentaje = porcentaje + "%"
-                var aviso = document.getElementById("aviso");
-                aviso.innerHTML = "";
-                
-                tabla3.innerHTML +=
-                    `<tr>
+        datos = doc.data();
+        validado = true;
+        var porcentaje = datos.PORCENTAJE;
+        porcentaje = parseInt(porcentaje, 10);
+        porcentaje.toString();
+        porcentaje = porcentaje + "%"
+        var aviso = document.getElementById("aviso");
+        aviso.innerHTML = "";
+
+        tabla3.innerHTML +=
+            `<tr>
              <td>${datos.CODIGO}</td>
              <td>${datos.DESCRIPCION}</td>
              <td>${datos.PRECIO_VENTA}</td>
@@ -245,16 +244,16 @@ function cargarProductosLista() {
              <td><a class="cursor" id="${doc.id}" onclick="observacion(this)"><img src="img/obs.png" width=20 title="Observación"></a></td>
              <td><a class="cursor" id="${doc.id}" onclick="mirarObsAdmin(this)"><img src="img/ojo.png" width=20 title="Observaciones"></a></td>
            </tr>`;
-            })
-            var ValorInventario = document.getElementById("ValorInventario");
-            suma1 = 0;
+    })
+    var ValorInventario = document.getElementById("ValorInventario");
+    suma1 = 0;
 
-            for (let i = 1; i < suma.length; i++) {
-                suma1 += suma[i]
+    for (let i = 1; i < suma.length; i++) {
+        suma1 += suma[i]
 
-            }
-            ValorInventario.innerHTML = `<p id="Aviso">Valor global del inventario: ${ingresar(suma1)}<br><hr></p>`
-        });
+    }
+    ValorInventario.innerHTML = `<p id="Aviso">Valor global del inventario: ${ingresar(suma1)}<br><hr></p>`
+
 
 
 }
