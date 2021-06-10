@@ -9,30 +9,30 @@ function contabilidad() {
     listarGastos();
     deudas();
     carteraGeneral();
-    var hoy=new Date();
+    var hoy = new Date();
 
-    ganancia(hoy.getMonth()+1);
+    ganancia(hoy.getMonth() + 1);
 }
-const getAbonos=()=> db.collection("abonos").get();
-async function ganancia(mes){
-    var tabTree=document.getElementById("tabTree");
-    tabTree.innerHTML=`<table></table>`
-    query=await getAbonos();
-    suma=0;
-    query.forEach(doc=>{
-        
-        var datos=doc.data();
-        if(datos.fecha[1]==mes){
+const getAbonos = () => db.collection("abonos").get();
+async function ganancia(mes) {
+    var tabTree = document.getElementById("tabTree");
+    tabTree.innerHTML = `<table></table>`
+    query = await getAbonos();
+    suma = 0;
+    query.forEach(doc => {
+
+        var datos = doc.data();
+        if (datos.fecha[1] == mes) {
             console.log(datos.fecha[1])
-            suma+=datos.cantidad_abono
+            suma += datos.cantidad_abono
         }
-        
+
     })
-    tabTree.innerHTML=`${suma}`
+    tabTree.innerHTML = `${suma}`
 }
-async function carteraGeneral(){
+async function carteraGeneral() {
     var tabFour = document.getElementById("tab4");
-    tabFour.innerHTML =  `<h3 id="titulo">No hay facturas pendientes.</h3>
+    tabFour.innerHTML = `<h3 id="titulo">No hay facturas pendientes.</h3>
     `
     tabFour.innerHTML += `<div class="overflow-auto"><table  class="table table-striped table-bordered" id="cabecera">
             <tr>
@@ -52,16 +52,16 @@ async function carteraGeneral(){
     querySnapshot = await obtenerTodasVentas();
     querySnapshot.forEach(async doc => {
         var datos = doc.data();
-        
-        if (datos.debe > 0 ) {
-            var titulo=document.getElementById("titulo")
-            titulo.innerHTML="";
+
+        if (datos.debe > 0) {
+            var titulo = document.getElementById("titulo")
+            titulo.innerHTML = "";
 
             var tablaPedidos = document.getElementById("cabecera");
 
-            cliente= await obtenerCliente(datos.cliente);
-            cliente=cliente.data();
-            
+            cliente = await obtenerCliente(datos.cliente);
+            cliente = cliente.data();
+
             tablaPedidos.innerHTML += `
             <tr>
                 <td>${datos.NumeroFactura}</td>
@@ -439,7 +439,7 @@ function abonarDeuda(element) {
                     var datos = doc.data();
 
                     if (datos.deuda >= result.value) {
-                       
+
                         entrada = true;
                         codigo = datos.Proveedor
                         NumeroFactura = datos.NumeroFactura;
@@ -499,11 +499,11 @@ function abonarDeuda(element) {
     })
 }
 const obtenerVendedores = () => db.collection("usuarios").get();
-const obtenerTodasVentas=()=>db.collection("ventas").get();
+const obtenerTodasVentas = () => db.collection("ventas").get();
 const obtenerVentas = (id) => db.collection("ventas").where("vendedor", "==", id).get();
 const obtenerVentasCliente = (id) => db.collection("ventas").where("cliente", "==", id).get();
 const obtenerCliente = (id) => db.collection("clientes").doc(id).get();
-async function historialCompra(element){
+async function historialCompra(element) {
     var login = document.getElementById("login-page");
     login.innerHTML = "";
     var main = document.getElementById("main");
@@ -515,9 +515,9 @@ async function historialCompra(element){
     querySnapshot = await obtenerVentasCliente(element.id);
     querySnapshot.forEach(doc => {
         var datos = doc.data();
-        
-            
-            main.innerHTML += `<div class="overflow-auto"><table  class="table table-striped table-bordered" id="Cabecera${doc.id}">
+
+
+        main.innerHTML += `<div class="overflow-auto"><table  class="table table-striped table-bordered" id="Cabecera${doc.id}">
             <tr>
                 <th>Número de factura</th>
                 <th>Cliente</th>
@@ -532,10 +532,10 @@ async function historialCompra(element){
             </tr>
         </table></div>`;
 
-            var tablaPedidos = document.getElementById("Cabecera" + doc.id);
+        var tablaPedidos = document.getElementById("Cabecera" + doc.id);
 
 
-            tablaPedidos.innerHTML += `
+        tablaPedidos.innerHTML += `
             <tr>
                 <td>${datos.NumeroFactura}</td>
                 <td>${cliente.RazonSocial}</td>
@@ -558,7 +558,7 @@ async function historialCompra(element){
             </tr>
             
                 `
-        
+
 
 
 
@@ -647,7 +647,7 @@ async function cartera(element) {
     querySnapshot.forEach(doc => {
         var datos = doc.data();
         if (datos.debe > 0) {
-            main.innerHTML=""
+            main.innerHTML = ""
             main.innerHTML += `<div class="overflow-auto"><table  class="table table-striped table-bordered" id="Cabecera${doc.id}">
             <tr>
                 <th>Número de factura</th>
@@ -696,7 +696,7 @@ async function cartera(element) {
 
     })
 }
-async function CalcularNomina(){
+async function CalcularNomina() {
     var login = document.getElementById("login-page");
     login.innerHTML = "";
     var main = document.getElementById("main");
@@ -771,122 +771,122 @@ async function CalcularNomina(){
         </div>
     </div>`;
     cargarTabs();
-    var TablaSalarios=document.getElementById("TablaSalarios");
-    busquedaSalarios=await obtenerSalarios();
-    selectsalarios=document.getElementById("salarios");
+    var TablaSalarios = document.getElementById("TablaSalarios");
+    busquedaSalarios = await obtenerSalarios();
+    selectsalarios = document.getElementById("salarios");
 
-    aviso=document.getElementById("aviso")
-    busquedaSalarios.forEach(doc=>{
-        aviso.innerHTML="";
-        var datos=doc.data();
-        option=document.createElement("option");
-        option.value=doc.id;
-        option.text=datos.NombreSalario;
+    aviso = document.getElementById("aviso")
+    busquedaSalarios.forEach(doc => {
+        aviso.innerHTML = "";
+        var datos = doc.data();
+        option = document.createElement("option");
+        option.value = doc.id;
+        option.text = datos.NombreSalario;
         selectsalarios.appendChild(option);
-        TablaSalarios.innerHTML+=`
+        TablaSalarios.innerHTML += `
             <td>${datos.NombreSalario}</td>
             <td>${ingresar(datos.valorSalario)}</td>
             <td id="deducciones${doc.id}"></td>
             <td id="auxilios${doc.id}"></td>
         `
-        deducciones1=document.getElementById("deducciones"+doc.id);
-        for (let i=0; i<datos.deducciones.length;i++){
-            deducciones1.innerHTML+=`${datos.deducciones[i]} ${datos.deduccionesValor[i]}%<br>`
+        deducciones1 = document.getElementById("deducciones" + doc.id);
+        for (let i = 0; i < datos.deducciones.length; i++) {
+            deducciones1.innerHTML += `${datos.deducciones[i]} ${datos.deduccionesValor[i]}%<br>`
         }
-        auxilios1=document.getElementById("auxilios"+doc.id);
-        for (let i=0; i<datos.auxilios.length;i++){
-            auxilios1.innerHTML+=`${datos.auxilios[i]} $${ingresar(datos.auxiliosValor[i])}<br>`
+        auxilios1 = document.getElementById("auxilios" + doc.id);
+        for (let i = 0; i < datos.auxilios.length; i++) {
+            auxilios1.innerHTML += `${datos.auxilios[i]} $${ingresar(datos.auxiliosValor[i])}<br>`
         }
     })
-    
-}
-var deducciones=[];
-var auxilios=[];
-var deduccionesValor=[];
-var auxiliosValor=[];
 
-function AgregarDeduccion(){
-    var NombreDeduccion=document.getElementById("NombreDeduccion").value;
-    var PorcentajeDeduccion=document.getElementById("PorcentajeDeduccion").value;
-    PorcentajeDeduccion= parseInt( PorcentajeDeduccion,10);
-    if(PorcentajeDeduccion!=NaN&&NombreDeduccion!=""){
+}
+var deducciones = [];
+var auxilios = [];
+var deduccionesValor = [];
+var auxiliosValor = [];
+
+function AgregarDeduccion() {
+    var NombreDeduccion = document.getElementById("NombreDeduccion").value;
+    var PorcentajeDeduccion = document.getElementById("PorcentajeDeduccion").value;
+    PorcentajeDeduccion = parseInt(PorcentajeDeduccion, 10);
+    if (PorcentajeDeduccion != NaN && NombreDeduccion != "") {
         deducciones.push(NombreDeduccion);
         deduccionesValor.push(PorcentajeDeduccion);
-        var ListaDeducciones=document.getElementById("ListaDeducciones");
-        ListaDeducciones.innerHTML="";
-        for (let i=0;i<deducciones.length;i++){
-            ListaDeducciones.innerHTML+=`
+        var ListaDeducciones = document.getElementById("ListaDeducciones");
+        ListaDeducciones.innerHTML = "";
+        for (let i = 0; i < deducciones.length; i++) {
+            ListaDeducciones.innerHTML += `
                 <div class="form-group border" style="padding=3%">
-                ${i+1}. ${deducciones[i]}
+                ${i + 1}. ${deducciones[i]}
                   ${deduccionesValor[i]}%
                 </div>
             `
         }
-    }else{
+    } else {
         console.log("error");
     }
 }
-function AgregarAuxilio(){
-    var NombreAuxilio=document.getElementById("NombreAuxilio").value;
-    var PorcentajeAuxilio=document.getElementById("ValorAuxilio").value;
-    PorcentajeAuxilio= parseInt( PorcentajeAuxilio,10);
-    
-    if(PorcentajeAuxilio!=NaN&&NombreAuxilio!=""){
-        console.log(PorcentajeAuxilio,NombreAuxilio);
+function AgregarAuxilio() {
+    var NombreAuxilio = document.getElementById("NombreAuxilio").value;
+    var PorcentajeAuxilio = document.getElementById("ValorAuxilio").value;
+    PorcentajeAuxilio = parseInt(PorcentajeAuxilio, 10);
+
+    if (PorcentajeAuxilio != NaN && NombreAuxilio != "") {
+        console.log(PorcentajeAuxilio, NombreAuxilio);
         auxilios.push(NombreAuxilio);
         auxiliosValor.push(PorcentajeAuxilio);
 
-        var ListaAuxilios=document.getElementById("ListaAuxilios");
-        ListaAuxilios.innerHTML="";
-        for (let i=0;i<auxilios.length;i++){
-            ListaAuxilios.innerHTML+=`
+        var ListaAuxilios = document.getElementById("ListaAuxilios");
+        ListaAuxilios.innerHTML = "";
+        for (let i = 0; i < auxilios.length; i++) {
+            ListaAuxilios.innerHTML += `
                 <div class="form-group border" style="padding=3%">
-                    ${i+1}. ${auxilios[i]}
+                    ${i + 1}. ${auxilios[i]}
                      $${auxiliosValor[i]}
                 </div>
             `
         }
-    }else{
+    } else {
         console.log("error");
     }
 }
-const obtenerSalarios=()=>db.collection("salarios").get();
-function AgregarSalario(){
-    var NombreSalario=document.getElementById("NombreSalario").value;
-    var valorSalario=document.getElementById("valorSalario").value;
-    valorSalario=parseInt(valorSalario,10);
-    if(NombreSalario!=""&&valorSalario!=NaN){
-        db.collection("salarios").doc().set({NombreSalario,valorSalario,deducciones,deduccionesValor,auxilios,auxiliosValor})
+const obtenerSalarios = () => db.collection("salarios").get();
+function AgregarSalario() {
+    var NombreSalario = document.getElementById("NombreSalario").value;
+    var valorSalario = document.getElementById("valorSalario").value;
+    valorSalario = parseInt(valorSalario, 10);
+    if (NombreSalario != "" && valorSalario != NaN) {
+        db.collection("salarios").doc().set({ NombreSalario, valorSalario, deducciones, deduccionesValor, auxilios, auxiliosValor })
     }
 }
-const obtenerSalariosIndividual=(id)=>db.collection("salarios").doc(id).get();
-async function SacarNomina(){
-    cantidadNominas=document.getElementById("cantidadNominas").value;
-    salarios=document.getElementById("salarios").value;
-    diasTrabajados=document.getElementById("diasTrabajados").value;
-    cantidadSalarios=document.getElementById("cantidadSalarios").value;
-    tablaNomina1=document.getElementById("tablaNomina1");
-    tablaNomina1.innerHTML=``;
-    if(cantidadNominas!=""&&salarios!=""&&diasTrabajados!=""&&cantidadSalarios!=""){
-        doc=await obtenerSalariosIndividual(salarios);
-        salario=doc.data();
-        cantidadNominas=parseInt(cantidadNominas,10);
-        diasTrabajados=parseInt(diasTrabajados,10);
-        
-        var listaA=[]
-        var sumaA=0;
-        for(let i=0;i<salario.auxilios.length;i++){
-            listaA[i]=salario.auxiliosValor[i]/30
-            sumaA+=listaA[i]*diasTrabajados;
+const obtenerSalariosIndividual = (id) => db.collection("salarios").doc(id).get();
+async function SacarNomina() {
+    cantidadNominas = document.getElementById("cantidadNominas").value;
+    salarios = document.getElementById("salarios").value;
+    diasTrabajados = document.getElementById("diasTrabajados").value;
+    cantidadSalarios = document.getElementById("cantidadSalarios").value;
+    tablaNomina1 = document.getElementById("tablaNomina1");
+    tablaNomina1.innerHTML = ``;
+    if (cantidadNominas != "" && salarios != "" && diasTrabajados != "" && cantidadSalarios != "") {
+        doc = await obtenerSalariosIndividual(salarios);
+        salario = doc.data();
+        cantidadNominas = parseInt(cantidadNominas, 10);
+        diasTrabajados = parseInt(diasTrabajados, 10);
+
+        var listaA = []
+        var sumaA = 0;
+        for (let i = 0; i < salario.auxilios.length; i++) {
+            listaA[i] = salario.auxiliosValor[i] / 30
+            sumaA += listaA[i] * diasTrabajados;
         }
-        var listaD=[]
-        var sumaD=0;
-        for(let i=0;i<salario.deducciones.length;i++){
-            listaD[i]=salario.deduccionesValor[i]/100*(salario.valorSalario/30)*diasTrabajados
-            sumaD+=listaD[i]
+        var listaD = []
+        var sumaD = 0;
+        for (let i = 0; i < salario.deducciones.length; i++) {
+            listaD[i] = salario.deduccionesValor[i] / 100 * (salario.valorSalario / 30) * diasTrabajados
+            sumaD += listaD[i]
         }
-        
-        tablaNomina1.innerHTML=`
+
+        tablaNomina1.innerHTML = `
             <table class="table table-striped table-bordered">
                 <tr>
                     <th>Cantidad de salarios</th>
@@ -903,23 +903,23 @@ async function SacarNomina(){
                     <td>${cantidadNominas}</td>
                     <td>${salario.valorSalario}</td>
                     <td>${diasTrabajados}</td>
-                    <td>${salario.valorSalario/30}</td>
-                    <td>${(salario.valorSalario/30)*diasTrabajados}</td>
+                    <td>${salario.valorSalario / 30}</td>
+                    <td>${(salario.valorSalario / 30) * diasTrabajados}</td>
                     <td id="Auxilios4"></td>
                     <td id="deducciones4"></td>
-                    <td>${(((salario.valorSalario/30)*diasTrabajados)-sumaD+sumaA).toFixed(2)}</td>
-                    <td>${((((salario.valorSalario/30)*diasTrabajados)-sumaD+sumaA)*cantidadNominas).toFixed(2)}</td>
+                    <td>${(((salario.valorSalario / 30) * diasTrabajados) - sumaD + sumaA).toFixed(2)}</td>
+                    <td>${((((salario.valorSalario / 30) * diasTrabajados) - sumaD + sumaA) * cantidadNominas).toFixed(2)}</td>
                 </tr>
             </table>
         `
-        var auxilios4=document.getElementById("Auxilios4");
-        for(let i=0;i<listaA.length;i++){
-            auxilios4.innerHTML+=`${salario.auxilios[i]}: ${listaA[i]*diasTrabajados}`
+        var auxilios4 = document.getElementById("Auxilios4");
+        for (let i = 0; i < listaA.length; i++) {
+            auxilios4.innerHTML += `${salario.auxilios[i]}: ${listaA[i] * diasTrabajados}`
         }
-        var deducciones4=document.getElementById("deducciones4");
-        for(let i=0;i<listaD.length;i++){
+        var deducciones4 = document.getElementById("deducciones4");
+        for (let i = 0; i < listaD.length; i++) {
             console.log("entró");
-            deducciones4.innerHTML+=`${salario.deducciones[i]}: ${listaD[i].toFixed(2)}<br>`
+            deducciones4.innerHTML += `${salario.deducciones[i]}: ${listaD[i].toFixed(2)}<br>`
         }
     }
 }
