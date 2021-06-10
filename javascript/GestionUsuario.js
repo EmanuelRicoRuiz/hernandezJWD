@@ -711,7 +711,7 @@ function recuperarContraseña(element){
   })
   
 }
-cargarFunciones();
+/*cargarFunciones();
 function cargarFunciones(){
   var user = firebase.auth().currentUser;
   firebase.auth().onAuthStateChanged((user) => {
@@ -732,4 +732,4 @@ function cargarFunciones(){
     })
   })
   
-}
+}*/
