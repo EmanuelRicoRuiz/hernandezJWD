@@ -160,6 +160,8 @@ function menuInicio(permisos) {
     } if (permisos[5]) {
         menu.innerHTML += `<a class="list-group-item list-group-item-action bg-light" onclick="ingresarProductosInterface()" 
                     href="#">Gestión de productos</a>`;
+        menu.innerHTML += `<a class="list-group-item list-group-item-action bg-light" onclick="cargarproductoslista()" 
+                    href="#">Gestión de productos</a>`;
     } if (permisos[2]) {
         menu.innerHTML += `<a class="list-group-item list-group-item-action bg-light" onclick="VentasInterface()" 
                     href="#">Pedidos</a>`;
@@ -843,7 +845,7 @@ function ingresarProductosInterface() {
     <ul class="tabs">
         <li><a href="#tab1"><span class="fa fa-home"></span><span class="tab-text">Registro Individual</span></a></li>
         <li><a href="#tab2"><span class="fa fa-group"></span><span class="tab-text">Registro Archivo XLSX</span></a></li>
-        <li><a href="#tab3"><span class="fa fa-group"></span><span class="tab-text">Lista de productos</span></a></li>
+        
     </ul>
     </center>
     <div class="secciones">
@@ -866,11 +868,7 @@ function ingresarProductosInterface() {
             <h3>Ingreso de productos por medio de un archivo XLSX</h3>
             </div>
         </article>
-        <article id="tab3">
-            <div id="tabTree">
-            <h3>Lista de productos</h3>
-            </div>
-        </article>
+        
 
         
     </div>

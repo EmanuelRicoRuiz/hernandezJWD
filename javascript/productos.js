@@ -189,7 +189,7 @@ function SubirXLSX() {
 }
 const obtenerProductos = () => db.collection("productos").get();
 async function cargarProductosLista() {
-    var tabTree = document.getElementById("tabTree");
+    var tabTree = document.getElementById("main");
     tabTree.innerHTML = "";
     tabTree.innerHTML = `
     <br><h3>Lista de productos:<div id="ValorInventario"></div></h3><br><div class="overflow-auto"><table id="tabla3" class="table table-striped table-bordered">
