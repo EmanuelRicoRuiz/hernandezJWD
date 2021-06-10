@@ -160,7 +160,7 @@ function menuInicio(permisos) {
     } if (permisos[5]) {
         menu.innerHTML += `<a class="list-group-item list-group-item-action bg-light" onclick="ingresarProductosInterface()" 
                     href="#">Gestión de productos</a>`;
-        menu.innerHTML += `<a class="list-group-item list-group-item-action bg-light" onclick="cargarproductoslista()" 
+        menu.innerHTML += `<a class="list-group-item list-group-item-action bg-light" onclick="cargarProductosLista()" 
                     href="#">Lista de productos</a>`;
     } if (permisos[2]) {
         menu.innerHTML += `<a class="list-group-item list-group-item-action bg-light" onclick="VentasInterface()" 
