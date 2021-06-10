@@ -837,6 +837,7 @@ function comprasInterface() {
 }
 
 function ingresarProductosInterface() {
+    console.log("entró")
     var login = document.getElementById("login-page");
     login.innerHTML = "";
     var main = document.getElementById("main");
@@ -947,7 +948,7 @@ function cargarLasTabs() {
     tabTwo.innerHTML = `<center><input id="archivoXLSX" class="form-control" type="file" accept=".xls,.xlsx"><br>
     <button class="btn btn-primary" onclick="SubirXLSX()">Subir archivo</button><center>
     <div id="carga"></div>`;
-    cargarProductosLista();
+    
 
 }
 function VentasInterface() {

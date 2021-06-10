@@ -209,7 +209,7 @@ async function cargarProductosLista() {
    </table></div>`;
     var validado = false;
     if (!validado) {
-        tabTree.innerHTML += `<center><div id="aviso">No hay productos registrados</div></center>`;
+        tabTree.innerHTML += `<center><div id="aviso"><img width="50" src="img/carga.gif"></div></center>`;
     }
     var tabla3 = document.getElementById("tabla3");
     var suma = [];
