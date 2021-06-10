@@ -161,7 +161,7 @@ function menuInicio(permisos) {
         menu.innerHTML += `<a class="list-group-item list-group-item-action bg-light" onclick="ingresarProductosInterface()" 
                     href="#">Gestión de productos</a>`;
         menu.innerHTML += `<a class="list-group-item list-group-item-action bg-light" onclick="cargarproductoslista()" 
-                    href="#">Gestión de productos</a>`;
+                    href="#">Lista de productos</a>`;
     } if (permisos[2]) {
         menu.innerHTML += `<a class="list-group-item list-group-item-action bg-light" onclick="VentasInterface()" 
                     href="#">Pedidos</a>`;
