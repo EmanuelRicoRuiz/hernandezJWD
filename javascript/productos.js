@@ -164,7 +164,7 @@ function SubirXLSX() {
                             carga.innerHTML = "";
                             Swal.fire('Guardado!', '', 'success');
 
-                            cargarProductosLista();
+                            
 
                         }
                     } catch (e) {
@@ -213,13 +213,12 @@ async function cargarProductosLista() {
     }
     var tabla3 = document.getElementById("tabla3");
     var suma = [];
+    
     querySnapshot=await obtenerProductos();
+    console.log(querySnapshot);
     querySnapshot.forEach((doc) => {
-
+        
         suma.push(datos.STOCK * datos.PRECIO_VENTA);
-
-
-
         datos = doc.data();
         validado = true;
         var porcentaje = datos.PORCENTAJE;
@@ -228,7 +227,6 @@ async function cargarProductosLista() {
         porcentaje = porcentaje + "%"
         var aviso = document.getElementById("aviso");
         aviso.innerHTML = "";
-
         tabla3.innerHTML +=
             `<tr>
              <td>${datos.CODIGO}</td>
