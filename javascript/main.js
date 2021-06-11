@@ -1869,7 +1869,7 @@ function InventarioGlobal() {
     var validado = false;
     if (!validado) {
         var aviso1 = document.getElementById("aviso1")
-        aviso1.innerHTML += `<center><div id="aviso">No hay productos registrados</div></center>`;
+        aviso1.innerHTML += `<center><div id="aviso"><img width=30 src="img/carga.gif"></div></center>`;
     }
     var tabla3 = document.getElementById("tabla3");
     db.collection("productos")
