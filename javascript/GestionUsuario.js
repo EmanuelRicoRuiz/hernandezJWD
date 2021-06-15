@@ -524,7 +524,7 @@ function listaDeUsuarios() {
   var login = document.getElementById("login-page");
   login.innerHTML = "";
   feed.innerHTML = ``;
-  feed.innerHTML = `<br><h3>Lista de usuarios:</h3><br><div class="overflow-auto"><table id="tabla2" class="table table-striped table-bordered">
+  feed.innerHTML = `<br><h3>Lista de usuarios:</h3><br><div class="delimitado"><table id="tabla2" class="table table-striped table-bordered">
     <thead>
       <tr>
         <th>Nombre</th>

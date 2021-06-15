@@ -44,7 +44,7 @@ function gestionarusuario() {
     <div class="secciones">
         <article id="tab1">
 
-            <div id="tabOne">
+            <div class="delimitado" id="tabOne">
               
         
             <div id="nombre">
@@ -57,7 +57,7 @@ function gestionarusuario() {
             </div>
         </article>
         <article id="tab2">
-            <div id="tabTwo">
+            <div  id="tabTwo">
             <input class="form-control" type="text" id="NombreUsuario" placeholder="ingrese el tipo de usuario*">
                 <br>
                 <input  type="checkbox" id="permiso1">
@@ -722,7 +722,7 @@ function Proveedores() {
     var login = document.getElementById("login-page");
     login.innerHTML = "";
     var main = document.getElementById("main");
-    main.innerHTML = `<div class="wrap">
+    main.innerHTML = `<div class="wrap ">
     <center>
     <ul class="tabs">
         <li><a href="#tab1"><span class="fa fa-home"></span><span class="tab-text">Registro de proveedores</span></a></li>
@@ -749,7 +749,7 @@ function Proveedores() {
             </div>
         </article>
         <article id="tab2">
-            <div id="tabTwo">
+            <div class="delimitado" id="tabTwo">
             
             </div>
         </article>
@@ -761,7 +761,7 @@ function Proveedores() {
 function ListarProveedores() {
     var tabTwo = document.getElementById("tabTwo");
     tabTwo.innerHTML = `
-        <table class="table table-striped table-bordered" id="tablaP">
+        <table class="table table-striped table-bordered delimitado" id="tablaP">
             <thead>
                 <tr>
                     <th>Código</th>

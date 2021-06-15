@@ -92,7 +92,7 @@ function hacerRegistroProducto() {
                     LIMITE_INFERIOR.value = "";
 
                     Swal.fire('Guardado!', '', 'success');
-                    cargarProductosLista();
+                    
                 } else {
 
                     Swal.fire({
@@ -192,7 +192,7 @@ async function cargarProductosLista() {
     var tabTree = document.getElementById("main");
     tabTree.innerHTML = "";
     tabTree.innerHTML = `
-    <br><h3>Lista de productos:<div id="ValorInventario"></div></h3><br><div class="overflow-auto"><table id="tabla3" class="table table-striped table-bordered">
+    <br><h3>Lista de productos:<div id="ValorInventario"></div></h3><br><div class="delimitado"><table id="tabla3" class="table table-striped table-bordered">
      <thead>
        <tr>
          <th>CODIGO</th>
@@ -227,21 +227,40 @@ async function cargarProductosLista() {
         porcentaje = porcentaje + "%"
         var aviso = document.getElementById("aviso");
         aviso.innerHTML = "";
-        tabla3.innerHTML +=
-            `<tr>
-             <td>${datos.CODIGO}</td>
-             <td>${datos.DESCRIPCION}</td>
-             <td>${datos.PRECIO_VENTA}</td>
-             <td>${datos.PRECIO_COMPRA}</td>
-             <td>${datos.STOCK}</td>
-             <td>${datos.VOLUMEN_GANANCIA}</td>
-             <td>${porcentaje}</td>
-             <td>${datos.STOCK * datos.PRECIO_VENTA}</td>
-             <th><a class="cursor" id="${doc.id}" onclick="eliminarProducto(this)"><img src="img/delete.png" width=20 title="Borrar"></a></th>
-             <th><a class="cursor" id="${datos.CODIGO}" onclick="EditarProducto(this)"><img src="img/editar.png" width=20 title="Editar"></a></th>
-             <td><a class="cursor" id="${doc.id}" onclick="observacion(this)"><img src="img/obs.png" width=20 title="Observación"></a></td>
-             <td><a class="cursor" id="${doc.id}" onclick="mirarObsAdmin(this)"><img src="img/ojo.png" width=20 title="Observaciones"></a></td>
-           </tr>`;
+        fila=document.createElement("tr");
+        Ccodigo=document.createElement("td");
+        Ccodigo.innerHTML=datos.CODIGO
+        Cdescripcion=document.createElement("td");
+        Cdescripcion.innerHTML=datos.DESCRIPCION;
+        CprecioVenta=document.createElement("td");
+        CprecioVenta.innerHTML=ingresar(datos.PRECIO_VENTA);
+        CprecioCompra=document.createElement("td");
+        CprecioCompra.innerHTML=ingresar(datos.PRECIO_COMPRA);
+        Cstock=document.createElement("td");
+        Cstock.innerHTML=datos.STOCK;
+        Cvolumen=document.createElement("td");
+        Cvolumen.innerHTML=ingresar(datos.VOLUMEN_GANANCIA);
+        Cporcentaje=document.createElement("td");
+        Cporcentaje.innerHTML=porcentaje;
+        Cvalor=document.createElement("td");
+        Cvalor.innerHTML=ingresar(datos.STOCK * datos.PRECIO_VENTA);
+        Cacciones=document.createElement("td");
+        Cacciones.innerHTML=`<a class="cursor" id="${doc.id}" onclick="eliminarProducto(this)"><img src="img/delete.png" width=20 title="Borrar"></a><br>
+        <a class="cursor" id="${datos.CODIGO}" onclick="EditarProducto(this)"><img src="img/editar.png" width=20 title="Editar"></a><br>
+        <a class="cursor" id="${doc.id}" onclick="observacion(this)"><img src="img/obs.png" width=20 title="Observación"></a><br>
+        <a class="cursor" id="${doc.id}" onclick="mirarObsAdmin(this)"><img src="img/ojo.png" width=20 title="Observaciones"></a><br>
+        `
+        fila.appendChild(Ccodigo);
+        fila.appendChild(Cdescripcion);
+        fila.appendChild(CprecioVenta);
+        fila.appendChild(CprecioCompra);
+        fila.appendChild(Cstock);
+        fila.appendChild(Cvolumen);
+        fila.appendChild(Cporcentaje);
+        fila.appendChild(Cvalor);
+        fila.appendChild(Cacciones);
+        tabla3.appendChild(fila);
+         
     })
     var ValorInventario = document.getElementById("ValorInventario");
     suma1 = 0;
@@ -269,7 +288,7 @@ function eliminarProducto(element) {
             db.collection("productos").doc(id).delete();
             Swal.fire('Borrado!', '', 'success');
 
-            cargarProductosLista();
+           
         }
 
     })
