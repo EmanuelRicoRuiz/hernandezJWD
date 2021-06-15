@@ -23,7 +23,7 @@ async function ganancia(mes) {
 
         var datos = doc.data();
         if (datos.fecha[1] == mes) {
-            console.log(datos.fecha[1])
+           
             suma += datos.cantidad_abono
         }
 
@@ -823,7 +823,7 @@ function AgregarDeduccion() {
             `
         }
     } else {
-        console.log("error");
+        
     }
 }
 function AgregarAuxilio() {
@@ -832,7 +832,7 @@ function AgregarAuxilio() {
     PorcentajeAuxilio = parseInt(PorcentajeAuxilio, 10);
 
     if (PorcentajeAuxilio != NaN && NombreAuxilio != "") {
-        console.log(PorcentajeAuxilio, NombreAuxilio);
+       
         auxilios.push(NombreAuxilio);
         auxiliosValor.push(PorcentajeAuxilio);
 
@@ -847,7 +847,7 @@ function AgregarAuxilio() {
             `
         }
     } else {
-        console.log("error");
+       
     }
 }
 const obtenerSalarios = () => db.collection("salarios").get();
@@ -918,7 +918,7 @@ async function SacarNomina() {
         }
         var deducciones4 = document.getElementById("deducciones4");
         for (let i = 0; i < listaD.length; i++) {
-            console.log("entró");
+           
             deducciones4.innerHTML += `${salario.deducciones[i]}: ${listaD[i].toFixed(2)}<br>`
         }
     }

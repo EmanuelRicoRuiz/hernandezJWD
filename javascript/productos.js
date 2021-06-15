@@ -147,7 +147,7 @@ function SubirXLSX() {
                             registradoPor = user.uid
                             var VOLUMEN_GANANCIA = PRECIO_VENTA - PRECIO_COMPRA;
                             var PORCENTAJE = (VOLUMEN_GANANCIA / PRECIO_VENTA) * 100
-                            console.log(rowObject[i]);
+                           
                             db.collection('productos').doc(CODIGO).set({
                                 CODIGO,
                                 DESCRIPCION,
@@ -189,6 +189,7 @@ function SubirXLSX() {
 }
 const obtenerProductos = () => db.collection("productos").get();
 async function cargarProductosLista() {
+    toggle();
     var tabTree = document.getElementById("main");
     tabTree.innerHTML = "";
     tabTree.innerHTML = `
@@ -209,13 +210,13 @@ async function cargarProductosLista() {
    </table></div>`;
     var validado = false;
     if (!validado) {
-        tabTree.innerHTML += `<center><div id="aviso"><img width="50" src="img/carga.gif"></div></center>`;
+        tabTree.innerHTML += `<center><div id="aviso"><img width="100" src="img/carga.gif"></div></center>`;
     }
     var tabla3 = document.getElementById("tabla3");
     var suma = [];
     
     querySnapshot=await obtenerProductos();
-    console.log(querySnapshot);
+   
     querySnapshot.forEach((doc) => {
         
         suma.push(datos.STOCK * datos.PRECIO_VENTA);

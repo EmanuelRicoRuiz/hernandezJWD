@@ -378,7 +378,10 @@ function guardarTipoDeUsuario() {
       permisos[8] = document.getElementById("permiso9").checked;
       permisos[9] = document.getElementById("permiso10").checked;
       permisos[10] = document.getElementById("permiso11").checked;
-      permisos[11] = document.getElementById("permiso12").checked;
+      permisos[12] = document.getElementById("permiso12").checked;
+      permisos[13] = document.getElementById("permiso13").checked;
+      permisos[14] = document.getElementById("permiso14").checked;
+      permisos[15] = document.getElementById("permiso15").checked;
       var usuario = document.getElementById("NombreUsuario").value;
       var sugerencia = document.getElementById("sugerencia");
       var aviso = document.getElementById("aviso");
@@ -394,47 +397,58 @@ function guardarTipoDeUsuario() {
         Swal.fire('Guardado!', '', 'success');
         var tabTwo = document.getElementById("tabTwo");
         tabTwo.innerHTML = `<input class="form-control" type="text" id="NombreUsuario" placeholder="ingrese el tipo de usuario*">
-       <br>
-       <input  type="checkbox" id="permiso1">
-       <label  for="permiso1">especificar tipos de usuarios</label>
-       <br>
-       <input  type="checkbox" id="permiso2">
-       <label  for="permiso2">registro de nuevos usuarios</label>
-       <br>
-       <input  type="checkbox" id="permiso3">
-       <label  for="permiso3">Montaje de pedidos</label>
-       <br>
-       <input  type="checkbox" id="permiso4">
-       <label  for="permiso4">Registro de pagos</label>
-       <br>
-       <input  type="checkbox" id="permiso5">
-       <label  for="permiso5">generación de facturas</label>
-       <br>
-       <input  type="checkbox" id="permiso6">
-       <label  for="permiso6">ingreso de productos</label>
-       <br>
-       <input  type="checkbox" id="permiso7">
-       <label  for="permiso7">Gestión de bodega e inventarios</label>
-       <br>
-       <input  type="checkbox" id="permiso8">
-       <label  for="permiso8">Ingresar compras</label>
-       <br>
-       <input  type="checkbox" id="permiso9">
-       <label  for="permiso9">vender</label>
-       <br>
-       <input  type="checkbox" id="permiso10">
-       <label  for="permiso10">Registro de clientes</label>
-       <br>
-       <input  type="checkbox" id="permiso11">
-       <label  for="permiso11">Administración de clientes</label>
-       <br>
-      
-       <button class="btn btn-success" onclick="guardarTipoDeUsuario()">Guardar</button>
-       <br><br>
-       <div id="sugerencia">
-      </div>
-      <div id="aviso">
-      </div>`;
+        <br>
+        <input  type="checkbox" id="permiso1">
+        <label  for="permiso1">Gestión de proveedores</label>
+        <br>
+        <input  type="checkbox" id="permiso2">
+        <label  for="permiso2">Gestión de usuarios</label>
+        <br>
+        <input  type="checkbox" id="permiso3">
+        <label  for="permiso3">Registrar nuevos usuarios</label>
+        <br>
+        <input  type="checkbox" id="permiso4">
+        <label  for="permiso6">Gestión de productos</label>
+        <br>
+        <input  type="checkbox" id="permiso5">
+        <label  for="permiso8">Gestionar las ventas</label>
+        <br>
+        <input  type="checkbox" id="permiso6">
+        <label  for="permiso9">Hacer ventas</label>
+        <br>
+        <input  type="checkbox" id="permiso7">
+        <label  for="permiso10">Registro de clientes globales</label>
+        <br>
+        <input  type="checkbox" id="permiso8">
+        <label  for="permiso11">Administración de clientes globales</label>
+        <br>
+        <input  type="checkbox" id="permiso9">
+        <label  for="permiso12">Realizar devoluciones</label>
+        <br>
+        <input  type="checkbox" id="permiso10">
+        <label  for="permiso12">Gestión contable</label>
+        <br>
+        <input  type="checkbox" id="permiso11">
+        <label  for="permiso12">Ver el inventario global</label>
+        <br>
+        <input  type="checkbox" id="permiso12">
+        <label  for="permiso12">Registrar clientes propios</label>
+        <br>
+        <input  type="checkbox" id="permiso13">
+        <label  for="permiso12">Calcular nómina</label>
+        <br>
+        <input  type="checkbox" id="permiso14">
+        <label  for="permiso12">Registrar factura de compra</label>
+        <br>
+        <input  type="checkbox" id="permiso15">
+        <label  for="permiso12">Registrar factura de compra</label>
+        <br>
+        <button class="btn btn-success" onclick="guardarTipoDeUsuario()">Guardar</button>
+        <br><br>
+        <div id="sugerencia">
+       </div>
+       <div id="aviso">
+       </div>`;
 
         buscarTU();
 
@@ -520,6 +534,7 @@ function eliminarTipoDeUsuario(Tusuario) {
 
 }
 function listaDeUsuarios() {
+  toggle();
   var feed = document.getElementById("main");
   var login = document.getElementById("login-page");
   login.innerHTML = "";
@@ -713,23 +728,31 @@ function recuperarContraseña(element){
 }
 cargarFunciones();
 function cargarFunciones(){
-  var user = firebase.auth().currentUser;
-  firebase.auth().onAuthStateChanged((user) => {
+  try {
+    var user = firebase.auth().currentUser;
+  
+    firebase.auth().onAuthStateChanged((user) => {
     
-    db.collection("usuarios").where("uid","==",user.uid).get().then((querySnapshot)=>{
-      querySnapshot.forEach((doc)=>{
-          datos=doc.data();
-          tipoDeUsuario=datos.tipoDeUsuario;
-          db.collection("tiposUsuario").where("usuario","==",tipoDeUsuario).get().then((querySnapshot)=>{
-            querySnapshot.forEach((doc)=>{
-              datos2=doc.data();
-              permisos=datos2.permisos;
-              menuInicio(permisos);
-            })
-          });
-          
+      db.collection("usuarios").where("uid","==",user.uid).get().then((querySnapshot)=>{
+        querySnapshot.forEach((doc)=>{
+            datos=doc.data();
+            tipoDeUsuario=datos.tipoDeUsuario;
+            db.collection("tiposUsuario").where("usuario","==",tipoDeUsuario).get().then((querySnapshot)=>{
+              querySnapshot.forEach((doc)=>{
+                datos2=doc.data();
+                permisos=datos2.permisos;
+                menuInicio(permisos);
+              })
+            });
+            
+        })
       })
     })
-  })
+  } catch (error) {
+    
+  }
+  
+  
+  
   
 }

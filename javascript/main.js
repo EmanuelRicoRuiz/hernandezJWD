@@ -1,4 +1,5 @@
 function RegistrarUsuario() {
+    toggle();
     var main = document.getElementById("main");
     main.innerHTML = "";
     main = document.getElementById("login-page");
@@ -29,7 +30,7 @@ function RegistrarUsuario() {
 }
 function gestionarusuario() {
 
-
+    toggle();
     var login = document.getElementById("login-page");
     login.innerHTML = "";
     var main = document.getElementById("main");
@@ -61,42 +62,50 @@ function gestionarusuario() {
             <input class="form-control" type="text" id="NombreUsuario" placeholder="ingrese el tipo de usuario*">
                 <br>
                 <input  type="checkbox" id="permiso1">
-                <label  for="permiso1">especificar tipos de usuarios</label>
+                <label  for="permiso1">Gestión de proveedores</label>
                 <br>
                 <input  type="checkbox" id="permiso2">
-                <label  for="permiso2">registro de nuevos usuarios</label>
+                <label  for="permiso2">Gestión de usuarios</label>
                 <br>
                 <input  type="checkbox" id="permiso3">
-                <label  for="permiso3">Montaje de pedidos</label>
+                <label  for="permiso3">Registrar nuevos usuarios</label>
                 <br>
                 <input  type="checkbox" id="permiso4">
-                <label  for="permiso4">Registro de pagos</label>
+                <label  for="permiso6">Gestión de productos</label>
                 <br>
                 <input  type="checkbox" id="permiso5">
-                <label  for="permiso5">generación de facturas</label>
+                <label  for="permiso8">Gestionar las ventas</label>
                 <br>
                 <input  type="checkbox" id="permiso6">
-                <label  for="permiso6">ingreso de productos</label>
+                <label  for="permiso9">Hacer ventas</label>
                 <br>
                 <input  type="checkbox" id="permiso7">
-                <label  for="permiso7">Gestión de bodega e inventarios</label>
+                <label  for="permiso10">Registro de clientes globales</label>
                 <br>
                 <input  type="checkbox" id="permiso8">
-                <label  for="permiso8">Ingresar compras</label>
+                <label  for="permiso11">Administración de clientes globales</label>
                 <br>
                 <input  type="checkbox" id="permiso9">
-                <label  for="permiso9">vender</label>
-                <br>
-                <input  type="checkbox" id="permiso10">
-                <label  for="permiso10">Registro de clientes</label>
-                <br>
-                <input  type="checkbox" id="permiso11">
-                <label  for="permiso11">Administración de clientes</label>
-                <br>
-                <input  type="checkbox" id="permiso12">
                 <label  for="permiso12">Realizar devoluciones</label>
                 <br>
-               
+                <input  type="checkbox" id="permiso10">
+                <label  for="permiso12">Gestión contable</label>
+                <br>
+                <input  type="checkbox" id="permiso11">
+                <label  for="permiso12">Ver el inventario global</label>
+                <br>
+                <input  type="checkbox" id="permiso12">
+                <label  for="permiso12">Registrar clientes propios</label>
+                <br>
+                <input  type="checkbox" id="permiso13">
+                <label  for="permiso12">Calcular nómina</label>
+                <br>
+                <input  type="checkbox" id="permiso14">
+                <label  for="permiso12">Registrar factura de compra</label>
+                <br>
+                <input  type="checkbox" id="permiso15">
+                <label  for="permiso12">Registrar factura de compra</label>
+                <br>
                 <button class="btn btn-success" onclick="guardarTipoDeUsuario()">Guardar</button>
                 <br><br>
                 <div id="sugerencia">
@@ -719,6 +728,7 @@ function FiltrarG(element) {
     }
 }
 function Proveedores() {
+    toggle()
     var login = document.getElementById("login-page");
     login.innerHTML = "";
     var main = document.getElementById("main");
@@ -837,7 +847,8 @@ function comprasInterface() {
 }
 
 function ingresarProductosInterface() {
-    console.log("entró")
+    toggle();
+   
     var login = document.getElementById("login-page");
     login.innerHTML = "";
     var main = document.getElementById("main");
@@ -1848,12 +1859,12 @@ function ocultarFactura(element) {
     container.innerHTML = "";
 }
 function InventarioGlobal() {
-
+    toggle();
     var login = document.getElementById("login-page");
     login.innerHTML = "";
     var main = document.getElementById("main");
     main.innerHTML = `
-    <br><h3>Lista de productos:</h3><br><div class="overflow-auto"><table id="tabla3" class="table table-striped table-bordered">
+    <br><h3>Lista de productos:</h3><br><div class="delimitado"><table id="tabla3" class="table table-striped table-bordered">
      <thead>
        <tr>
          <th>CODIGO</th>
@@ -1869,7 +1880,7 @@ function InventarioGlobal() {
     var validado = false;
     if (!validado) {
         var aviso1 = document.getElementById("aviso1")
-        aviso1.innerHTML += `<center><div id="aviso"><img width=30 src="img/carga.gif"></div></center>`;
+        aviso1.innerHTML += `<center><div id="aviso"><img width=100 src="img/carga.gif"></div></center>`;
     }
     var tabla3 = document.getElementById("tabla3");
     db.collection("productos")
@@ -1877,21 +1888,43 @@ function InventarioGlobal() {
         .then((querySnapshot) => {
             querySnapshot.forEach((doc) => {
                 datos = doc.data();
-                validado = true;
-                aviso1.innerHTML = "";
-                tabla3.innerHTML +=
-                    `<tr>
-             <td>${datos.CODIGO}</td>
-             <td>${datos.DESCRIPCION}</td>
-             <td>${datos.PRECIO_VENTA}</td>
+        validado = true;
+        var porcentaje = datos.PORCENTAJE;
+        porcentaje = parseInt(porcentaje, 10);
+        porcentaje.toString();
+        porcentaje = porcentaje + "%"
+        var aviso = document.getElementById("aviso");
+        aviso.innerHTML = "";
+        fila=document.createElement("tr");
+        Ccodigo=document.createElement("td");
+        Ccodigo.innerHTML=datos.CODIGO
+        Cdescripcion=document.createElement("td");
+        Cdescripcion.innerHTML=datos.DESCRIPCION;
+        CprecioVenta=document.createElement("td");
+        CprecioVenta.innerHTML=ingresar(datos.PRECIO_VENTA);
+        
+        Cstock=document.createElement("td");
+        Cstock.innerHTML=datos.STOCK;
+        
+        
+       
+        Cacciones=document.createElement("td");
+        Cacciones.innerHTML=`<a herf="#main" class="cursor" id="${doc.id}" onclick="observacion(this)"><img src="img/obs.png" width=30></a><br>
+        <a herf="#main" class="cursor" id="${doc.id}" onclick="mirarObs(this)"><img src="img/ojo.png" width=30></a><br>
+        <a herf="#main" class="cursor" id="${doc.id}" onclick="foto(this)"><img src="img/imagen.png" width=30></a>
+        `
+        fila.appendChild(Ccodigo);
+        fila.appendChild(Cdescripcion);
+        fila.appendChild(CprecioVenta);
+        
+        fila.appendChild(Cstock);
+        
+        fila.appendChild(Cacciones);
+        tabla3.appendChild(fila);
              
-             <td>${datos.STOCK}</td>
-             <td><a herf="#main" class="cursor" id="${doc.id}" onclick="observacion(this)"><img src="img/obs.png" width=30></a></td>
-             <td><a herf="#main" class="cursor" id="${doc.id}" onclick="mirarObs(this)"><img src="img/ojo.png" width=30></a></td>
-             <td><a herf="#main" class="cursor" id="${doc.id}" onclick="foto(this)"><img src="img/imagen.png" width=30></a></td>
             
              
-           </tr>`;
+           
             })
         });
 }
