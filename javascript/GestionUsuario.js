@@ -279,18 +279,19 @@ function buscarTU() {
   var select = document.getElementById("selectT1");
   var encontrado = false;
   var permisos1 = []
-  var ListaPermisos = ["especificar tipos de usuarios",
-        "registro de nuevos usuarios",
-        "Montaje de pedidos",
-        "Registro de pagos",
-        "generación de facturas",
-        "ingreso de productos",
-        "Gestión de bodega e inventarios",
-        "Ingresar compras",
-        "vender",
-        "Registro de clientes",
-        "Administración de clientes",
-        "Realizar devoluciones"
+  var ListaPermisos = ["Gestión de proveedores",
+  "Gestión de usuarios",
+  "Registrar nuevos usuarios",
+  "Gestión de productos",
+  "Gestionar las ventas",
+  "Hacer ventas",
+  "Registro de clientes globales",
+  "Realizar devoluciones",
+  "Gestión contable",
+  "Ver el inventario global",
+  "Registrar clientes propios",
+  "Calcular nómina",
+  "Registrar factura de compra"
 ];
 
   db.collection("tiposUsuario")
@@ -378,10 +379,10 @@ function guardarTipoDeUsuario() {
       permisos[8] = document.getElementById("permiso9").checked;
       permisos[9] = document.getElementById("permiso10").checked;
       permisos[10] = document.getElementById("permiso11").checked;
-      permisos[12] = document.getElementById("permiso12").checked;
-      permisos[13] = document.getElementById("permiso13").checked;
-      permisos[14] = document.getElementById("permiso14").checked;
-      permisos[15] = document.getElementById("permiso15").checked;
+      permisos[11] = document.getElementById("permiso12").checked;
+      permisos[12] = document.getElementById("permiso13").checked;
+      
+      
       var usuario = document.getElementById("NombreUsuario").value;
       var sugerencia = document.getElementById("sugerencia");
       var aviso = document.getElementById("aviso");
@@ -408,41 +409,36 @@ function guardarTipoDeUsuario() {
         <label  for="permiso3">Registrar nuevos usuarios</label>
         <br>
         <input  type="checkbox" id="permiso4">
-        <label  for="permiso6">Gestión de productos</label>
+        <label  for="permiso4">Gestión de productos</label>
         <br>
         <input  type="checkbox" id="permiso5">
-        <label  for="permiso8">Gestionar las ventas</label>
+        <label  for="permiso5">Gestionar las ventas</label>
         <br>
         <input  type="checkbox" id="permiso6">
-        <label  for="permiso9">Hacer ventas</label>
+        <label  for="permiso6">Hacer ventas</label>
         <br>
         <input  type="checkbox" id="permiso7">
-        <label  for="permiso10">Registro de clientes globales</label>
+        <label  for="permiso7">Registro de clientes globales</label>
         <br>
         <input  type="checkbox" id="permiso8">
-        <label  for="permiso11">Administración de clientes globales</label>
+        <label  for="permiso8">Realizar devoluciones</label>
         <br>
         <input  type="checkbox" id="permiso9">
-        <label  for="permiso12">Realizar devoluciones</label>
+        <label  for="permiso9">Gestión contable</label>
         <br>
         <input  type="checkbox" id="permiso10">
-        <label  for="permiso12">Gestión contable</label>
+        <label  for="permiso10">Ver el inventario global</label>
         <br>
         <input  type="checkbox" id="permiso11">
-        <label  for="permiso12">Ver el inventario global</label>
+        <label  for="permiso11">Registrar clientes propios</label>
         <br>
         <input  type="checkbox" id="permiso12">
-        <label  for="permiso12">Registrar clientes propios</label>
-        <br>
-        <input  type="checkbox" id="permiso13">
         <label  for="permiso12">Calcular nómina</label>
         <br>
-        <input  type="checkbox" id="permiso14">
-        <label  for="permiso12">Registrar factura de compra</label>
+        <input  type="checkbox" id="permiso13">
+        <label  for="permiso13">Registrar factura de compra</label>
         <br>
-        <input  type="checkbox" id="permiso15">
-        <label  for="permiso12">Registrar factura de compra</label>
-        <br>
+        
         <button class="btn btn-success" onclick="guardarTipoDeUsuario()">Guardar</button>
         <br><br>
         <div id="sugerencia">

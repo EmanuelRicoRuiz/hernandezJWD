@@ -71,41 +71,36 @@ function gestionarusuario() {
                 <label  for="permiso3">Registrar nuevos usuarios</label>
                 <br>
                 <input  type="checkbox" id="permiso4">
-                <label  for="permiso6">Gestión de productos</label>
+                <label  for="permiso4">Gestión de productos</label>
                 <br>
                 <input  type="checkbox" id="permiso5">
-                <label  for="permiso8">Gestionar las ventas</label>
+                <label  for="permiso5">Gestionar las ventas</label>
                 <br>
                 <input  type="checkbox" id="permiso6">
-                <label  for="permiso9">Hacer ventas</label>
+                <label  for="permiso6">Hacer ventas</label>
                 <br>
                 <input  type="checkbox" id="permiso7">
-                <label  for="permiso10">Registro de clientes globales</label>
+                <label  for="permiso7">Registro de clientes globales</label>
                 <br>
                 <input  type="checkbox" id="permiso8">
-                <label  for="permiso11">Administración de clientes globales</label>
+                <label  for="permiso8">Realizar devoluciones</label>
                 <br>
                 <input  type="checkbox" id="permiso9">
-                <label  for="permiso12">Realizar devoluciones</label>
+                <label  for="permiso9">Gestión contable</label>
                 <br>
                 <input  type="checkbox" id="permiso10">
-                <label  for="permiso12">Gestión contable</label>
+                <label  for="permiso10">Ver el inventario global</label>
                 <br>
                 <input  type="checkbox" id="permiso11">
-                <label  for="permiso12">Ver el inventario global</label>
+                <label  for="permiso11">Registrar clientes propios</label>
                 <br>
                 <input  type="checkbox" id="permiso12">
-                <label  for="permiso12">Registrar clientes propios</label>
-                <br>
-                <input  type="checkbox" id="permiso13">
                 <label  for="permiso12">Calcular nómina</label>
                 <br>
-                <input  type="checkbox" id="permiso14">
-                <label  for="permiso12">Registrar factura de compra</label>
+                <input  type="checkbox" id="permiso13">
+                <label  for="permiso13">Registrar factura de compra</label>
                 <br>
-                <input  type="checkbox" id="permiso15">
-                <label  for="permiso12">Registrar factura de compra</label>
-                <br>
+                
                 <button class="btn btn-success" onclick="guardarTipoDeUsuario()">Guardar</button>
                 <br><br>
                 <div id="sugerencia">
@@ -142,64 +137,74 @@ function menuInicio(permisos) {
         menu.innerHTML = "";
 
     }
-    var ListaPermisos = ["especificar tipos de usuarios",
-        "registro de nuevos usuarios",
-        "Montaje de pedidos",
-        "Registro de pagos",
-        "generación de facturas",
-        "ingreso de productos",
-        "Gestión de bodega e inventarios",
-        "Ingresar compras",
-        "vender",
-        "Registro de clientes",
-        "Administración de clientes",
-        "Realizar devoluciones"
-    ];
-    menu.innerHTML += `<a class="list-group-item list-group-item-action bg-light" onclick="Proveedores()"
-    href="#">Gestión de proveedores</a>`;
+
+
     if (permisos[0]) {
-        menu.innerHTML += `<a class="list-group-item list-group-item-action bg-light" onclick="gestionarusuario()"
-        href="#">Gestión de Usuarios</a>`;
+        menu.innerHTML += `<a class="list-group-item list-group-item-action bg-light" onclick="Proveedores()"
+        href="#">Gestión de proveedores</a>`;
+
     }
     if (permisos[1]) {
-        menu.innerHTML += `<a class="list-group-item list-group-item-action bg-light" onclick="RegistrarUsuario()"
-        href="#">Registrar Usuario</a>`;
-        menu.innerHTML += `<a class="list-group-item list-group-item-action bg-light" onclick="listaDeUsuarios()" 
-                    href="#">Lista de usuarios</a>`;
-    } if (permisos[5]) {
+        menu.innerHTML += `<a class="list-group-item list-group-item-action bg-light" onclick="gestionarusuario()"
+        href="#">Gestión de Usuarios</a>`;
+
+    } if (permisos[3]) {
         menu.innerHTML += `<a class="list-group-item list-group-item-action bg-light" onclick="ingresarProductosInterface()" 
                     href="#">Gestión de productos</a>`;
         menu.innerHTML += `<a class="list-group-item list-group-item-action bg-light" onclick="cargarProductosLista()" 
                     href="#">Lista de productos</a>`;
     } if (permisos[2]) {
+        menu.innerHTML += `<a class="list-group-item list-group-item-action bg-light" onclick="RegistrarUsuario()"
+        href="#">Registrar Usuario</a>`;
+        menu.innerHTML += `<a class="list-group-item list-group-item-action bg-light" onclick="listaDeUsuarios()" 
+                    href="#">Lista de usuarios</a>`;
+    }
+    if (permisos[4]) {
+        menu.innerHTML += `<a class="list-group-item list-group-item-action bg-light" onclick="ventasGenerales()" 
+                    href="#">Ventas generales</a>`;
+        menu.innerHTML += `<a class="list-group-item list-group-item-action bg-light" onclick="pedidosGenerales()" 
+                    href="#">Pedidos generales</a>`;
+    }
+    if (permisos[5]) {
         menu.innerHTML += `<a class="list-group-item list-group-item-action bg-light" onclick="VentasInterface()" 
                     href="#">Pedidos</a>`;
         menu.innerHTML += `<a class="list-group-item list-group-item-action bg-light" onclick="ventas()" 
                     href="#">ventas</a>`;
-        menu.innerHTML += `<a class="list-group-item list-group-item-action bg-light" onclick="contabilidad()" 
-                    href="#">Contabilidad</a>`;
-
-        menu.innerHTML += `<a class="list-group-item list-group-item-action bg-light" onclick="InventarioGlobal()" 
-                    href="#">Inventario Global</a>`;
-        menu.innerHTML += `<a class="list-group-item list-group-item-action bg-light" onclick="ListaPosicionVentas()" 
-                    href="#">Posiciones</a>`;
-        menu.innerHTML += `<a class="list-group-item list-group-item-action bg-light" onclick="misClientes()" 
-                    href="#">mis clientes</a>`;
-        menu.innerHTML += `<a class="list-group-item list-group-item-action bg-light" onclick="CalcularNomina()" 
-                    href="#">Nómina</a>`;
-
-    } if (permisos[7]) {
-        menu.innerHTML += `<a class="list-group-item list-group-item-action bg-light" onclick="comprasInterface()" 
-                    href="#">compras</a>`;
-        menu.innerHTML += `<a class="list-group-item list-group-item-action bg-light" onclick="ventasGenerales()" 
-                    href="#">Ventas generales</a>`;
-    } if (permisos[10]) {
+    }
+    if (permisos[6]) {
         menu.innerHTML += `<a class="list-group-item list-group-item-action bg-light" onclick="cargarClientes()" 
                     href="#">Clientes</a>`;
     }
-    if (permisos[11]) {
+    if (permisos[7]) {
         menu.innerHTML += `<a class="list-group-item list-group-item-action bg-light" onclick="RealizarDevoluciones()" 
-                    href="#">Devoluciones</a>`;
+        href="#">Devoluciones</a>`;
+    }
+    if (permisos[8]) {
+        menu.innerHTML += `<a class="list-group-item list-group-item-action bg-light" onclick="contabilidad()" 
+                    href="#">Contabilidad</a>`;
+        menu.innerHTML += `<a class="list-group-item list-group-item-action bg-light" onclick="ListaPosicionVentas()" 
+                    href="#">Posiciones</a>`;
+    }
+    if (permisos[9]) {
+        menu.innerHTML += `<a class="list-group-item list-group-item-action bg-light" onclick="InventarioGlobal()" 
+                    href="#">Inventario Global</a>`;
+    }
+    if (permisos[10]) {
+        menu.innerHTML += `<a class="list-group-item list-group-item-action bg-light" onclick="misClientes()" 
+                    href="#">mis clientes</a>`;
+    }
+    if (permisos[11]) {
+        menu.innerHTML += `<a class="list-group-item list-group-item-action bg-light" onclick="CalcularNomina()" 
+                    href="#">Nómina</a>`;
+    }
+
+
+
+
+    if (permisos[12]) {
+        menu.innerHTML += `<a class="list-group-item list-group-item-action bg-light" onclick="comprasInterface()" 
+                    href="#">compras</a>`;
+
     }
 
 }
@@ -848,7 +853,7 @@ function comprasInterface() {
 
 function ingresarProductosInterface() {
     toggle();
-   
+
     var login = document.getElementById("login-page");
     login.innerHTML = "";
     var main = document.getElementById("main");
@@ -959,7 +964,7 @@ function cargarLasTabs() {
     tabTwo.innerHTML = `<center><input id="archivoXLSX" class="form-control" type="file" accept=".xls,.xlsx"><br>
     <button class="btn btn-primary" onclick="SubirXLSX()">Subir archivo</button><center>
     <div id="carga"></div>`;
-    
+
 
 }
 function VentasInterface() {
@@ -1888,43 +1893,43 @@ function InventarioGlobal() {
         .then((querySnapshot) => {
             querySnapshot.forEach((doc) => {
                 datos = doc.data();
-        validado = true;
-        var porcentaje = datos.PORCENTAJE;
-        porcentaje = parseInt(porcentaje, 10);
-        porcentaje.toString();
-        porcentaje = porcentaje + "%"
-        var aviso = document.getElementById("aviso");
-        aviso.innerHTML = "";
-        fila=document.createElement("tr");
-        Ccodigo=document.createElement("td");
-        Ccodigo.innerHTML=datos.CODIGO
-        Cdescripcion=document.createElement("td");
-        Cdescripcion.innerHTML=datos.DESCRIPCION;
-        CprecioVenta=document.createElement("td");
-        CprecioVenta.innerHTML=ingresar(datos.PRECIO_VENTA);
-        
-        Cstock=document.createElement("td");
-        Cstock.innerHTML=datos.STOCK;
-        
-        
-       
-        Cacciones=document.createElement("td");
-        Cacciones.innerHTML=`<a herf="#main" class="cursor" id="${doc.id}" onclick="observacion(this)"><img src="img/obs.png" width=30></a><br>
+                validado = true;
+                var porcentaje = datos.PORCENTAJE;
+                porcentaje = parseInt(porcentaje, 10);
+                porcentaje.toString();
+                porcentaje = porcentaje + "%"
+                var aviso = document.getElementById("aviso");
+                aviso.innerHTML = "";
+                fila = document.createElement("tr");
+                Ccodigo = document.createElement("td");
+                Ccodigo.innerHTML = datos.CODIGO
+                Cdescripcion = document.createElement("td");
+                Cdescripcion.innerHTML = datos.DESCRIPCION;
+                CprecioVenta = document.createElement("td");
+                CprecioVenta.innerHTML = ingresar(datos.PRECIO_VENTA);
+
+                Cstock = document.createElement("td");
+                Cstock.innerHTML = datos.STOCK;
+
+
+
+                Cacciones = document.createElement("td");
+                Cacciones.innerHTML = `<a herf="#main" class="cursor" id="${doc.id}" onclick="observacion(this)"><img src="img/obs.png" width=30></a><br>
         <a herf="#main" class="cursor" id="${doc.id}" onclick="mirarObs(this)"><img src="img/ojo.png" width=30></a><br>
         <a herf="#main" class="cursor" id="${doc.id}" onclick="foto(this)"><img src="img/imagen.png" width=30></a>
         `
-        fila.appendChild(Ccodigo);
-        fila.appendChild(Cdescripcion);
-        fila.appendChild(CprecioVenta);
-        
-        fila.appendChild(Cstock);
-        
-        fila.appendChild(Cacciones);
-        tabla3.appendChild(fila);
-             
-            
-             
-           
+                fila.appendChild(Ccodigo);
+                fila.appendChild(Cdescripcion);
+                fila.appendChild(CprecioVenta);
+
+                fila.appendChild(Cstock);
+
+                fila.appendChild(Cacciones);
+                tabla3.appendChild(fila);
+
+
+
+
             })
         });
 }
