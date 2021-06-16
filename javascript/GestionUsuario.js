@@ -619,11 +619,11 @@ function Editar(element) {
         }
         feed.innerHTML += `<div class="col-md-8"><form class="form-gruop">
         <br>
-        <input class="form-control " type="text" id="nombreP" value=${nombreP}>
+        <input class="form-control " type="text" id="nombreP" placeholder="Nombre" value="${nombreP}">
         <br>
-        <input class="form-control " type="text" id="apellidoP" value=${apellidoP}>
+        <input class="form-control " type="text" id="apellidoP" placeholder="apellido" value="${apellidoP}">
         <br>
-        <input class="form-control " type="number" id="apellidoP" value=${cuota}>
+        <input class="form-control " type="number" id="cuota0" placeholder="cuota" value="${cuota}">
         <br>
         <select class="form-control" id="tipoDeUsuario">
           <option value="">seleccione el tipo de usuario</option>
@@ -671,7 +671,9 @@ function GuardarCambios(element){
         nombre=document.getElementById("nombreP").value;
         tipoDeUsuario=document.getElementById("tipoDeUsuario").value;
         uid=datos.uid;
-        cuota=datos.cuota;
+        cuota=document.getElementById("cuota0").value;
+        cuota=parseInt(cuota,10);
+        console.log(nombre, apellido, email, tipoDeUsuario, uid, cuota);
         if(apellido!=""&&nombre!=""&&tipoDeUsuario!=""){
           db.collection("usuarios").doc(uid).set({
             apellido,
