@@ -1863,13 +1863,18 @@ function ocultarFactura(element) {
     var container = document.getElementById(`contenido1${element.id}`);
     container.innerHTML = "";
 }
-function InventarioGlobal() {
-    toggle();
-    var login = document.getElementById("login-page");
-    login.innerHTML = "";
-    var main = document.getElementById("main");
-    main.innerHTML = `
-    <br><h3>Lista de productos:</h3><br><div class="delimitado"><table id="tabla3" class="table table-striped table-bordered">
+const obtenerProductosglobal = () => db.collection("productos").get();
+var productos1;
+async function InventarioGlobal() {
+
+    var tabTree = document.getElementById("main");
+    tabTree.innerHTML = "";
+    tabTree.innerHTML = `
+    <br><br><hr>
+    <input class="form-control" type="text" id="buscador" placeholder="Nombre del producto">
+    <br>
+    <button class="btn btn-info" onclick="filterProductosGlobal()">Buscar</button>
+    <br><h3>Lista de productos:<div id="ValorInventario"></div></h3><br><div class="delimitado"><table class="table table-striped table-bordered">
      <thead>
        <tr>
          <th>CODIGO</th>
@@ -1878,60 +1883,111 @@ function InventarioGlobal() {
          
          <th>STOCK</th>
          
-        
+         
+         <th colspan=4>Acciones</th>
+         <tbody id="tabla3">
+
+         </tbody>
        </tr>
      </thead>
-   </table></div><div id="aviso1"</div>`;
+   </table></div>`;
     var validado = false;
     if (!validado) {
-        var aviso1 = document.getElementById("aviso1")
-        aviso1.innerHTML += `<center><div id="aviso"><img width=100 src="img/carga.gif"></div></center>`;
+        tabTree.innerHTML += `<center><div id="aviso"><img width="100" src="img/carga.gif"></div></center>`;
     }
+
+
+    productos1 = await obtenerProductosglobal();
+    cargarListaglobal();
+
+
+
+}
+function filterProductosGlobal() {
     var tabla3 = document.getElementById("tabla3");
-    db.collection("productos")
-        .get()
-        .then((querySnapshot) => {
-            querySnapshot.forEach((doc) => {
-                datos = doc.data();
-                validado = true;
-                var porcentaje = datos.PORCENTAJE;
-                porcentaje = parseInt(porcentaje, 10);
-                porcentaje.toString();
-                porcentaje = porcentaje + "%"
-                var aviso = document.getElementById("aviso");
-                aviso.innerHTML = "";
-                fila = document.createElement("tr");
-                Ccodigo = document.createElement("td");
-                Ccodigo.innerHTML = datos.CODIGO
-                Cdescripcion = document.createElement("td");
-                Cdescripcion.innerHTML = datos.DESCRIPCION;
-                CprecioVenta = document.createElement("td");
-                CprecioVenta.innerHTML = ingresar(datos.PRECIO_VENTA);
+    tabla3.innerHTML = "";
 
-                Cstock = document.createElement("td");
-                Cstock.innerHTML = datos.STOCK;
+    productos1.forEach((doc) => {
+        datos = doc.data();
+        let nombre = datos.DESCRIPCION.toLowerCase();
+        let texto = document.getElementById("buscador").value.toLowerCase();
+        if (nombre.indexOf(texto) !== -1) {
+
+            validado = true;
 
 
+            var aviso = document.getElementById("aviso");
+            aviso.innerHTML = "";
+            fila = document.createElement("tr");
+            Ccodigo = document.createElement("td");
+            Ccodigo.innerHTML = datos.CODIGO
+            Cdescripcion = document.createElement("td");
+            Cdescripcion.innerHTML = datos.DESCRIPCION;
+            CprecioVenta = document.createElement("td");
+            CprecioVenta.innerHTML = ingresar(datos.PRECIO_VENTA);
 
-                Cacciones = document.createElement("td");
-                Cacciones.innerHTML = `<a herf="#main" class="cursor" id="${doc.id}" onclick="observacion(this)"><img src="img/obs.png" width=30></a><br>
-        <a herf="#main" class="cursor" id="${doc.id}" onclick="mirarObs(this)"><img src="img/ojo.png" width=30></a><br>
-        <a herf="#main" class="cursor" id="${doc.id}" onclick="foto(this)"><img src="img/imagen.png" width=30></a>
-        `
-                fila.appendChild(Ccodigo);
-                fila.appendChild(Cdescripcion);
-                fila.appendChild(CprecioVenta);
-
-                fila.appendChild(Cstock);
-
-                fila.appendChild(Cacciones);
-                tabla3.appendChild(fila);
+            Cstock = document.createElement("td");
+            Cstock.innerHTML = datos.STOCK;
 
 
 
+            Cacciones = document.createElement("td");
+            Cacciones.innerHTML = `<a class="cursor" id="${doc.id}" onclick="observacion(this)"><img src="img/obs.png" width=20 title="Observación"></a><br>
+                <a class="cursor" id="${doc.id}" onclick="mirarObsAdmin(this)"><img src="img/ojo.png" width=20 title="Observaciones"></a><br>
+                `
+            fila.appendChild(Ccodigo);
+            fila.appendChild(Cdescripcion);
+            fila.appendChild(CprecioVenta);
 
-            })
-        });
+            fila.appendChild(Cstock);
+
+
+            fila.appendChild(Cacciones);
+            tabla3.appendChild(fila);
+        }
+
+
+    })
+    
+}
+function cargarListaglobal() {
+    var tabla3 = document.getElementById("tabla3");
+    var suma = [];
+    productos1.forEach((doc) => {
+        validado = true;
+        datos = doc.data();
+
+            var aviso = document.getElementById("aviso");
+            aviso.innerHTML = "";
+            fila = document.createElement("tr");
+            Ccodigo = document.createElement("td");
+            Ccodigo.innerHTML = datos.CODIGO
+            Cdescripcion = document.createElement("td");
+            Cdescripcion.innerHTML = datos.DESCRIPCION;
+            CprecioVenta = document.createElement("td");
+            CprecioVenta.innerHTML = ingresar(datos.PRECIO_VENTA);
+
+            Cstock = document.createElement("td");
+            Cstock.innerHTML = datos.STOCK;
+
+
+
+            Cacciones = document.createElement("td");
+            Cacciones.innerHTML = `<a class="cursor" id="${doc.id}" onclick="observacion(this)"><img src="img/obs.png" width=20 title="Observación"></a><br>
+                <a class="cursor" id="${doc.id}" onclick="mirarObsAdmin(this)"><img src="img/ojo.png" width=20 title="Observaciones"></a><br>
+                `
+            fila.appendChild(Ccodigo);
+            fila.appendChild(Cdescripcion);
+            fila.appendChild(CprecioVenta);
+
+            fila.appendChild(Cstock);
+
+
+            fila.appendChild(Cacciones);
+            tabla3.appendChild(fila);
+
+    })
+    
 }
 function RealizarDevoluciones() {
     var login = document.getElementById("login-page");
