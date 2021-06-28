@@ -235,8 +235,51 @@ function filterProductos(){
     productos1.forEach((doc) => {
         datos = doc.data();
         let nombre = datos.DESCRIPCION.toLowerCase();
+        let codigo =datos.CODIGO.toLowerCase();
         let texto=document.getElementById("buscador").value.toLowerCase();
             if(nombre.indexOf(texto) !== -1){
+                suma.push(datos.STOCK * datos.PRECIO_VENTA);
+                validado = true;
+                var porcentaje = datos.PORCENTAJE;
+                porcentaje = parseInt(porcentaje, 10);
+                porcentaje.toString();
+                porcentaje = porcentaje + "%"
+                var aviso = document.getElementById("aviso");
+                aviso.innerHTML = "";
+                fila = document.createElement("tr");
+                Ccodigo = document.createElement("td");
+                Ccodigo.innerHTML = datos.CODIGO
+                Cdescripcion = document.createElement("td");
+                Cdescripcion.innerHTML = datos.DESCRIPCION;
+                CprecioVenta = document.createElement("td");
+                CprecioVenta.innerHTML = ingresar(datos.PRECIO_VENTA);
+                CprecioCompra = document.createElement("td");
+                CprecioCompra.innerHTML = ingresar(datos.PRECIO_COMPRA);
+                Cstock = document.createElement("td");
+                Cstock.innerHTML = datos.STOCK;
+                Cvolumen = document.createElement("td");
+                Cvolumen.innerHTML = ingresar(datos.VOLUMEN_GANANCIA);
+                Cporcentaje = document.createElement("td");
+                Cporcentaje.innerHTML = porcentaje;
+                Cvalor = document.createElement("td");
+                Cvalor.innerHTML = ingresar(datos.STOCK * datos.PRECIO_VENTA);
+                Cacciones = document.createElement("td");
+                Cacciones.innerHTML = `<a class="cursor" id="${doc.id}" onclick="eliminarProducto(this)"><img src="img/delete.png" width=20 title="Borrar"></a><br>
+                <a class="cursor" id="${datos.CODIGO}" onclick="EditarProducto(this)"><img src="img/editar.png" width=20 title="Editar"></a><br>
+                <a class="cursor" id="${doc.id}" onclick="observacion(this)"><img src="img/obs.png" width=20 title="Observación"></a><br>
+                <a class="cursor" id="${doc.id}" onclick="mirarObsAdmin(this)"><img src="img/ojo.png" width=20 title="Observaciones"></a><br>
+                `
+                fila.appendChild(Ccodigo);
+                fila.appendChild(Cdescripcion);
+                fila.appendChild(CprecioVenta);
+                fila.appendChild(CprecioCompra);
+                fila.appendChild(Cstock);
+                fila.appendChild(Cvolumen);
+                fila.appendChild(Cporcentaje);
+                fila.appendChild(Cvalor);
+                fila.appendChild(Cacciones);
+                tabla3.appendChild(fila); 
+            }else  if(codigo.indexOf(texto) !== -1){
                 suma.push(datos.STOCK * datos.PRECIO_VENTA);
                 validado = true;
                 var porcentaje = datos.PORCENTAJE;
@@ -545,11 +588,44 @@ function EliminarItem(element) {
     var idElemento = element.id;
     for (let i = 0; i < ventaGarray.length; i++) {
         if (idElemento == ventaGarray[i].idProducto) {
-            ventaGarray.splice(i);
+            ventaGarray.splice(i,1);
 
         }
     }
     pintarTabla(ventaGarray);
+}
+const obtenerCompra=(id)=>db.collection("compras").doc(id).get();
+async function eliminarPCompra(element){
+    console.log(element.id);
+    var DocId="";
+    var indice="";
+    var encontrado=false;
+    for (let i=0;i<element.id.length;i++){
+        if(element.id[i]=="/"&&!encontrado){
+            i+=1
+            encontrado=true;
+        }else if(!encontrado){
+            DocId+=element.id[i]
+        }
+        if(encontrado){
+            indice+=element.id[i]
+        }
+    }
+    var doc=await obtenerCompra(DocId);
+    var datos=doc.data();
+    var NumeroFactura=datos.NumeroFactura;
+    var Proveedor=datos.Proveedor;
+    var cantidades=datos.cantidades;
+    var costos=datos.costos;
+    var deuda=datos.deuda;
+    var estado=datos.estado;
+    var fecha1=datos.fecha1;
+    var productos=datos.productos;
+    var valorFactura=datos.valorFactura;
+    cantidades.splice(indice,1);
+    costos.splice(indice,1);
+    fecha1.splice(indice,1);
+    productos.splice(indice,1);
 }
 function CambiarCantidad(element) {
     var cantidad_nueva;

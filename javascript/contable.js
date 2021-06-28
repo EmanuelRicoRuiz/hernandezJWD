@@ -362,7 +362,7 @@ function verProveedor(element) {
         <tr>
             <td>${doc2.id}</td>
             <td>${datos.nombre}</td>
-            <td>$${datos.deuda}</td>
+            <td>$${ingresar(datos.deuda)}</td>
         </tr>
     </table>
     <br><h3>Lista de compras:</h3><br><div class="overflow-auto" id="tabla6"></div>`;
@@ -375,14 +375,14 @@ function verProveedor(element) {
 
                         tabla6.innerHTML +=
                             `<table  class="table table-striped table-bordered" id="${doc.id}"><tr>
-            <td colspan=4>Número de factura:${doc.id}</td>
+            <td colspan=5>Número de factura:${doc.id}</td>
             </tr>
             <tr>
             <th>Codigo producto</th>
             <th>cantidad</th>
             <th>costo</th>
             <th>fecha</th>
-            
+            <th>Acciones</th>
           </tr></table>`;
                         costos = datos.costos;
                         var suma = 0;
@@ -398,11 +398,13 @@ function verProveedor(element) {
                     <td>${datos.cantidades[i]}</td>
                     <td>${datos.costos[i]}</td>
                     <td>${datos.fecha1[i]}</td>
+                    <td><a id="${doc.id}/${i}" onclick="eliminarPCompra(this)"><img src="img/delete.png" width=30 class="cursor"></a>
+                    </td>
                     </tr>`;
                         }
                         tabla7.innerHTML += `
                     <tr>
-                        <td colspan=4 id="tablaSuma">
+                        <td colspan=5 id="tablaSuma">
                             suma de la compra:${suma}<br>
                             valor total de la compra: ${datos.valorFactura}<br>
                             valor restante de la compra: ${datos.deuda}<br>
@@ -414,6 +416,12 @@ function verProveedor(element) {
                 });
         })
     })
+
+}
+async function eliminarProveedor(element){
+    await db.collection("proveedores").doc(element.id).delete();
+    Swal.fire('Borrado!', '', 'success');
+    ListarProveedores();
 
 }
 function abonarDeuda(element) {

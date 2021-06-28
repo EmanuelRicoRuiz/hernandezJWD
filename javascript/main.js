@@ -733,7 +733,7 @@ function FiltrarG(element) {
     }
 }
 function Proveedores() {
-    toggle()
+    
     var login = document.getElementById("login-page");
     login.innerHTML = "";
     var main = document.getElementById("main");
@@ -795,14 +795,16 @@ function ListarProveedores() {
                 <tr>
                     <td>${datos.codigo}</td>
                     <td>${datos.nombre}</td>
-                    <td>$${datos.deuda}</td>
-                    <td><a id="${doc.id}" onclick="verProveedor(this)"><img src="img/ojo.png" width=30 class="cursor"></a></td>
+                    <td>$${ingresar(datos.deuda)}</td>
+                    <td><a id="${doc.id}" onclick="verProveedor(this)"><img src="img/ojo.png" width=30 class="cursor"></a>
+                    <a id="${doc.id}" onclick="eliminarProveedor(this)"><img src="img/delete.png" width=30 class="cursor"></a></td>
                 </tr>    
             
         `
         })
     })
 }
+
 function comprasInterface() {
     var login = document.getElementById("login-page");
     login.innerHTML = "";
