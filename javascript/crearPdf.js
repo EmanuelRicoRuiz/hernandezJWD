@@ -28,9 +28,11 @@ function facturaPdf(element) {
                             querySnapshot.forEach((doc3) => {
                                 function cabecera() {
                                     var datos3 = doc3.data();
-                                    var titulo="Comercializadora los Hernandez G";
-                                    var datosCliente = ` Nombre: ${datos2.RazonSocial}\nNit: ${datos2.nit}\nDirección: ${datos2.Direccion}\nTeléfono: ${datos2.telefono}\nCiudad: ${datos2.ciudad}\nBarrio: ${datos2.barrio}`
-                                    var datosFactura = `Remisión: #${datos.NumeroFactura}\nPago: ${datos.plazo} Días\nFecha: ${datos.fecha}\nFecha de vencimiento: ${datos.fechaVencimiento}\nVendedor: ${datos3.nombre} ${datos3.apellido}`
+                                    doc.setFontType("bold");
+                                    var titulo="COMERCIALIZADORA LOS HERNÁNDEZ G\nNúmero: 6024637";
+                                    doc.setFontType("normal");
+                                    var datosCliente = `Nombre: ${datos2.RazonSocial}\nNit: ${datos2.nit}\nDirección: ${datos2.Direccion}\nTeléfono: ${datos2.telefono}\nCiudad: ${datos2.ciudad}\nBarrio: ${datos2.barrio}`
+                                    var datosFactura = `Remisión: #${datos.NumeroFactura}\nPago: ${datos.plazo} Días\nFecha: ${datos.fecha[0]}/${datos.fecha[1]}/${datos.fecha[2]}\nFecha de vencimiento: ${datos.fechaVencimiento[0]}/${datos.fechaVencimiento[1]}/${datos.fechaVencimiento[2]}\nVendedor: ${datos3.nombre} ${datos3.apellido}`
                                     doc.setFontSize(15);
                                     doc.text(x,y,titulo);
                                     doc.setFontSize(9);
@@ -40,11 +42,13 @@ function facturaPdf(element) {
                                 }
                                 cabecera();
                                 var y1 = y + 50;
-                                var columns = ["item", "Código", "Descripción", "Cantidad", "Unitario","Descuento", "Total"];
+                                var columns = ["ITEM", "REFRENCIA", "DESCRIPCIÓN", "CANTIDAD", "UNITARIO","DESCUENTO", "TOTAL"];
                                 var data = [];
                                 var cantidades = datos.cantidades;
                                 var idProducto = datos.idProducto;
                                 var cont = 0;
+                                var sumaTotal=0;
+                                var sumaDescuentos=0;
                                 for (let i = 0; i < idProducto.length; i++) {
                                     db.collection("productos").get().then((querySnapshot) => {
                                         querySnapshot.forEach((doc4) => {
@@ -53,7 +57,9 @@ function facturaPdf(element) {
                                                 datos4 = doc4.data();
                                                 
                                                 console.log();
-                                                data.push([cont, datos4.CODIGO, datos4.DESCRIPCION, ingresar(cantidades[i]), ingresar(datos4.PRECIO_VENTA),datos.descuentos[i], ingresar(cantidades[i]*datos4.PRECIO_VENTA-(cantidades[i]*datos4.PRECIO_VENTA*(datos.descuentos[i]/100)))]);
+                                                data.push([cont, datos4.CODIGO, datos4.DESCRIPCION, ingresar(cantidades[i]), ingresar(datos4.PRECIO_VENTA),`${datos.descuentos[i]}%`, ingresar(cantidades[i]*datos4.PRECIO_VENTA-(cantidades[i]*datos4.PRECIO_VENTA*(datos.descuentos[i]/100)))]);
+                                                sumaTotal+=cantidades[i]*datos4.PRECIO_VENTA;
+                                                sumaDescuentos+=cantidades[i]*datos4.PRECIO_VENTA*(datos.descuentos[i]/100)
                                                 xp = 10;
                                                 yp = 90;
                                                 xc = 5;
@@ -63,17 +69,23 @@ function facturaPdf(element) {
                                                         doc.setFontType("bold");
                                                         for (let h = 0; h < columns.length; h++) {
                                                             doc.text(xc, yc, columns[h].toString())
+                                                            
                                                             if (h == 2) {
                                                                 xc += 65
                                                             } else {
                                                                 xc += 22
                                                             }
                                                         }
+                                                        
+                                                        
                                                         xc = 5;
                                                         yc = 90;
+                                                        doc.line(xc, yc+2, xc+200, yc+2);
                                                         doc.setFontType("normal");
+                                                        
                                                     }
                                                     columnas();
+                                                    yc+10
                                                     for (let j = 0; j < data.length; j++) {
                                                         aux = data[j]
                                                         xp = 5
@@ -98,8 +110,12 @@ function facturaPdf(element) {
                                                             columnas();
                                                         }
                                                         if (data.length == j + 1) {
-                                                            doc.setFontSize(20);
-                                                            doc.text(150, yp + 15, `Total: ${ingresar(datos.suma)}`)
+                                                            doc.setFontSize(12);
+                                                            doc.line(5, 270, 200, 270);
+                                                            doc.line(35, 280, 100, 280);
+                                                            doc.text(5, 280, `Recibido:`)
+                                                            doc.text(150,275,`Subtotal: ${ingresar(sumaTotal)}\nDescuentos: ${ingresar(sumaDescuentos)}\nTotal: ${ingresar(datos.suma)}`)
+                                                            
                                                         }
                                                     }
 

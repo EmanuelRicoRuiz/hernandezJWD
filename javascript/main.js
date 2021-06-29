@@ -773,6 +773,194 @@ function Proveedores() {
     cargarTabs();
     ListarProveedores();
 }
+function pedidosGenerales(){
+    var main = document.getElementById("main");
+    main.innerHTML = ``;
+    var login = document.getElementById("login-page");
+    login.innerHTML = "";
+    main.innerHTML += `<div class="wrap">
+    <center>
+    <ul class="tabs">
+        <li><a href="#tab1"><span class="fa fa-home"></span><span class="tab-text">Hacer pedido</span></a></li>
+        <li><a href="#tab2"><span class="fa fa-group"></span><span class="tab-text">Lista de pedidos</span></a></li>
+        
+    </ul>
+    </center>
+    <div class="secciones">
+        <article id="tab1">
+
+            <div id="tabOne">
+            <br>
+            <center><h2>Montar pedido</h2></center>
+            <center>
+                <table class="table">
+                    <tr>
+                        <td>
+                            <input list="productos" id="productos1" class="form-control"
+                                placeholder="Nombre del producto">
+                        </td>
+                        <td>
+                            <input list="clientes" id="clientes1" class="form-control"
+                                placeholder="Nombre del cliente">
+                        </td>
+                        <td>
+                            <input id="cantidadVenta" class="form-control " placeholder="cantidad">
+                        </td>
+                        <td>
+                            <input id="Descuento" class="form-control " placeholder="Descuento">
+                        </td>
+                        
+                    </tr>
+                </table>
+                <datalist class="form-select" id="productos"></datalist>
+                <datalist class="form-select" id="clientes"> </datalist>
+                <br><button class="btn btn-primary" onclick="Emitir()">Emitir</button>
+                    <br><br>
+            </center>
+            <div class="overflow-auto">
+                <table>
+                    <h3>Lista de productos:</h3><br>
+                    <table class="table table-striped table-bordered">
+                        <thead>
+                            <tr>
+                                <th>Código del producto</th>
+                                <th>Nombre del producto</th>
+                                <th>stock</th>
+                                <th>precio del producto</th>
+                                <th>Cantidad</th>
+                                <th>Descuento</th>
+                                <th>Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tabla5"></tbody>
+                        <tbody id="tabla4"></tbody>
+                        <tr>
+                            <td colspan=7>
+                                <center>
+                                    <div id="botonGuadar"></div>
+                                </center>
+                            </td>
+                        </tr>
+                        </tbody>
+        
+                    </table>
+                </table>
+            </div>
+        
+            <div id="nombre">
+
+            <div>
+            <br>
+            <div id="permisos">
+            
+            </div>
+            </div>
+        </article>
+        <article id="tab2">
+            <div id="tabTwo">
+            <h3>Lista de pedidos: </h3>
+            </div>
+        </article>
+        
+
+        
+    </div>
+</div>
+  `;
+    var listaProductos = document.getElementById("productos")
+    db.collection("productos").get().then((querySnapshot) => {
+        querySnapshot.forEach((doc) => {
+            var datos = doc.data();
+            var option = document.createElement("option");
+            option.value = datos.CODIGO;
+            option.text = `Nombre: ${datos.DESCRIPCION}\n Cantidad: ${datos.STOCK}`;
+            listaProductos.appendChild(option);
+        });
+    })
+    var clientes = document.getElementById("clientes")
+    var user = firebase.auth().currentUser;
+    user = user.uid
+    db.collection("clientes").get().then((querySnapshot) => {
+        querySnapshot.forEach((doc) => {
+            var datos = doc.data();
+            var option = document.createElement("option");
+            option.value = doc.id;
+            option.text = `Nombre: ${datos.RazonSocial}`;
+            clientes.appendChild(option);
+        });
+    })
+    cargarTabs();
+
+    var tabTwo = document.getElementById("tabTwo");
+    var user = firebase.auth().currentUser;
+    user = user.uid;
+    db.collection("ventas").get().then((querySnapshot) => {
+        querySnapshot.forEach((doc) => {
+            var datos = doc.data();
+            
+                if (!datos.entregado) {
+
+
+                    tabTwo.innerHTML += `<div class="overflow-auto"><table  class="table table-striped table-bordered" id="Cabecera${doc.id}">
+                    <tr>
+                        <th>Número de factura</th>
+                        <th>Cliente</th>
+                        <th>Estado de entrega</th>
+                        <th>Estado de pago</th>
+                        <th>Valor</th>
+                        <th>debe</th>
+                        <th>fecha</th>
+                        <th>Rentabilidad</th>
+                        <th>Plazo</th>
+                       
+                    </tr>
+                </table></div>`;
+
+                    var tablaPedidos = document.getElementById("Cabecera" + doc.id);
+
+
+                    tablaPedidos.innerHTML += `
+                    <tr>
+                        <td>${datos.NumeroFactura}</td>
+                        <td id="${datos.cliente}${datos.NumeroFactura}"></td>
+                        <td>${datos.entregado}</td>
+                        <td>${datos.pagado}</td>
+                        <td>${ingresar(datos.suma)}</td>
+                        <td>${ingresar(datos.debe)}</td>
+                        <td>${datos.fecha[0]}/${datos.fecha[1]}/${datos.fecha[2]}</td>
+                        <td>${datos.rentabilidad.toFixed(2)}%</td>
+                        <td>${datos.plazo} Dias</td>
+                        <td><a class="cursor" id="${doc.id}" onclick="AbonarPedido(this)"><img src="img/abono.png" width=30></a>
+                        <a class="cursor" id="${doc.id}" onclick="cambiarEstado(this)"><img src="img/envio.png" width=30></a>
+                        <a class="cursor" id="${doc.id}" onclick="facturaPdf(this)"><img src="img/factura.png" width=30></a>
+                        <a class="cursor" id="${doc.id}" onclick="contenidoPedido(this)"><img src="img/contenido.png" width=30></a></td>
+                        
+                    </tr>
+                    
+                    <tr>
+                        <td colspan=8   >
+                             <div id="contenido${doc.id}"></div>
+                        </td>
+                    </tr>
+                    
+                        `
+
+                    db.collection("clientes").where("nit", "==", datos.cliente).get().then((querySnapshot) => {
+                        querySnapshot.forEach((doc2) => {
+
+                            var datosCliente = document.getElementById(`${datos.cliente}${datos.NumeroFactura}`);
+                            datos2 = doc2.data();
+                            datosCliente.innerHTML = `${datos2.RazonSocial}`
+                        })
+                    })
+
+
+                }
+            
+
+        })
+    })
+}
 function ListarProveedores() {
     var tabTwo = document.getElementById("tabTwo");
     tabTwo.innerHTML = `
@@ -1128,7 +1316,7 @@ function VentasInterface() {
                         <td>${datos.rentabilidad.toFixed(2)}%</td>
                         <td>${datos.plazo} Dias</td>
                         <td><a class="cursor" id="${doc.id}" onclick="AbonarPedido(this)"><img src="img/abono.png" width=30></a>
-                        <a class="cursor" id="${doc.id}" onclick="cambiarEstado(this)"><img src="img/envio.png" width=30></a>
+                        
                         <a class="cursor" id="${doc.id}" onclick="facturaPdf(this)"><img src="img/factura.png" width=30></a>
                         <a class="cursor" id="${doc.id}" onclick="contenidoPedido(this)"><img src="img/contenido.png" width=30></a></td>
                         

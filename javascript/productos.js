@@ -195,7 +195,7 @@ async function cargarProductosLista() {
     tabTree.innerHTML = "";
     tabTree.innerHTML = `
     <br><br><hr>
-    <input class="form-control" type="text" id="buscador" placeholder="Nombre del producto">
+    <input class="form-control" type="text" id="buscador" placeholder="Nombre o código del producto">
     <br>
     <button class="btn btn-info" onclick="filterProductos()">Buscar</button>
     <br><h3>Lista de productos:<div id="ValorInventario"></div></h3><br><div class="delimitado"><table class="table table-striped table-bordered">
