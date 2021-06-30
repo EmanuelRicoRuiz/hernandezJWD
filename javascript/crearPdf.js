@@ -27,6 +27,7 @@ function facturaPdf(element) {
                         db.collection("usuarios").where("uid", "==", datos.vendedor).get().then(async (querySnapshot) => {
                             querySnapshot.forEach((doc3) => {
                                 function cabecera() {
+                                    y=30;
                                     var datos3 = doc3.data();
                                     doc.setFontType("bold");
                                     var titulo="COMERCIALIZADORA LOS HERNÁNDEZ G\nNúmero: 6024637";
@@ -102,8 +103,13 @@ function facturaPdf(element) {
 
 
                                                         }
-                                                        if (j % 16 == 0 && j != 0) {
-                                                            yp = 90
+                                                        if (j % 32 == 0 && j != 0) {
+                                                            doc.setFontSize(12);
+                                                            doc.line(5, 270, 200, 270);
+                                                            doc.line(35, 280, 100, 280);
+                                                            doc.text(5, 280, `Recibido:`)
+                                                            doc.text(150,275,`Subtotal: ${ingresar(sumaTotal)}\nDescuentos: ${ingresar(sumaDescuentos)}\nTotal: ${ingresar(datos.suma)}`)
+                                                            yp = 95
                                                             doc.addPage();
                                                             
                                                             cabecera();
