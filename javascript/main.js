@@ -1978,17 +1978,19 @@ function contenidoPedido(element) {
                     contenido.innerHTML += `
                         <tr>
                             <th>${datos.idProducto[i]}</th>
-                            <th id="${datos.NumeroFactura}${datos.idProducto[i]}"></th>
+                            <th id="${datos.NumeroFactura}${datos.idProducto[i]}${i}"></th>
                             <th>${datos.cantidades[i]}</th>
                             <th>${datos.descuentos[i]}%</th>
                         </tr>
 
                 `;
+                var cont=0;
                     db.collection("productos").where("CODIGO", "==", datos.idProducto[i]).get().then((querySnapshot) => {
                         querySnapshot.forEach((doc2) => {
-                            var nombre = document.getElementById(datos.NumeroFactura + datos.idProducto[i]);
+                            var nombre = document.getElementById(datos.NumeroFactura + datos.idProducto[i]+cont);
                             datos2 = doc2.data();
                             nombre.innerHTML = `${datos2.DESCRIPCION}`;
+                            cont+=1;
                         })
                     })
                 }

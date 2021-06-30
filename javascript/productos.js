@@ -220,7 +220,7 @@ async function cargarProductosLista() {
     if (!validado) {
         tabTree.innerHTML += `<center><div id="aviso"><img width="100" src="img/carga.gif"></div></center>`;
     }
-    
+
 
     productos1 = await obtenerProductos();
     cargarLista();
@@ -228,101 +228,101 @@ async function cargarProductosLista() {
 
 
 }
-function filterProductos(){
+function filterProductos() {
     var tabla3 = document.getElementById("tabla3");
-    tabla3.innerHTML="";
+    tabla3.innerHTML = "";
     var suma = [];
     productos1.forEach((doc) => {
         datos = doc.data();
         let nombre = datos.DESCRIPCION.toLowerCase();
-        let codigo =datos.CODIGO.toLowerCase();
-        let texto=document.getElementById("buscador").value.toLowerCase();
-            if(nombre.indexOf(texto) !== -1){
-                suma.push(datos.STOCK * datos.PRECIO_VENTA);
-                validado = true;
-                var porcentaje = datos.PORCENTAJE;
-                porcentaje = parseInt(porcentaje, 10);
-                porcentaje.toString();
-                porcentaje = porcentaje + "%"
-                var aviso = document.getElementById("aviso");
-                aviso.innerHTML = "";
-                fila = document.createElement("tr");
-                Ccodigo = document.createElement("td");
-                Ccodigo.innerHTML = datos.CODIGO
-                Cdescripcion = document.createElement("td");
-                Cdescripcion.innerHTML = datos.DESCRIPCION;
-                CprecioVenta = document.createElement("td");
-                CprecioVenta.innerHTML = ingresar(datos.PRECIO_VENTA);
-                CprecioCompra = document.createElement("td");
-                CprecioCompra.innerHTML = ingresar(datos.PRECIO_COMPRA);
-                Cstock = document.createElement("td");
-                Cstock.innerHTML = datos.STOCK;
-                Cvolumen = document.createElement("td");
-                Cvolumen.innerHTML = ingresar(datos.VOLUMEN_GANANCIA);
-                Cporcentaje = document.createElement("td");
-                Cporcentaje.innerHTML = porcentaje;
-                Cvalor = document.createElement("td");
-                Cvalor.innerHTML = ingresar(datos.STOCK * datos.PRECIO_VENTA);
-                Cacciones = document.createElement("td");
-                Cacciones.innerHTML = `<a class="cursor" id="${doc.id}" onclick="eliminarProducto(this)"><img src="img/delete.png" width=20 title="Borrar"></a><br>
+        let codigo = datos.CODIGO.toLowerCase();
+        let texto = document.getElementById("buscador").value.toLowerCase();
+        if (nombre.indexOf(texto) !== -1) {
+            suma.push(datos.STOCK * datos.PRECIO_VENTA);
+            validado = true;
+            var porcentaje = datos.PORCENTAJE;
+            porcentaje = parseInt(porcentaje, 10);
+            porcentaje.toString();
+            porcentaje = porcentaje + "%"
+            var aviso = document.getElementById("aviso");
+            aviso.innerHTML = "";
+            fila = document.createElement("tr");
+            Ccodigo = document.createElement("td");
+            Ccodigo.innerHTML = datos.CODIGO
+            Cdescripcion = document.createElement("td");
+            Cdescripcion.innerHTML = datos.DESCRIPCION;
+            CprecioVenta = document.createElement("td");
+            CprecioVenta.innerHTML = ingresar(datos.PRECIO_VENTA);
+            CprecioCompra = document.createElement("td");
+            CprecioCompra.innerHTML = ingresar(datos.PRECIO_COMPRA);
+            Cstock = document.createElement("td");
+            Cstock.innerHTML = datos.STOCK;
+            Cvolumen = document.createElement("td");
+            Cvolumen.innerHTML = ingresar(datos.VOLUMEN_GANANCIA);
+            Cporcentaje = document.createElement("td");
+            Cporcentaje.innerHTML = porcentaje;
+            Cvalor = document.createElement("td");
+            Cvalor.innerHTML = ingresar(datos.STOCK * datos.PRECIO_VENTA);
+            Cacciones = document.createElement("td");
+            Cacciones.innerHTML = `<a class="cursor" id="${doc.id}" onclick="eliminarProducto(this)"><img src="img/delete.png" width=20 title="Borrar"></a><br>
                 <a class="cursor" id="${datos.CODIGO}" onclick="EditarProducto(this)"><img src="img/editar.png" width=20 title="Editar"></a><br>
                 <a class="cursor" id="${doc.id}" onclick="observacion(this)"><img src="img/obs.png" width=20 title="Observación"></a><br>
                 <a class="cursor" id="${doc.id}" onclick="mirarObsAdmin(this)"><img src="img/ojo.png" width=20 title="Observaciones"></a><br>
                 `
-                fila.appendChild(Ccodigo);
-                fila.appendChild(Cdescripcion);
-                fila.appendChild(CprecioVenta);
-                fila.appendChild(CprecioCompra);
-                fila.appendChild(Cstock);
-                fila.appendChild(Cvolumen);
-                fila.appendChild(Cporcentaje);
-                fila.appendChild(Cvalor);
-                fila.appendChild(Cacciones);
-                tabla3.appendChild(fila); 
-            }else  if(codigo.indexOf(texto) !== -1){
-                suma.push(datos.STOCK * datos.PRECIO_VENTA);
-                validado = true;
-                var porcentaje = datos.PORCENTAJE;
-                porcentaje = parseInt(porcentaje, 10);
-                porcentaje.toString();
-                porcentaje = porcentaje + "%"
-                var aviso = document.getElementById("aviso");
-                aviso.innerHTML = "";
-                fila = document.createElement("tr");
-                Ccodigo = document.createElement("td");
-                Ccodigo.innerHTML = datos.CODIGO
-                Cdescripcion = document.createElement("td");
-                Cdescripcion.innerHTML = datos.DESCRIPCION;
-                CprecioVenta = document.createElement("td");
-                CprecioVenta.innerHTML = ingresar(datos.PRECIO_VENTA);
-                CprecioCompra = document.createElement("td");
-                CprecioCompra.innerHTML = ingresar(datos.PRECIO_COMPRA);
-                Cstock = document.createElement("td");
-                Cstock.innerHTML = datos.STOCK;
-                Cvolumen = document.createElement("td");
-                Cvolumen.innerHTML = ingresar(datos.VOLUMEN_GANANCIA);
-                Cporcentaje = document.createElement("td");
-                Cporcentaje.innerHTML = porcentaje;
-                Cvalor = document.createElement("td");
-                Cvalor.innerHTML = ingresar(datos.STOCK * datos.PRECIO_VENTA);
-                Cacciones = document.createElement("td");
-                Cacciones.innerHTML = `<a class="cursor" id="${doc.id}" onclick="eliminarProducto(this)"><img src="img/delete.png" width=20 title="Borrar"></a><br>
+            fila.appendChild(Ccodigo);
+            fila.appendChild(Cdescripcion);
+            fila.appendChild(CprecioVenta);
+            fila.appendChild(CprecioCompra);
+            fila.appendChild(Cstock);
+            fila.appendChild(Cvolumen);
+            fila.appendChild(Cporcentaje);
+            fila.appendChild(Cvalor);
+            fila.appendChild(Cacciones);
+            tabla3.appendChild(fila);
+        } else if (codigo.indexOf(texto) !== -1) {
+            suma.push(datos.STOCK * datos.PRECIO_VENTA);
+            validado = true;
+            var porcentaje = datos.PORCENTAJE;
+            porcentaje = parseInt(porcentaje, 10);
+            porcentaje.toString();
+            porcentaje = porcentaje + "%"
+            var aviso = document.getElementById("aviso");
+            aviso.innerHTML = "";
+            fila = document.createElement("tr");
+            Ccodigo = document.createElement("td");
+            Ccodigo.innerHTML = datos.CODIGO
+            Cdescripcion = document.createElement("td");
+            Cdescripcion.innerHTML = datos.DESCRIPCION;
+            CprecioVenta = document.createElement("td");
+            CprecioVenta.innerHTML = ingresar(datos.PRECIO_VENTA);
+            CprecioCompra = document.createElement("td");
+            CprecioCompra.innerHTML = ingresar(datos.PRECIO_COMPRA);
+            Cstock = document.createElement("td");
+            Cstock.innerHTML = datos.STOCK;
+            Cvolumen = document.createElement("td");
+            Cvolumen.innerHTML = ingresar(datos.VOLUMEN_GANANCIA);
+            Cporcentaje = document.createElement("td");
+            Cporcentaje.innerHTML = porcentaje;
+            Cvalor = document.createElement("td");
+            Cvalor.innerHTML = ingresar(datos.STOCK * datos.PRECIO_VENTA);
+            Cacciones = document.createElement("td");
+            Cacciones.innerHTML = `<a class="cursor" id="${doc.id}" onclick="eliminarProducto(this)"><img src="img/delete.png" width=20 title="Borrar"></a><br>
                 <a class="cursor" id="${datos.CODIGO}" onclick="EditarProducto(this)"><img src="img/editar.png" width=20 title="Editar"></a><br>
                 <a class="cursor" id="${doc.id}" onclick="observacion(this)"><img src="img/obs.png" width=20 title="Observación"></a><br>
                 <a class="cursor" id="${doc.id}" onclick="mirarObsAdmin(this)"><img src="img/ojo.png" width=20 title="Observaciones"></a><br>
                 `
-                fila.appendChild(Ccodigo);
-                fila.appendChild(Cdescripcion);
-                fila.appendChild(CprecioVenta);
-                fila.appendChild(CprecioCompra);
-                fila.appendChild(Cstock);
-                fila.appendChild(Cvolumen);
-                fila.appendChild(Cporcentaje);
-                fila.appendChild(Cvalor);
-                fila.appendChild(Cacciones);
-                tabla3.appendChild(fila); 
-            }
-        
+            fila.appendChild(Ccodigo);
+            fila.appendChild(Cdescripcion);
+            fila.appendChild(CprecioVenta);
+            fila.appendChild(CprecioCompra);
+            fila.appendChild(Cstock);
+            fila.appendChild(Cvolumen);
+            fila.appendChild(Cporcentaje);
+            fila.appendChild(Cvalor);
+            fila.appendChild(Cacciones);
+            tabla3.appendChild(fila);
+        }
+
 
     })
     var ValorInventario = document.getElementById("ValorInventario");
@@ -588,44 +588,95 @@ function EliminarItem(element) {
     var idElemento = element.id;
     for (let i = 0; i < ventaGarray.length; i++) {
         if (idElemento == ventaGarray[i].idProducto) {
-            ventaGarray.splice(i,1);
+            ventaGarray.splice(i, 1);
 
         }
     }
     pintarTabla(ventaGarray);
 }
-const obtenerCompra=(id)=>db.collection("compras").doc(id).get();
-async function eliminarPCompra(element){
+const obtenerCompra = (id) => db.collection("compras").doc(id).get();
+const obtenerProveedor = (id) => db.collection("proveedores").doc(id).get();
+async function eliminarPCompra(element) {
     console.log(element.id);
-    var DocId="";
-    var indice="";
-    var encontrado=false;
-    for (let i=0;i<element.id.length;i++){
-        if(element.id[i]=="/"&&!encontrado){
-            i+=1
-            encontrado=true;
-        }else if(!encontrado){
-            DocId+=element.id[i]
+    var DocId = "";
+    var indice = "";
+    var encontrado = false;
+    for (let i = 0; i < element.id.length; i++) {
+        if (element.id[i] == "/" && !encontrado) {
+            i += 1
+            encontrado = true;
+        } else if (!encontrado) {
+            DocId += element.id[i]
         }
-        if(encontrado){
-            indice+=element.id[i]
+        if (encontrado) {
+            indice += element.id[i]
         }
     }
-    var doc=await obtenerCompra(DocId);
-    var datos=doc.data();
-    var NumeroFactura=datos.NumeroFactura;
-    var Proveedor=datos.Proveedor;
-    var cantidades=datos.cantidades;
-    var costos=datos.costos;
-    var deuda=datos.deuda;
-    var estado=datos.estado;
-    var fecha1=datos.fecha1;
-    var productos=datos.productos;
-    var valorFactura=datos.valorFactura;
-    cantidades.splice(indice,1);
-    costos.splice(indice,1);
-    fecha1.splice(indice,1);
-    productos.splice(indice,1);
+    var doc = await obtenerCompra(DocId);
+    var datos = doc.data();
+    var NumeroFactura = datos.NumeroFactura;
+    var Proveedor = datos.Proveedor;
+    var cantidades = datos.cantidades;
+    var costos = datos.costos;
+    var deuda = datos.deuda;
+    var estado = datos.estado;
+    var fecha1 = datos.fecha1;
+    var productos = datos.productos;
+    var valorFactura = datos.valorFactura;
+
+    deuda -= cantidades[indice] * costos[indice];
+    valorFactura -= cantidades[indice] * costos[indice];
+    var queryProveedor = await obtenerProveedor(Proveedor);
+    datosP = queryProveedor.data();
+    console.log(Proveedor)
+    var codigo = datosP.codigo;
+    var deudaP = datosP.deuda;
+    var nombre = datosP.nombre;
+    deudaP -= cantidades[indice] * costos[indice];
+    await actualizarProveedor(codigo, deudaP, nombre);
+    cantidades.splice(indice, 1);
+    costos.splice(indice, 1);
+    fecha1.splice(indice, 1);
+    productos.splice(indice, 1);
+    await actualizarCompra(DocId, NumeroFactura,
+        Proveedor,
+        valorFactura,
+        productos,
+        cantidades,
+        costos,
+        fecha1,
+        estado,
+        deuda)
+    verProveedor2(Proveedor);
+}
+function actualizarCompra(DocId, NumeroFactura,
+    Proveedor,
+    valorFactura,
+    productos,
+    cantidades,
+    costos,
+    fecha1,
+    estado,
+    deuda) {
+    db.collection("compras").doc(DocId).set({
+        NumeroFactura,
+        Proveedor,
+        valorFactura,
+        productos,
+        cantidades,
+        costos,
+        fecha1,
+        estado,
+        deuda
+    })
+}
+function actualizarProveedor(codigo, deuda, nombre) {
+    console.log(codigo, deuda, nombre)
+    db.collection("proveedores").doc(codigo).set({
+        codigo,
+        deuda,
+        nombre
+    })
 }
 function CambiarCantidad(element) {
     var cantidad_nueva;
