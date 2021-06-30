@@ -1,4 +1,11 @@
 function facturaPdf(element) {
+    Swal.fire({
+        position: 'top-end',
+        icon: 'info',
+        title: 'Guardando factura...',
+        showConfirmButton: false,
+        
+      })
     var user = firebase.auth().currentUser;
     db.collection("usuarios").where("uid","==",user.uid).get().then((querySnapshot)=>{
         querySnapshot.forEach((doc6)=>{
@@ -126,6 +133,13 @@ function facturaPdf(element) {
                                                     }
 
                                                     doc.save("test.pdf");
+                                                    Swal.fire({
+                                                        position: 'top-end',
+                                                        icon: 'success',
+                                                        title: 'Factura Guardada',
+                                                        showConfirmButton: false,
+                                                        timer: 1500
+                                                      })
                                                 }
                                             }
                                         })
