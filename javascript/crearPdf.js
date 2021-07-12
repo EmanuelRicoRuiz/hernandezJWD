@@ -15,7 +15,7 @@ function facturaPdf(element) {
                     var datos7=doc7.data();
                     if(datos7.permisos[11]){
                         var IdVenta = element.id;
-    var doc = new jsPDF();
+    var doc = jsPDF( 'p', 'mm', [279.4, 216]);
     
     var x = 5;
     var y = 30;
@@ -110,12 +110,13 @@ function facturaPdf(element) {
 
 
                                                         }
-                                                        if (j % 32 == 0 && j != 0) {
+                                                        if (j % 30 == 0 && j != 0) {
                                                             doc.setFontSize(12);
-                                                            doc.line(5, 270, 200, 270);
-                                                            doc.line(35, 280, 100, 280);
-                                                            doc.text(5, 280, `Recibido:`)
-                                                            doc.text(150,275,`Subtotal: ${ingresar(sumaTotal)}\nDescuentos: ${ingresar(sumaDescuentos)}\nTotal: ${ingresar(datos.suma)}`)
+                                                            doc.text(70, 250,"No se aceptan reclamos después de 3 días\nDevolución de mercancía solo con factura")
+                                                            doc.line(5, 260, 200, 260);
+                                                            doc.line(35, 270, 100, 270);
+                                                            doc.text(5, 270, `Recibido:`)
+                                                            doc.text(150,265,`Subtotal: ${ingresar(sumaTotal)}\nDescuentos: ${ingresar(sumaDescuentos)}\nTotal: ${ingresar(datos.suma)}`)
                                                             yp = 95
                                                             doc.addPage();
                                                             
@@ -124,15 +125,16 @@ function facturaPdf(element) {
                                                         }
                                                         if (data.length == j + 1) {
                                                             doc.setFontSize(12);
-                                                            doc.line(5, 270, 200, 270);
-                                                            doc.line(35, 280, 100, 280);
-                                                            doc.text(5, 280, `Recibido:`)
-                                                            doc.text(150,275,`Subtotal: ${ingresar(sumaTotal)}\nDescuentos: ${ingresar(sumaDescuentos)}\nTotal: ${ingresar(datos.suma)}`)
+                                                            doc.text(70, 250,"No se aceptan reclamos después de 3 días\nDevolución de mercancía solo con factura")
+                                                            doc.line(5, 260, 200, 260);
+                                                            doc.line(35, 270, 100, 270);
+                                                            doc.text(5, 270, `Recibido:`)
+                                                            doc.text(150,265,`Subtotal: ${ingresar(sumaTotal)}\nDescuentos: ${ingresar(sumaDescuentos)}\nTotal: ${ingresar(datos.suma)}`)
                                                             
                                                         }
                                                     }
 
-                                                    doc.save("test.pdf");
+                                                    doc.save(`factura${datos.NumeroFactura}.pdf`);
                                                     Swal.fire({
                                                         position: 'top-end',
                                                         icon: 'success',

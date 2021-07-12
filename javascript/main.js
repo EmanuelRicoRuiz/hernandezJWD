@@ -733,7 +733,7 @@ function FiltrarG(element) {
     }
 }
 function Proveedores() {
-    
+
     var login = document.getElementById("login-page");
     login.innerHTML = "";
     var main = document.getElementById("main");
@@ -773,7 +773,7 @@ function Proveedores() {
     cargarTabs();
     ListarProveedores();
 }
-function pedidosGenerales(){
+function pedidosGenerales() {
     var main = document.getElementById("main");
     main.innerHTML = ``;
     var login = document.getElementById("login-page");
@@ -783,7 +783,6 @@ function pedidosGenerales(){
     <ul class="tabs">
         <li><a href="#tab1"><span class="fa fa-home"></span><span class="tab-text">Hacer pedido</span></a></li>
         <li><a href="#tab2"><span class="fa fa-group"></span><span class="tab-text">Lista de pedidos</span></a></li>
-        
     </ul>
     </center>
     <div class="secciones">
@@ -894,14 +893,10 @@ function pedidosGenerales(){
     var tabTwo = document.getElementById("tabTwo");
     var user = firebase.auth().currentUser;
     user = user.uid;
-    db.collection("ventas").get().then((querySnapshot) => {
+    db.collection("ventas").where("entregado", "==", false).get().then((querySnapshot) => {
         querySnapshot.forEach((doc) => {
             var datos = doc.data();
-            
-                if (!datos.entregado) {
-
-
-                    tabTwo.innerHTML += `<div class="overflow-auto"><table  class="table table-striped table-bordered" id="Cabecera${doc.id}">
+            tabTwo.innerHTML += `<div class="overflow-auto"><table  class="table table-striped table-bordered" id="Cabecera${doc.id}">
                     <tr>
                         <th>Número de factura</th>
                         <th>Cliente</th>
@@ -916,10 +911,10 @@ function pedidosGenerales(){
                     </tr>
                 </table></div>`;
 
-                    var tablaPedidos = document.getElementById("Cabecera" + doc.id);
+            var tablaPedidos = document.getElementById("Cabecera" + doc.id);
 
 
-                    tablaPedidos.innerHTML += `
+            tablaPedidos.innerHTML += `
                     <tr>
                         <td>${datos.NumeroFactura}</td>
                         <td id="${datos.cliente}${datos.NumeroFactura}"></td>
@@ -933,8 +928,8 @@ function pedidosGenerales(){
                         <td><a class="cursor" id="${doc.id}" onclick="AbonarPedido(this)"><img src="img/abono.png" width=30></a>
                         <a class="cursor" id="${doc.id}" onclick="cambiarEstado(this)"><img src="img/envio.png" width=30></a>
                         <a class="cursor" id="${doc.id}" onclick="facturaPdf(this)"><img src="img/factura.png" width=30></a>
-                        <a class="cursor" id="${doc.id}" onclick="contenidoPedido(this)"><img src="img/contenido.png" width=30></a></td>
-                        
+                        <a class="cursor" id="${doc.id}" onclick="contenidoPedido(this)"><img src="img/contenido.png" width=30></a>
+                       
                     </tr>
                     
                     <tr>
@@ -945,22 +940,29 @@ function pedidosGenerales(){
                     
                         `
 
-                    db.collection("clientes").where("nit", "==", datos.cliente).get().then((querySnapshot) => {
-                        querySnapshot.forEach((doc2) => {
+            db.collection("clientes").where("nit", "==", datos.cliente).get().then((querySnapshot) => {
+                querySnapshot.forEach((doc2) => {
 
-                            var datosCliente = document.getElementById(`${datos.cliente}${datos.NumeroFactura}`);
-                            datos2 = doc2.data();
-                            datosCliente.innerHTML = `${datos2.RazonSocial}`
-                        })
-                    })
+                    var datosCliente = document.getElementById(`${datos.cliente}${datos.NumeroFactura}`);
+                    datos2 = doc2.data();
+                    datosCliente.innerHTML = `${datos2.RazonSocial}`
+                })
+            })
 
 
-                }
-            
+
+
 
         })
     })
-}
+}/*
+const ventasGet=(id)=>db.collection("venta").doc(id).get();
+async function editarPedido(element){
+    pedidosGenerales();
+    var ventas=await ventasGet(element.id);
+    <a class="cursor" id="${doc.id}" onclick="editarPedido(this)"><img src="img/editar.png" width=30></a></td>
+    pintarTabla()
+}*/
 function ListarProveedores() {
     var tabTwo = document.getElementById("tabTwo");
     tabTwo.innerHTML = `
@@ -1984,13 +1986,13 @@ function contenidoPedido(element) {
                         </tr>
 
                 `;
-                var cont=0;
+                    var cont = 0;
                     db.collection("productos").where("CODIGO", "==", datos.idProducto[i]).get().then((querySnapshot) => {
                         querySnapshot.forEach((doc2) => {
-                            var nombre = document.getElementById(datos.NumeroFactura + datos.idProducto[i]+cont);
+                            var nombre = document.getElementById(datos.NumeroFactura + datos.idProducto[i] + cont);
                             datos2 = doc2.data();
                             nombre.innerHTML = `${datos2.DESCRIPCION}`;
-                            cont+=1;
+                            cont += 1;
                         })
                     })
                 }
@@ -2140,7 +2142,7 @@ function filterProductosGlobal() {
 
 
     })
-    
+
 }
 function cargarListaglobal() {
     var tabla3 = document.getElementById("tabla3");
@@ -2149,37 +2151,37 @@ function cargarListaglobal() {
         validado = true;
         datos = doc.data();
 
-            var aviso = document.getElementById("aviso");
-            aviso.innerHTML = "";
-            fila = document.createElement("tr");
-            Ccodigo = document.createElement("td");
-            Ccodigo.innerHTML = datos.CODIGO
-            Cdescripcion = document.createElement("td");
-            Cdescripcion.innerHTML = datos.DESCRIPCION;
-            CprecioVenta = document.createElement("td");
-            CprecioVenta.innerHTML = ingresar(datos.PRECIO_VENTA);
+        var aviso = document.getElementById("aviso");
+        aviso.innerHTML = "";
+        fila = document.createElement("tr");
+        Ccodigo = document.createElement("td");
+        Ccodigo.innerHTML = datos.CODIGO
+        Cdescripcion = document.createElement("td");
+        Cdescripcion.innerHTML = datos.DESCRIPCION;
+        CprecioVenta = document.createElement("td");
+        CprecioVenta.innerHTML = ingresar(datos.PRECIO_VENTA);
 
-            Cstock = document.createElement("td");
-            Cstock.innerHTML = datos.STOCK;
+        Cstock = document.createElement("td");
+        Cstock.innerHTML = datos.STOCK;
 
 
 
-            Cacciones = document.createElement("td");
-            Cacciones.innerHTML = `<a class="cursor" id="${doc.id}" onclick="observacion(this)"><img src="img/obs.png" width=20 title="Observación"></a><br>
+        Cacciones = document.createElement("td");
+        Cacciones.innerHTML = `<a class="cursor" id="${doc.id}" onclick="observacion(this)"><img src="img/obs.png" width=20 title="Observación"></a><br>
                 <a class="cursor" id="${doc.id}" onclick="mirarObsAdmin(this)"><img src="img/ojo.png" width=20 title="Observaciones"></a><br>
                 `
-            fila.appendChild(Ccodigo);
-            fila.appendChild(Cdescripcion);
-            fila.appendChild(CprecioVenta);
+        fila.appendChild(Ccodigo);
+        fila.appendChild(Cdescripcion);
+        fila.appendChild(CprecioVenta);
 
-            fila.appendChild(Cstock);
+        fila.appendChild(Cstock);
 
 
-            fila.appendChild(Cacciones);
-            tabla3.appendChild(fila);
+        fila.appendChild(Cacciones);
+        tabla3.appendChild(fila);
 
     })
-    
+
 }
 function RealizarDevoluciones() {
     var login = document.getElementById("login-page");
