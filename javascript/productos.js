@@ -328,7 +328,7 @@ function filterProductos() {
     var ValorInventario = document.getElementById("ValorInventario");
     suma1 = 0;
 
-    for (let i = 1; i < suma.length; i++) {
+    for (let i = 0 ; i < suma.length; i++) {
         suma1 += suma[i]
 
     }
@@ -337,10 +337,14 @@ function filterProductos() {
 }
 function cargarLista() {
     var tabla3 = document.getElementById("tabla3");
-    var suma = [];
+    var suma1 = 0;
     productos1.forEach((doc) => {
-        suma.push(datos.STOCK * datos.PRECIO_VENTA);
         datos = doc.data();
+        if((datos.STOCK * datos.PRECIO_VENTA)!=NaN){
+            
+            suma1+=datos.STOCK * datos.PRECIO_VENTA;
+            console.log(suma1)
+        }
         validado = true;
         var porcentaje = datos.PORCENTAJE;
         porcentaje = parseInt(porcentaje, 10);
@@ -384,12 +388,13 @@ function cargarLista() {
 
     })
     var ValorInventario = document.getElementById("ValorInventario");
-    suma1 = 0;
+    /*suma1 = 0;
 
-    for (let i = 1; i < suma.length; i++) {
+    for (let i = 0; i < suma.length; i++) {
+        console.log(suma[i])
         suma1 += suma[i]
 
-    }
+    }*/
     ValorInventario.innerHTML = `<p id="Aviso">Valor global del inventario: ${ingresar(suma1)}<br><hr></p>`
 
 }
