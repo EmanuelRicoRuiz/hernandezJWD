@@ -341,7 +341,6 @@ function cargarLista() {
     productos1.forEach((doc) => {
         datos = doc.data();
         if((datos.STOCK * datos.PRECIO_VENTA)!=NaN){
-            
             suma1+=datos.STOCK * datos.PRECIO_VENTA;
             console.log(suma1)
         }

@@ -103,8 +103,8 @@ function facturaPdf(element) {
                                                                                 aux2 = aux[k];
                                                                                 aux2 = aux2.toString();
                                                                                 var aux3 = "";
-                                                                                if (aux2.length > 32) {
-                                                                                    for (let p = 0; p < 32; p++) {
+                                                                                if (aux2.length > 28) {
+                                                                                    for (let p = 0; p < 28; p++) {
                                                                                         aux3 += aux2[p]
                                                                                     }
                                                                                 } else {
