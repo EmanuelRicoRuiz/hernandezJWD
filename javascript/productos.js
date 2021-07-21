@@ -995,6 +995,13 @@ async function GuardarPedido() {
 const obtenerVenta = (id) => db.collection("ventas").doc(id).get();
 
 async function guadarCambiosPedido(element) {
+    Swal.fire({
+        position: 'top-end',
+        icon: 'info',
+        title: 'Guardando cambios...',
+        showConfirmButton: false,
+
+    })
     var idVenta = element.id;
     var venta = await obtenerVenta(idVenta);
     var datosVenta = venta.data();
@@ -1015,7 +1022,8 @@ async function guadarCambiosPedido(element) {
             var query = await obtenerProducto(idProducto[i]);
             query.forEach(doc => {
                 datos = doc.data();
-                var disponible = datos.STOCK - datos.reservado
+                var reservado=datos.reservado-cantidades[i];
+                var disponible = datos.STOCK - reservado;
                 if (disponible < cantidades[i]) {
                     entrada = false;
                 }
@@ -1028,7 +1036,7 @@ async function guadarCambiosPedido(element) {
                 var query = await obtenerProducto(idProducto[i]);
                 for (let j = 0; j < idProductoVenta.length; j++) {
                     if (idProducto[i] == idProductoVenta[j]) {
-                        query.forEach(doc1 => {
+                        query.forEach(async doc1 => {
                             var datos1 = doc1.data();
                             var CODIGO = datos1.CODIGO;
                             var DESCRIPCION = datos1.DESCRIPCION;
@@ -1040,12 +1048,11 @@ async function guadarCambiosPedido(element) {
                             var registradoPor = datos1.registradoPor;
                             var PORCENTAJE = datos1.PORCENTAJE;
                             var reservado = datos1.reservado;
-                            console.log(reservado);
+                            console.log(DESCRIPCION);
                             reservado -= cantidadesVenta[i];
-                            console.log(reservado);
                             var CATEGORIA = datos1.CATEGORIA;
                             var urlProfile = datos1.urlProfile;
-                            db.collection("productos").doc(doc1.id).set({
+                            await db.collection("productos").doc(doc1.id).set({
                                 CODIGO,
                                 DESCRIPCION,
                                 PRECIO_COMPRA,
@@ -1059,13 +1066,14 @@ async function guadarCambiosPedido(element) {
                                 urlProfile,
                                 reservado
                             })
-                            console.log("primera entrada")
+                            
                         })
                     }
                 }
+            }
+            for (let i = 0; i < idProducto.length; i++) {
                 var query = await obtenerProducto(idProducto[i]);
                 query.forEach(doc => {
-                    console.log("segunda Entrada")
                     var datos = doc.data();
                     suma = suma + (cantidades[i] * (datos.PRECIO_VENTA - (datos.PRECIO_VENTA * (descuentos[i]) / 100)))
                     sumaCosto = sumaCosto + (cantidades[i] * datos.PRECIO_COMPRA)

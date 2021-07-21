@@ -349,7 +349,7 @@ async function editarPedido(element) {
     var id = element.id;
     var main = document.getElementById("main");
     main.innerHTML = `
-    <center><h2>Montar pedido</h2></center>
+    <center><h2>Editar pedido</h2></center>
     <center>
         <table class="table">
             <tr>

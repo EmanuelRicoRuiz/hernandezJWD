@@ -786,7 +786,7 @@ db.collection("productos").get()
       })
     })
   })
-const productoVenta = (id) => db.collection("productos").doc(id).get();
+  const productoVenta = (id) => db.collection("productos").doc(id).get();
 db.collection("ventas").where("entregado", "==", false).get().then((querySnapshot) => {
   querySnapshot.forEach(async (doc) => {
 
@@ -808,7 +808,7 @@ db.collection("ventas").where("entregado", "==", false).get().then((querySnapsho
       var PORCENTAJE = datos2.PORCENTAJE
       var urlProfile = datos2.urlProfile;
       var reservado = datos2.reservado;
-      STOCK-=reservado;
+      reservado+=cantidades[i]
       db.collection("productos").doc(idProducto[i]).set({
         CODIGO,
         DESCRIPCION,
