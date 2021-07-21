@@ -424,9 +424,9 @@ async function editarPedido(element) {
     var idProducto1 = datos.idProducto;
     var Descuento1 = datos.descuentos;
     for (let i = 0; i < datos.idProducto.length; i++) {
-        var cantidad=cantidad1[i];
-        var idProducto=idProducto1[i];
-        var Descuento=Descuento1[i];
+        var cantidad = cantidad1[i];
+        var idProducto = idProducto1[i];
+        var Descuento = Descuento1[i];
         var ventaG = {
             cantidad, idProducto, Descuento
         }
@@ -2175,10 +2175,9 @@ async function InventarioGlobal() {
          <th>CODIGO</th>
          <th>DESCRIPCION</th>
          <th>PRECIO DE VENTA</th>
-         
          <th>STOCK</th>
-         
-         
+         <th>RESERVADO</th>
+         <th>DISPONIBLE</th>
          <th colspan=4>Acciones</th>
          <tbody id="tabla3">
 
@@ -2261,9 +2260,12 @@ function cargarListaglobal() {
         Cdescripcion.innerHTML = datos.DESCRIPCION;
         CprecioVenta = document.createElement("td");
         CprecioVenta.innerHTML = ingresar(datos.PRECIO_VENTA);
-
         Cstock = document.createElement("td");
         Cstock.innerHTML = datos.STOCK;
+        CstockR = document.createElement("td");
+        CstockR.innerHTML = datos.reservado;
+        CstockD = document.createElement("td");
+        CstockD.innerHTML = datos.STOCK - datos.reservado;
 
 
 
@@ -2274,10 +2276,9 @@ function cargarListaglobal() {
         fila.appendChild(Ccodigo);
         fila.appendChild(Cdescripcion);
         fila.appendChild(CprecioVenta);
-
         fila.appendChild(Cstock);
-
-
+        fila.appendChild(CstockR);
+        fila.appendChild(CstockD);
         fila.appendChild(Cacciones);
         tabla3.appendChild(fila);
 
