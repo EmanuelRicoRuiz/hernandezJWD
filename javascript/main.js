@@ -344,10 +344,118 @@ async function misClientes() {
     <br><hr><br></center>`;
 
 }
+const ventaseditar = (id) => db.collection("ventas").doc(id).get();
+async function editarPedido(element) {
+    var id = element.id;
+    var main = document.getElementById("main");
+    main.innerHTML = `
+    <center><h2>Montar pedido</h2></center>
+    <center>
+        <table class="table">
+            <tr>
+                <td>
+                    <input list="productos" id="productos1" class="form-control"
+                        placeholder="Nombre del producto">
+                </td>
+                <td>
+                    <input list="clientes" id="clientes1" class="form-control"
+                        placeholder="Nombre del cliente">
+                </td>
+                <td>
+                    <input id="cantidadVenta" class="form-control " placeholder="cantidad">
+                </td>
+                <td>
+                    <input id="Descuento" class="form-control " placeholder="Descuento">
+                </td>
+                
+            </tr>
+        </table>
+        <datalist class="form-select" id="productos"></datalist>
+        <datalist class="form-select" id="clientes"> </datalist>
+        <br><button class="btn btn-primary" onclick="EmitirEditar()">Emitir</button>
+            <br><br>
+    </center>
+    <div class="overflow-auto">
+        <table>
+            <h3>Lista de productos:</h3><br>
+            <table class="table table-striped table-bordered">
+                <thead>
+                    <tr>
+                        <th>Código del producto</th>
+                        <th>Nombre del producto</th>
+                        <th>Disponible</th>
+                        <th>precio del producto</th>
+                        <th>Cantidad</th>
+                        <th>Descuento</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody id="tabla5"></tbody>
+                <tbody id="tabla4"></tbody>
+                <tr>
+                    <td colspan=7>
+                        <center>
+                            <div id="botonGuadar">
+                                <button id=${id} class="btn btn-success" onclick="guadarCambiosPedido(this)">Guardar cambios</button>
+                            </div>
+                        </center>
+                    </td>
+                </tr>
+                </tbody>
 
+            </table>
+        </table>
+    </div>
+
+    <div id="nombre">
+
+    <div>
+    <br>
+    <div id="permisos">
+    
+    </div>
+    `;
+    var doc = await ventaseditar(id);
+    var datos = doc.data();
+    var clientes1 = document.getElementById("clientes1");
+    clientes1.value = datos.cliente;
+    var ventaGarrayEditar = [];
+    var cantidad1 = datos.cantidades;
+    var idProducto1 = datos.idProducto;
+    var Descuento1 = datos.descuentos;
+    for (let i = 0; i < datos.idProducto.length; i++) {
+        var cantidad=cantidad1[i];
+        var idProducto=idProducto1[i];
+        var Descuento=Descuento1[i];
+        var ventaG = {
+            cantidad, idProducto, Descuento
+        }
+        ventaGarray.push(ventaG);
+    }
+    var listaProductos = document.getElementById("productos")
+    db.collection("productos").get().then((querySnapshot) => {
+        querySnapshot.forEach((doc) => {
+            var datos = doc.data();
+            var option = document.createElement("option");
+            option.value = datos.CODIGO;
+            option.text = `Nombre: ${datos.DESCRIPCION}\n Cantidad: ${datos.STOCK}`;
+            listaProductos.appendChild(option);
+        });
+    })
+    var clientes = document.getElementById("clientes")
+    db.collection("clientes").get().then((querySnapshot) => {
+        querySnapshot.forEach((doc) => {
+            var datos = doc.data();
+            var option = document.createElement("option");
+            option.value = doc.id;
+            option.text = `Nombre: ${datos.RazonSocial}`;
+            clientes.appendChild(option);
+        });
+    })
+    pintartablaEditada(ventaGarray);
+}
 function ventasGenerales() {
     event.preventDefault();
-
     var login = document.getElementById("login-page");
     login.innerHTML = "";
     var main = document.getElementById("main");
@@ -428,7 +536,7 @@ function tabTreeVentasG(mes, año) {
                 var fechaVencimiento = new Date(datos.fechaVencimiento[2], datos.fechaVencimiento[1] - 1, datos.fechaVencimiento[0])
                 var fechaActual = new Date();
 
-                if (fechaActual >= fechaVencimiento && datos.entregado && mes == datos.fecha[1] && año == datos.fecha[2]) {
+                if (fechaActual >= fechaVencimiento && datos.entregado && mes == datos.fecha[1] && año == datos.fecha[2] && datos.debe > 0) {
 
 
                     tabTree.innerHTML += `<div class="overflow-auto"><table  class="table table-striped table-bordered" id="Cabecera2${doc.id}">
@@ -876,9 +984,9 @@ function pedidosGenerales() {
             listaProductos.appendChild(option);
         });
     })
-    var clientes = document.getElementById("clientes")
     var user = firebase.auth().currentUser;
     user = user.uid
+    var clientes = document.getElementById("clientes")
     db.collection("clientes").get().then((querySnapshot) => {
         querySnapshot.forEach((doc) => {
             var datos = doc.data();
@@ -929,7 +1037,7 @@ function pedidosGenerales() {
                         <a class="cursor" id="${doc.id}" onclick="cambiarEstado(this)"><img src="img/envio.png" width=30></a>
                         <a class="cursor" id="${doc.id}" onclick="facturaPdf(this)"><img src="img/factura.png" width=30></a>
                         <a class="cursor" id="${doc.id}" onclick="contenidoPedido(this)"><img src="img/contenido.png" width=30></a>
-                       
+                        <a class="cursor" id="${doc.id}" onclick="editarPedido(this)"><img src="img/editar.png" width=30></a>
                     </tr>
                     
                     <tr>
@@ -955,14 +1063,7 @@ function pedidosGenerales() {
 
         })
     })
-}/*
-const ventasGet=(id)=>db.collection("venta").doc(id).get();
-async function editarPedido(element){
-    pedidosGenerales();
-    var ventas=await ventasGet(element.id);
-    <a class="cursor" id="${doc.id}" onclick="editarPedido(this)"><img src="img/editar.png" width=30></a></td>
-    pintarTabla()
-}*/
+}
 function ListarProveedores() {
     var tabTwo = document.getElementById("tabTwo");
     tabTwo.innerHTML = `

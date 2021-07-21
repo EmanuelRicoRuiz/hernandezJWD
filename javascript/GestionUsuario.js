@@ -38,105 +38,105 @@ function ingreso() {
         <p id="sugerencia">usted no tiene una cuenta</p>
         </div>`;
       }
-      
+
     });
 }
 var uid;
 
 function registrar() {
- 
+
   aviso = document.getElementById("sugerencias");
   aviso.innerHTML = `<div>
           <p id="segerencia">Registrando...</p>
           </div>`;
   var correoAdmin = document.getElementById("correoAdmin").value;
   var contraAdmin = document.getElementById("contraseñaAdmin").value;
-  
+
   firebase.auth().signInWithEmailAndPassword(correoAdmin, contraAdmin)
     .then((user) => {
       var entrada = false;
       var idPrincipal;
-      
+
       idPrincipal = user.user.uid;
-      
+
       db.collection("usuarios").where("uid", "==", idPrincipal)
         .get()
         .then((querySnapshot) => {
           querySnapshot.forEach((doc) => {
             datos = doc.data();
             db.collection("tiposUsuario").where("usuario", "==", datos.tipoDeUsuario)
-        .get()
-        .then((querySnapshot) => {
-          querySnapshot.forEach((doc) => {
-            datos2=doc.data();
-            permisos=datos2.permisos;
-            if (permisos[1]) {
-              var email = document.getElementById('correo').value;
-              var contraseña = document.getElementById('contraseña').value;
-              var confirmarContraseña = document.getElementById('confirmarContra').value;
-              if (contraseña != confirmarContraseña) {
-                aviso = document.getElementById("sugerencias");
-                aviso.innerHTML = `<div>
+              .get()
+              .then((querySnapshot) => {
+                querySnapshot.forEach((doc) => {
+                  datos2 = doc.data();
+                  permisos = datos2.permisos;
+                  if (permisos[1]) {
+                    var email = document.getElementById('correo').value;
+                    var contraseña = document.getElementById('contraseña').value;
+                    var confirmarContraseña = document.getElementById('confirmarContra').value;
+                    if (contraseña != confirmarContraseña) {
+                      aviso = document.getElementById("sugerencias");
+                      aviso.innerHTML = `<div>
           <p id="segerencia">las contraseñas no coinciden</p>
           </div>`;
-              } else {
-                firebase.auth().createUserWithEmailAndPassword(email, contraseña)
-                  .then((user) => {
-                    uid = user.user.uid
-                    aviso = document.getElementById("sugerencias");
-                    aviso.innerHTML = `<div>
+                    } else {
+                      firebase.auth().createUserWithEmailAndPassword(email, contraseña)
+                        .then((user) => {
+                          uid = user.user.uid
+                          aviso = document.getElementById("sugerencias");
+                          aviso.innerHTML = `<div>
           <p id="aviso">registrado exitosamente</p>
           </div>`;
 
-                    firebase.auth().signInWithEmailAndPassword(correoAdmin, contraAdmin)
-                      .then((user) => {
-                        
-                        LlenarDatos(email);
-                      })
+                          firebase.auth().signInWithEmailAndPassword(correoAdmin, contraAdmin)
+                            .then((user) => {
 
-                  })
-                  .catch((error) => {
-                    var errorCode = error.code;
-                    var errorMessage = error.message;
-                   
-                    if (errorCode == "auth/email-already-in-use") {
-                      aviso = document.getElementById("sugerencias");
-                      aviso.innerHTML = `<div>
+                              LlenarDatos(email);
+                            })
+
+                        })
+                        .catch((error) => {
+                          var errorCode = error.code;
+                          var errorMessage = error.message;
+
+                          if (errorCode == "auth/email-already-in-use") {
+                            aviso = document.getElementById("sugerencias");
+                            aviso.innerHTML = `<div>
               <p id="sugerencia">el correo ya está en uso</p>
               </div>`;
-                    }
-                    if (errorCode == "auth/weak-password") {
-                      aviso = document.getElementById("sugerencias");
-                      aviso.innerHTML = `<div>
+                          }
+                          if (errorCode == "auth/weak-password") {
+                            aviso = document.getElementById("sugerencias");
+                            aviso.innerHTML = `<div>
               <p id="sugerencia">la contraseña es demasiado débil</p>
               </div>`;
-                    } if (errorCode == "auth/invalid-email") {
-                      aviso = document.getElementById("sugerencias");
-                      aviso.innerHTML = `<div>
+                          } if (errorCode == "auth/invalid-email") {
+                            aviso = document.getElementById("sugerencias");
+                            aviso.innerHTML = `<div>
               <p id="sugerencia">el correo no es válido</p>
               </div>`;
+                          }
+                        });
                     }
-                  });
-              }
 
 
-            } else {
-              aviso = document.getElementById("sugerencias");
-              aviso.innerHTML = `<div>
+                  } else {
+                    aviso = document.getElementById("sugerencias");
+                    aviso.innerHTML = `<div>
               <p id="sugerencia">este usuario no tiene permitido hacer este tipo de operaciones</p>
               </div>`;
-            }
-          })
-        })
-            
-            
+                  }
+                })
+              })
+
+
           });
         })
     })
     .catch((error) => {
       var errorCode = error.code;
       var errorMessage = error.message;
-      
+
       if (errorCode == "auth/wrong-password") {
         aviso = document.getElementById("sugerencias");
         aviso.innerHTML = `<div>
@@ -153,7 +153,7 @@ function registrar() {
         <p id="sugerencia">correo del gerente inválido</p>
         </div>`;
       }
-      
+
     });
 
 
@@ -221,17 +221,17 @@ function GuardarDatos() {
   var nombre = document.getElementById("Nombre").value;
   var apellido = document.getElementById("Apellido").value;
   var tipoDeUsuario = document.getElementById("tipoDeUsuario").value;
-  var cuota=document.getElementById("cuota").value;
-  cuota=parseInt(cuota,10);
+  var cuota = document.getElementById("cuota").value;
+  cuota = parseInt(cuota, 10);
   if (nombre != "" && apellido != "" && tipoDeUsuario != "" && (uid != "" || uid != undefined)) {
-    
+
     db.collection("usuarios").where("uid", "==", uid)
       .get()
       .then((querySnapshot) => {
         querySnapshot.forEach((doc) => {
           datos = doc.data();
           email = datos.email;
-          
+
           db.collection("usuarios").doc(uid).set({
             nombre,
             apellido,
@@ -280,19 +280,19 @@ function buscarTU() {
   var encontrado = false;
   var permisos1 = []
   var ListaPermisos = ["Gestión de proveedores",
-  "Gestión de usuarios",
-  "Registrar nuevos usuarios",
-  "Gestión de productos",
-  "Gestionar las ventas",
-  "Hacer ventas",
-  "Registro de clientes globales",
-  "Realizar devoluciones",
-  "Gestión contable",
-  "Ver el inventario global",
-  "Registrar clientes propios",
-  "Calcular nómina",
-  "Registrar factura de compra"
-];
+    "Gestión de usuarios",
+    "Registrar nuevos usuarios",
+    "Gestión de productos",
+    "Gestionar las ventas",
+    "Hacer ventas",
+    "Registro de clientes globales",
+    "Realizar devoluciones",
+    "Gestión contable",
+    "Ver el inventario global",
+    "Registrar clientes propios",
+    "Calcular nómina",
+    "Registrar factura de compra"
+  ];
 
   db.collection("tiposUsuario")
     .get()
@@ -309,7 +309,7 @@ function buscarTU() {
         <tr><th><h4>${datos.usuario}</h4></th><td><button id="${doc.id}" onclick="eliminarTipoDeUsuario(this)" class="btn btn-danger">Eliminar</button></td></tr>
         <tr><th>Tarea</th><th>Permiso</th></tr>
         </table>`;
-        
+
         var cont = 0;
         var tabla = document.getElementById(doc.id);
         var imgs = [];
@@ -342,7 +342,7 @@ observador();
 function observador() {
   firebase.auth().onAuthStateChanged((user) => {
     if (user) {
-      
+
     } else {
       try {
         var main = document.getElementById("wrapper");
@@ -351,7 +351,7 @@ function observador() {
         <a href="index.html"><button class="btn btn-danger">Iniciar sesión</button></a>`
           ;
       } catch (E) {
-        
+
       }
 
     }
@@ -381,8 +381,8 @@ function guardarTipoDeUsuario() {
       permisos[10] = document.getElementById("permiso11").checked;
       permisos[11] = document.getElementById("permiso12").checked;
       permisos[12] = document.getElementById("permiso13").checked;
-      
-      
+
+
       var usuario = document.getElementById("NombreUsuario").value;
       var sugerencia = document.getElementById("sugerencia");
       var aviso = document.getElementById("aviso");
@@ -517,7 +517,7 @@ function eliminarTipoDeUsuario(Tusuario) {
   }).then((result) => {
     if (result.isConfirmed) {
       var idTS = Tusuario.id;
-      
+
       db.collection("tiposUsuario").doc(idTS).delete();
 
       Swal.fire(
@@ -552,20 +552,20 @@ function listaDeUsuarios() {
     .then((querySnapshot) => {
       querySnapshot.forEach((doc) => {
         datos = doc.data();
-        if(datos.nombre==undefined){
-          nombreP="no tiene nombre";
-        }else{
-          nombreP=datos.nombre;
+        if (datos.nombre == undefined) {
+          nombreP = "no tiene nombre";
+        } else {
+          nombreP = datos.nombre;
         }
-        if(datos.apellido==undefined){
-          apellidoP="no tiene apellido";
-        }else{
-          apellidoP=datos.apellido;
+        if (datos.apellido == undefined) {
+          apellidoP = "no tiene apellido";
+        } else {
+          apellidoP = datos.apellido;
         }
-        if(datos.tipoDeUsuario==undefined){
-          tipoDeUsuarioP="no tiene tipo de usuario";
-        }else{
-          tipoDeUsuarioP=datos.tipoDeUsuario;
+        if (datos.tipoDeUsuario == undefined) {
+          tipoDeUsuarioP = "no tiene tipo de usuario";
+        } else {
+          tipoDeUsuarioP = datos.tipoDeUsuario;
         }
         tabla2.innerHTML +=
           `<tr>
@@ -581,41 +581,41 @@ function listaDeUsuarios() {
       })
     });
 }
-function EliminarUsuario(element){
-  var userUid=element.id;
+function EliminarUsuario(element) {
+  var userUid = element.id;
   db.collection("usuarios").doc(userUid).delete();
-  
+
   listaDeUsuarios();
 }
 function Editar(element) {
   var feed = document.getElementById("main");
-  
-  
+
+
   db.collection("usuarios").where("uid", "==", element.id)
     .get()
     .then((querySnapshot) => {
       querySnapshot.forEach((doc) => {
         datos = doc.data();
         feed.innerHTML = `<br><h3>Datos del usuario: ${datos.email}</h3>`;
-        if(datos.nombre==undefined){
-          nombreP="";
-        }else{
-          nombreP=datos.nombre;
+        if (datos.nombre == undefined) {
+          nombreP = "";
+        } else {
+          nombreP = datos.nombre;
         }
-        if(datos.apellido==undefined){
-          apellidoP="";
-        }else{
-          apellidoP=datos.apellido;
+        if (datos.apellido == undefined) {
+          apellidoP = "";
+        } else {
+          apellidoP = datos.apellido;
         }
-        if(datos.tipoDeUsuario==undefined){
-          tipoDeUsuarioP="";
-        }else{
-          tipoDeUsuarioP=datos.tipoDeUsuario;
+        if (datos.tipoDeUsuario == undefined) {
+          tipoDeUsuarioP = "";
+        } else {
+          tipoDeUsuarioP = datos.tipoDeUsuario;
         }
-        if(datos.cuota==undefined){
-          cuota=0;
-        }else{
-          cuota=datos.cuota;
+        if (datos.cuota == undefined) {
+          cuota = 0;
+        } else {
+          cuota = datos.cuota;
         }
         feed.innerHTML += `<div class="col-md-8"><form class="form-gruop">
         <br>
@@ -632,8 +632,8 @@ function Editar(element) {
         <button class="btn btn-success" id=${doc.id} onclick="GuardarCambios(this)">Guardar</button>
         </form></div>
         `;
-        var tipoDeUsuario=document.getElementById("tipoDeUsuario");
-         
+        var tipoDeUsuario = document.getElementById("tipoDeUsuario");
+
         db.collection("tiposUsuario")
           .get()
           .then((querySnapshot) => {
@@ -642,15 +642,15 @@ function Editar(element) {
               option.value = doc.id;
               option.text = doc.id;
               tipoDeUsuario.appendChild(option);
-              tipoDeUsuario.value=tipoDeUsuarioP; 
+              tipoDeUsuario.value = tipoDeUsuarioP;
             })
           })
-        
+
       })
     })
 
 }
-function GuardarCambios(element){
+function GuardarCambios(element) {
   event.preventDefault();
   Swal.fire({
     title: '¿Quiere guardar o actualizar el usuario?',
@@ -659,98 +659,170 @@ function GuardarCambios(element){
     confirmButtonText: `Guardar`,
     denyButtonText: `No guardar`,
   }).then((result) => {
-    if(result.isConfirmed){
+    if (result.isConfirmed) {
 
-   
-    var idP=element.id;
-  db.collection("usuarios").where("uid","==",idP).get().then((querySnapshot)=>{
-    querySnapshot.forEach((doc)=>{
-        datos=doc.data();
-        apellido=document.getElementById("apellidoP").value;
-        email=datos.email;
-        nombre=document.getElementById("nombreP").value;
-        tipoDeUsuario=document.getElementById("tipoDeUsuario").value;
-        uid=datos.uid;
-        cuota=document.getElementById("cuota0").value;
-        cuota=parseInt(cuota,10);
-        console.log(nombre, apellido, email, tipoDeUsuario, uid, cuota);
-        if(apellido!=""&&nombre!=""&&tipoDeUsuario!=""){
-          db.collection("usuarios").doc(uid).set({
-            apellido,
-            email,
-            nombre,
-            tipoDeUsuario,
-            uid,
-            cuota
-          })
-          Swal.fire('Guardado!', '', 'success');
-          listaDeUsuarios();
-        }else{
-          Swal.fire({
-            icon: 'error',
-            title: 'datos en blanco',
-            text: 'debes llenar todos los campos',
-            
-          })
-        }
-        
-    })
+
+      var idP = element.id;
+      db.collection("usuarios").where("uid", "==", idP).get().then((querySnapshot) => {
+        querySnapshot.forEach((doc) => {
+          datos = doc.data();
+          apellido = document.getElementById("apellidoP").value;
+          email = datos.email;
+          nombre = document.getElementById("nombreP").value;
+          tipoDeUsuario = document.getElementById("tipoDeUsuario").value;
+          uid = datos.uid;
+          cuota = document.getElementById("cuota0").value;
+          cuota = parseInt(cuota, 10);
+          console.log(nombre, apellido, email, tipoDeUsuario, uid, cuota);
+          if (apellido != "" && nombre != "" && tipoDeUsuario != "") {
+            db.collection("usuarios").doc(uid).set({
+              apellido,
+              email,
+              nombre,
+              tipoDeUsuario,
+              uid,
+              cuota
+            })
+            Swal.fire('Guardado!', '', 'success');
+            listaDeUsuarios();
+          } else {
+            Swal.fire({
+              icon: 'error',
+              title: 'datos en blanco',
+              text: 'debes llenar todos los campos',
+
+            })
+          }
+
+        })
+      })
+    }
   })
-}
-  })
-  
-  
 
-  
+
+
+
 }
 
-function recuperarContraseña(element){
-  var id=element.id;
-  db.collection("usuarios").where("uid","==",id).get().then((querySnapshot)=>{
-    querySnapshot.forEach((doc)=>{
-      datos=doc.data();
-      correoUsuario=datos.email;
-      firebase.auth().sendPasswordResetEmail(correoUsuario).then(function() {
+function recuperarContraseña(element) {
+  var id = element.id;
+  db.collection("usuarios").where("uid", "==", id).get().then((querySnapshot) => {
+    querySnapshot.forEach((doc) => {
+      datos = doc.data();
+      correoUsuario = datos.email;
+      firebase.auth().sendPasswordResetEmail(correoUsuario).then(function () {
         Swal.fire('correo enviado correctamente!', '', 'success');
-      }).catch(function(error) {
+      }).catch(function (error) {
         Swal.fire({
           icon: 'error',
           title: 'datos en blanco',
           text: 'ha ocurrido algún error.',
-          
+
         })
       });
     })
   })
-  
+
 }
 cargarFunciones();
-function cargarFunciones(){
+function cargarFunciones() {
   try {
     var user = firebase.auth().currentUser;
-  
+
     firebase.auth().onAuthStateChanged((user) => {
-    
-      db.collection("usuarios").where("uid","==",user.uid).get().then((querySnapshot)=>{
-        querySnapshot.forEach((doc)=>{
-            datos=doc.data();
-            tipoDeUsuario=datos.tipoDeUsuario;
-            db.collection("tiposUsuario").where("usuario","==",tipoDeUsuario).get().then((querySnapshot)=>{
-              querySnapshot.forEach((doc)=>{
-                datos2=doc.data();
-                permisos=datos2.permisos;
-                menuInicio(permisos);
-              })
-            });
-            
+
+      db.collection("usuarios").where("uid", "==", user.uid).get().then((querySnapshot) => {
+        querySnapshot.forEach((doc) => {
+          datos = doc.data();
+          tipoDeUsuario = datos.tipoDeUsuario;
+          db.collection("tiposUsuario").where("usuario", "==", tipoDeUsuario).get().then((querySnapshot) => {
+            querySnapshot.forEach((doc) => {
+              datos2 = doc.data();
+              permisos = datos2.permisos;
+              menuInicio(permisos);
+            })
+          });
+
         })
       })
     })
   } catch (error) {
-    
+
   }
-  
-  
-  
-  
-}
+
+
+
+
+}/*
+db.collection("productos").get()
+  .then((querySnapshot) => {
+    querySnapshot.forEach((doc) => {
+      var datos = doc.data();
+      var CODIGO = datos.CODIGO;
+      var DESCRIPCION = datos.DESCRIPCION;
+      var PRECIO_COMPRA = datos.PRECIO_COMPRA;
+      var PRECIO_VENTA = datos.PRECIO_VENTA;
+      var STOCK = datos.STOCK;
+      var CATEGORIA = datos.CATEGORIA;
+      var LIMITE_INFERIOR = datos.LIMITE_INFERIOR;
+      var registradoPor = datos.registradoPor;
+      var VOLUMEN_GANANCIA = datos.VOLUMEN_GANANCIA;
+      var PORCENTAJE = datos.PORCENTAJE
+      var urlProfile = datos.urlProfile;
+      var reservado = 0;
+      db.collection("productos").doc(doc.id).set({
+        CODIGO,
+        DESCRIPCION,
+        PRECIO_COMPRA,
+        PRECIO_VENTA,
+        STOCK,
+        CATEGORIA,
+        LIMITE_INFERIOR,
+        registradoPor,
+        VOLUMEN_GANANCIA,
+        PORCENTAJE,
+        urlProfile,
+        reservado
+      })
+    })
+  })
+const productoVenta = (id) => db.collection("productos").doc(id).get();
+db.collection("ventas").where("entregado", "==", false).get().then((querySnapshot) => {
+  querySnapshot.forEach(async (doc) => {
+
+    var datos = doc.data();
+    var idProducto = datos.idProducto;
+    var cantidades = datos.cantidades;
+    for (let i = 0; i < idProducto.length; i++) {
+      var producto = await productoVenta(idProducto[i]);
+      var datos2 = producto.data();
+      var CODIGO = datos2.CODIGO;
+      var DESCRIPCION = datos2.DESCRIPCION;
+      var PRECIO_COMPRA = datos2.PRECIO_COMPRA;
+      var PRECIO_VENTA = datos2.PRECIO_VENTA;
+      var STOCK = datos2.STOCK;
+      var CATEGORIA = datos2.CATEGORIA;
+      var LIMITE_INFERIOR = datos2.LIMITE_INFERIOR;
+      var registradoPor = datos2.registradoPor;
+      var VOLUMEN_GANANCIA = datos2.VOLUMEN_GANANCIA;
+      var PORCENTAJE = datos2.PORCENTAJE
+      var urlProfile = datos2.urlProfile;
+      var reservado = datos2.reservado;
+      STOCK-=reservado;
+      db.collection("productos").doc(idProducto[i]).set({
+        CODIGO,
+        DESCRIPCION,
+        PRECIO_COMPRA,
+        PRECIO_VENTA,
+        STOCK,
+        CATEGORIA,
+        LIMITE_INFERIOR,
+        registradoPor,
+        VOLUMEN_GANANCIA,
+        PORCENTAJE,
+        urlProfile,
+        reservado
+      })
+    }
+  })
+})*/
