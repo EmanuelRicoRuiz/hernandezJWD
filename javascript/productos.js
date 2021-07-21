@@ -260,6 +260,10 @@ function filterProductos() {
             CprecioCompra.innerHTML = ingresar(datos.PRECIO_COMPRA);
             Cstock = document.createElement("td");
             Cstock.innerHTML = datos.STOCK;
+            CstockR = document.createElement("td");
+            CstockR.innerHTML = datos.reservado;
+            CstockD = document.createElement("td");
+            CstockD.innerHTML = datos.STOCK - datos.reservado;
             Cvolumen = document.createElement("td");
             Cvolumen.innerHTML = ingresar(datos.VOLUMEN_GANANCIA);
             Cporcentaje = document.createElement("td");
@@ -277,6 +281,8 @@ function filterProductos() {
             fila.appendChild(CprecioVenta);
             fila.appendChild(CprecioCompra);
             fila.appendChild(Cstock);
+            fila.appendChild(CstockR);
+            fila.appendChild(CstockD);
             fila.appendChild(Cvolumen);
             fila.appendChild(Cporcentaje);
             fila.appendChild(Cvalor);
@@ -302,6 +308,10 @@ function filterProductos() {
             CprecioCompra.innerHTML = ingresar(datos.PRECIO_COMPRA);
             Cstock = document.createElement("td");
             Cstock.innerHTML = datos.STOCK;
+            CstockR = document.createElement("td");
+            CstockR.innerHTML = datos.reservado;
+            CstockD = document.createElement("td");
+            CstockD.innerHTML = datos.STOCK - datos.reservado;
             Cvolumen = document.createElement("td");
             Cvolumen.innerHTML = ingresar(datos.VOLUMEN_GANANCIA);
             Cporcentaje = document.createElement("td");
@@ -319,6 +329,8 @@ function filterProductos() {
             fila.appendChild(CprecioVenta);
             fila.appendChild(CprecioCompra);
             fila.appendChild(Cstock);
+            fila.appendChild(CstockR);
+            fila.appendChild(CstockD);
             fila.appendChild(Cvolumen);
             fila.appendChild(Cporcentaje);
             fila.appendChild(Cvalor);
@@ -345,7 +357,7 @@ function cargarLista() {
         datos = doc.data();
         if ((datos.STOCK * datos.PRECIO_VENTA) != NaN) {
             suma1 += datos.STOCK * datos.PRECIO_VENTA;
-            console.log(suma1)
+
         }
         validado = true;
         var porcentaje = datos.PORCENTAJE;
@@ -396,13 +408,7 @@ function cargarLista() {
 
     })
     var ValorInventario = document.getElementById("ValorInventario");
-    /*suma1 = 0;
 
-    for (let i = 0; i < suma.length; i++) {
-        console.log(suma[i])
-        suma1 += suma[i]
-
-    }*/
     ValorInventario.innerHTML = `<p id="Aviso">Valor global del inventario: ${ingresar(suma1)}<br><hr></p>`
 
 }
@@ -684,7 +690,7 @@ function EliminarItemEditado(element) {
 const obtenerCompra = (id) => db.collection("compras").doc(id).get();
 const obtenerProveedor = (id) => db.collection("proveedores").doc(id).get();
 async function eliminarPCompra(element) {
-    console.log(element.id);
+
     var DocId = "";
     var indice = "";
     var encontrado = false;
@@ -715,7 +721,7 @@ async function eliminarPCompra(element) {
     valorFactura -= cantidades[indice] * costos[indice];
     var queryProveedor = await obtenerProveedor(Proveedor);
     datosP = queryProveedor.data();
-    console.log(Proveedor)
+
     var codigo = datosP.codigo;
     var deudaP = datosP.deuda;
     var nombre = datosP.nombre;
@@ -758,7 +764,7 @@ function actualizarCompra(DocId, NumeroFactura,
     })
 }
 function actualizarProveedor(codigo, deuda, nombre) {
-    console.log(codigo, deuda, nombre)
+
     db.collection("proveedores").doc(codigo).set({
         codigo,
         deuda,
@@ -1022,7 +1028,7 @@ async function guadarCambiosPedido(element) {
             var query = await obtenerProducto(idProducto[i]);
             query.forEach(doc => {
                 datos = doc.data();
-                var reservado=datos.reservado-cantidades[i];
+                var reservado = datos.reservado - cantidades[i];
                 var disponible = datos.STOCK - reservado;
                 if (disponible < cantidades[i]) {
                     entrada = false;
@@ -1048,7 +1054,7 @@ async function guadarCambiosPedido(element) {
                             var registradoPor = datos1.registradoPor;
                             var PORCENTAJE = datos1.PORCENTAJE;
                             var reservado = datos1.reservado;
-                            console.log(DESCRIPCION);
+
                             reservado -= cantidadesVenta[i];
                             var CATEGORIA = datos1.CATEGORIA;
                             var urlProfile = datos1.urlProfile;
@@ -1066,7 +1072,7 @@ async function guadarCambiosPedido(element) {
                                 urlProfile,
                                 reservado
                             })
-                            
+
                         })
                     }
                 }
@@ -1424,7 +1430,7 @@ function AbonarPedido(element) {
         }
     })
 }
-const obtenerProducto1=(id)=>db.collection("productos").doc(id).get();
+const obtenerProducto1 = (id) => db.collection("productos").doc(id).get();
 async function cambiarEstado(element) {
     var Ventaid = element.id;
 
@@ -1437,7 +1443,7 @@ async function cambiarEstado(element) {
                 var idProducto = datos.idProducto;
                 for (let i = 0; i < idProducto.length; i++) {
                     var producto = await obtenerProducto1(idProducto[i])
-                    console.log(producto.data())
+
                     var datos2 = producto.data();
                     var CODIGO = datos2.CODIGO;
                     var DESCRIPCION = datos2.DESCRIPCION;
@@ -1450,8 +1456,8 @@ async function cambiarEstado(element) {
                     var PORCENTAJE = datos2.PORCENTAJE;
                     var CATEGORIA = datos2.CATEGORIA;
                     var urlProfile = datos2.urlProfile;
-                    var reservado=datos2.reservado;
-                    reservado-=cantidades[i]
+                    var reservado = datos2.reservado;
+                    reservado -= cantidades[i]
                     STOCK = STOCK - cantidades[i];
                     db.collection("productos").doc(producto.id).set({
                         CODIGO,
@@ -1500,7 +1506,7 @@ async function cambiarEstado(element) {
         })
     })
     Swal.fire('Entregado!', '', 'success');
-    
+
 }
 function observacion(element) {
     Swal.fire({

@@ -673,7 +673,7 @@ function GuardarCambios(element) {
           uid = datos.uid;
           cuota = document.getElementById("cuota0").value;
           cuota = parseInt(cuota, 10);
-          console.log(nombre, apellido, email, tipoDeUsuario, uid, cuota);
+          
           if (apellido != "" && nombre != "" && tipoDeUsuario != "") {
             db.collection("usuarios").doc(uid).set({
               apellido,

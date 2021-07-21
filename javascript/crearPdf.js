@@ -9,12 +9,12 @@ function facturaPdf(element) {
     var user = firebase.auth().currentUser;
     db.collection("usuarios").where("uid", "==", user.uid).get().then((querySnapshot) => {
         querySnapshot.forEach((doc6) => {
-            console.log("entró")
+           
             var datos6 = doc6.data();
             db.collection("tiposUsuario").where("usuario", "==", datos6.tipoDeUsuario).get().then((querySnapshot) => {
                 querySnapshot.forEach((doc7) => {
                     var datos7 = doc7.data();
-                    console.log("entró")
+                    
                     if (datos7.permisos[11]) {
                         var IdVenta = element.id;
                         var doc = jsPDF('p', 'mm', [279.4, 216]);
@@ -36,7 +36,7 @@ function facturaPdf(element) {
                                             db.collection("usuarios").where("uid", "==", datos.vendedor).get().then(async (querySnapshot) => {
                                                 querySnapshot.forEach((doc3) => {
                                                     function cabecera() {
-                                                        console.log("entró")
+                                                       
                                                         y = 30;
                                                         var datos3 = doc3.data();
                                                         doc.setFontType("bold");
@@ -64,11 +64,11 @@ function facturaPdf(element) {
                                                         db.collection("productos").get().then((querySnapshot) => {
                                                             querySnapshot.forEach((doc4) => {
                                                                 if (doc4.id == idProducto[i]) {
-                                                                    console.log("entró")
+                                                                   
                                                                    
                                                                     datos4 = doc4.data();
 
-                                                                    console.log();
+                                                                   
                                                                     data.push([datos4.CODIGO, datos4.DESCRIPCION, ingresar(cantidades[i]), ingresar(datos4.PRECIO_VENTA), `${datos.descuentos[i]}%`, ingresar(cantidades[i] * datos4.PRECIO_VENTA - (cantidades[i] * datos4.PRECIO_VENTA * (datos.descuentos[i] / 100)))]);
                                                                     sumaTotal += cantidades[i] * datos4.PRECIO_VENTA;
                                                                     sumaDescuentos += cantidades[i] * datos4.PRECIO_VENTA * (datos.descuentos[i] / 100)
@@ -148,7 +148,7 @@ function facturaPdf(element) {
 
                                                                             }
                                                                         }
-                                                                        console.log("entró")
+                                                                       
                                                                         doc.save(`factura${datos.NumeroFactura}.pdf`);
                                                                         Swal.fire({
                                                                             position: 'top-end',
