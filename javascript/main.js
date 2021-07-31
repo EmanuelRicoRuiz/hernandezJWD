@@ -1001,6 +1001,10 @@ function pedidosGenerales() {
     var tabTwo = document.getElementById("tabTwo");
     var user = firebase.auth().currentUser;
     user = user.uid;
+    listaPedidos1();
+   
+}
+function listaPedidos1(){
     db.collection("ventas").where("entregado", "==", false).get().then((querySnapshot) => {
         querySnapshot.forEach((doc) => {
             var datos = doc.data();

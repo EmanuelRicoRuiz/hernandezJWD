@@ -569,48 +569,61 @@ function EmitirEditar() {
 
 
 }
-
-function Emitir() {
+const obtenerProducto2 = (id) => db.collection("productos").doc(id).get();
+async function Emitir() {
     var cantidad = document.getElementById("cantidadVenta").value;
     var idProducto = document.getElementById("productos1").value;
     var Descuento = document.getElementById("Descuento").value;
-    if (cantidad != "") {
-        if (idProducto != "") {
-            if (Descuento != "") {
-                cantidad = parseInt(cantidad, 10);
-                Descuento = parseFloat(Descuento, 10);
-                var ventaG = {
-                    cantidad, idProducto, Descuento
-                }
-                ventaGarray.push(ventaG);
+    var producto = await obtenerProducto2(idProducto);
+    console.log(producto.data());
+    if (producto.data()!=undefined) {
+        if (cantidad != "") {
+            if (idProducto != "") {
+                if (Descuento != "") {
+                    cantidad = parseInt(cantidad, 10);
+                    Descuento = parseFloat(Descuento, 10);
+                    var ventaG = {
+                        cantidad, idProducto, Descuento
+                    }
+                    ventaGarray.push(ventaG);
 
-                pintarTabla(ventaGarray);
+                    pintarTabla(ventaGarray);
+                    console.log(ventaGarray);
+                } else {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Especificar descuento',
+                        text: 'Si el producto no tiene descuento, debe colocar 0',
+
+                    })
+
+                }
             } else {
                 Swal.fire({
                     icon: 'error',
-                    title: 'Especificar descuento',
-                    text: 'Si el producto no tiene descuento, debe colocar 0',
+                    title: 'Producto inválido',
+                    text: 'debe especificar el código del producto',
 
                 })
-
             }
         } else {
             Swal.fire({
                 icon: 'error',
-                title: 'Producto inválido',
-                text: 'debe especificar el código del producto',
+                title: 'Cantidades inválidas',
+                text: 'Debe especificar las cantidades a vender',
 
             })
+
         }
-    } else {
+    }else{
         Swal.fire({
             icon: 'error',
-            title: 'Cantidades inválidas',
-            text: 'Debe especificar las cantidades a vender',
+            title: 'El producto no existe',
+            text: 'Debe especificar un código de producto existente...',
 
         })
-
     }
+
 
 
 }
@@ -1431,81 +1444,95 @@ function AbonarPedido(element) {
     })
 }
 const obtenerProducto1 = (id) => db.collection("productos").doc(id).get();
+const obtenerVenta1 = (id) => db.collection("ventas").doc(id).get();
 async function cambiarEstado(element) {
+
     var Ventaid = element.id;
 
-    db.collection("ventas").get().then((querySnapshot) => {
-        querySnapshot.forEach(async (doc) => {
-            if (doc.id == Ventaid) {
-                var datos = doc.data();
-                var cantidades = datos.cantidades;
+    var doc = await obtenerVenta1(Ventaid);
+    var datos = doc.data();
+    if (!datos.entregado) {
+        Swal.fire({
+            icon: 'info',
+            title: 'Entregando...',
+            showConfirmButton: false,
 
-                var idProducto = datos.idProducto;
-                for (let i = 0; i < idProducto.length; i++) {
-                    var producto = await obtenerProducto1(idProducto[i])
-
-                    var datos2 = producto.data();
-                    var CODIGO = datos2.CODIGO;
-                    var DESCRIPCION = datos2.DESCRIPCION;
-                    var STOCK = datos2.STOCK;
-                    var LIMITE_INFERIOR = datos2.LIMITE_INFERIOR;
-                    var PRECIO_VENTA = datos2.PRECIO_VENTA;
-                    var VOLUMEN_GANANCIA = datos2.VOLUMEN_GANANCIA;
-                    var PRECIO_COMPRA = datos2.PRECIO_COMPRA;
-                    var registradoPor = datos2.registradoPor;
-                    var PORCENTAJE = datos2.PORCENTAJE;
-                    var CATEGORIA = datos2.CATEGORIA;
-                    var urlProfile = datos2.urlProfile;
-                    var reservado = datos2.reservado;
-                    reservado -= cantidades[i]
-                    STOCK = STOCK - cantidades[i];
-                    db.collection("productos").doc(producto.id).set({
-                        CODIGO,
-                        DESCRIPCION,
-                        PRECIO_COMPRA,
-                        PRECIO_VENTA,
-                        STOCK,
-                        CATEGORIA,
-                        LIMITE_INFERIOR,
-                        registradoPor,
-                        VOLUMEN_GANANCIA,
-                        PORCENTAJE,
-                        urlProfile,
-                        reservado
-                    })
-                }
-                var entregado = true;
-                var vendedor = datos.vendedor;
-                var fecha = datos.fecha;
-                var pagado = datos.pagado;
-                var suma = datos.suma;
-                var debe = datos.debe;
-                var cliente = datos.cliente;
-                var NumeroFactura = datos.NumeroFactura
-                var descuentos = datos.descuentos;
-                var rentabilidad = datos.rentabilidad
-                var plazo = datos.plazo;
-                var fechaVencimiento = datos.fechaVencimiento;
-                db.collection("ventas").doc(Ventaid).set({
-                    cantidades,
-                    idProducto,
-                    entregado,
-                    vendedor,
-                    fecha,
-                    pagado,
-                    suma,
-                    debe,
-                    cliente,
-                    NumeroFactura,
-                    descuentos,
-                    plazo,
-                    rentabilidad,
-                    fechaVencimiento
-                })
-            }
         })
-    })
-    Swal.fire('Entregado!', '', 'success');
+        var cantidades = datos.cantidades;
+        var idProducto = datos.idProducto;
+        for (let i = 0; i < idProducto.length; i++) {
+            var producto = await obtenerProducto1(idProducto[i])
+            var datos2 = producto.data();
+            var CODIGO = datos2.CODIGO;
+            var DESCRIPCION = datos2.DESCRIPCION;
+            var STOCK = datos2.STOCK;
+            var LIMITE_INFERIOR = datos2.LIMITE_INFERIOR;
+            var PRECIO_VENTA = datos2.PRECIO_VENTA;
+            var VOLUMEN_GANANCIA = datos2.VOLUMEN_GANANCIA;
+            var PRECIO_COMPRA = datos2.PRECIO_COMPRA;
+            var registradoPor = datos2.registradoPor;
+            var PORCENTAJE = datos2.PORCENTAJE;
+            var CATEGORIA = datos2.CATEGORIA;
+            var urlProfile = datos2.urlProfile;
+            var reservado = datos2.reservado;
+            reservado -= cantidades[i]
+            STOCK = STOCK - cantidades[i];
+            await db.collection("productos").doc(producto.id).set({
+                CODIGO,
+                DESCRIPCION,
+                PRECIO_COMPRA,
+                PRECIO_VENTA,
+                STOCK,
+                CATEGORIA,
+                LIMITE_INFERIOR,
+                registradoPor,
+                VOLUMEN_GANANCIA,
+                PORCENTAJE,
+                urlProfile,
+                reservado
+            })
+        }
+        var entregado = true;
+        var vendedor = datos.vendedor;
+        var fecha = datos.fecha;
+        var pagado = datos.pagado;
+        var suma = datos.suma;
+        var debe = datos.debe;
+        var cliente = datos.cliente;
+        var NumeroFactura = datos.NumeroFactura
+        var descuentos = datos.descuentos;
+        var rentabilidad = datos.rentabilidad
+        var plazo = datos.plazo;
+        var fechaVencimiento = datos.fechaVencimiento;
+        await db.collection("ventas").doc(Ventaid).set({
+            cantidades,
+            idProducto,
+            entregado,
+            vendedor,
+            fecha,
+            pagado,
+            suma,
+            debe,
+            cliente,
+            NumeroFactura,
+            descuentos,
+            plazo,
+            rentabilidad,
+            fechaVencimiento
+        })
+        Swal.fire('Entregado!', '', 'success');
+
+    } else {
+        Swal.fire({
+            icon: 'info',
+            title: 'El pedido ya había sido entregado...',
+            showConfirmButton: false,
+            timer: 1500
+        })
+    }
+
+
+
 
 }
 function observacion(element) {

@@ -825,4 +825,11 @@ db.collection("ventas").where("entregado", "==", false).get().then((querySnapsho
       })
     }
   })
+})
+
+db.collection("productos").where("STOCK","<",0).get().then((querySnapshot)=>{
+  querySnapshot.forEach((doc)=>{
+    var datos=doc.data();
+    console.log(datos);
+  })
 })*/

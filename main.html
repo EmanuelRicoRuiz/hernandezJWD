@@ -65,7 +65,7 @@
                 <div class="container-fluid">
 
                     <div id="main">
-                        
+
                     </div>
 
 
@@ -86,52 +86,85 @@
     <script src="javascript/scripts.js"></script>
     <script src="javascript/menu.js"></script>
     <script>/*
-        const producto = (id) => db.collection("productos").doc(id).get();
-        function Eliminar() {
-            db.collection("ventas").where("NumeroFactura", "==", 1672).get().then((querySnapshot) => {
-                querySnapshot.forEach(async (doc1) => {
-                    var datos1 = doc1.data();
-                    var cantidades = datos1.cantidades;
-                    var idProducto = datos1.idProducto;
-                    for (let i = 0; i < idProducto.length; i++) {
-                        var doc = await producto(idProducto[i]);
-                        console.log(idProducto[i],doc)
-                        var datos = doc.data();
-                        var CODIGO = datos.CODIGO;
-                        var DESCRIPCION = datos.DESCRIPCION;
-                        var STOCK = datos.STOCK;
-                        var LIMITE_INFERIOR = datos.LIMITE_INFERIOR;
-                        var PRECIO_VENTA = datos.PRECIO_VENTA;
-                        var VOLUMEN_GANANCIA = datos.VOLUMEN_GANANCIA;
-                        var PRECIO_COMPRA = datos.PRECIO_COMPRA;
-                        var registradoPor = datos.registradoPor;
-                        var PORCENTAJE = datos.PORCENTAJE;
-                        var CATEGORIA = datos.CATEGORIA;
-                        var urlProfile = datos.urlProfile;
-                        STOCK = STOCK + cantidades[i];
-                        db.collection("productos").doc(doc.id).set({
-                            CODIGO,
-                            DESCRIPCION,
-                            PRECIO_COMPRA,
-                            PRECIO_VENTA,
-                            STOCK,
-                            CATEGORIA,
-                            LIMITE_INFERIOR,
-                            registradoPor,
-                            VOLUMEN_GANANCIA,
-                            PORCENTAJE,
-                            urlProfile
-                        })
-                    }
-                    db.collection("ventas").doc(doc1.id).delete();
-                });
-                
-            })
-        }*/
+    const producto = (id) => db.collection("productos").doc(id).get();
+    function Eliminar() {
+        db.collection("ventas").where("NumeroFactura", "==", 1672).get().then((querySnapshot) => {
+            querySnapshot.forEach(async (doc1) => {
+                var datos1 = doc1.data();
+                var cantidades = datos1.cantidades;
+                var idProducto = datos1.idProducto;
+                for (let i = 0; i < idProducto.length; i++) {
+                    var doc = await producto(idProducto[i]);
+                    console.log(idProducto[i],doc)
+                    var datos = doc.data();
+                    var CODIGO = datos.CODIGO;
+                    var DESCRIPCION = datos.DESCRIPCION;
+                    var STOCK = datos.STOCK;
+                    var LIMITE_INFERIOR = datos.LIMITE_INFERIOR;
+                    var PRECIO_VENTA = datos.PRECIO_VENTA;
+                    var VOLUMEN_GANANCIA = datos.VOLUMEN_GANANCIA;
+                    var PRECIO_COMPRA = datos.PRECIO_COMPRA;
+                    var registradoPor = datos.registradoPor;
+                    var PORCENTAJE = datos.PORCENTAJE;
+                    var CATEGORIA = datos.CATEGORIA;
+                    var urlProfile = datos.urlProfile;
+                    STOCK = STOCK + cantidades[i];
+                    db.collection("productos").doc(doc.id).set({
+                        CODIGO,
+                        DESCRIPCION,
+                        PRECIO_COMPRA,
+                        PRECIO_VENTA,
+                        STOCK,
+                        CATEGORIA,
+                        LIMITE_INFERIOR,
+                        registradoPor,
+                        VOLUMEN_GANANCIA,
+                        PORCENTAJE,
+                        urlProfile
+                    })
+                }
+                db.collection("ventas").doc(doc1.id).delete();
+            });
+            
+        })
+    }
+        db.collection("productos").where("STOCK", "<", 0).get().then((querySnapshot) => {
+            querySnapshot.forEach(doc => {
+                var datos = doc.data();
+                console.log(datos)/*
+                var CODIGO = datos.CODIGO;
+                var DESCRIPCION = datos.DESCRIPCION;
+                var STOCK = datos.STOCK;
+                var LIMITE_INFERIOR = datos.LIMITE_INFERIOR;
+                var PRECIO_VENTA = datos.PRECIO_VENTA;
+                var VOLUMEN_GANANCIA = datos.VOLUMEN_GANANCIA;
+                var PRECIO_COMPRA = datos.PRECIO_COMPRA;
+                var registradoPor = datos.registradoPor;
+                var PORCENTAJE = datos.PORCENTAJE;
+                var CATEGORIA = datos.CATEGORIA;
+                var urlProfile = datos.urlProfile;
+                var reservado=datos.reservado;
+                STOCK+=Math.abs(reservado);
+                reservado=0;
+                db.collection("productos").doc(doc.id).set({
+                        CODIGO,
+                        DESCRIPCION,
+                        PRECIO_COMPRA,
+                        PRECIO_VENTA,
+                        STOCK,
+                        CATEGORIA,
+                        LIMITE_INFERIOR,
+                        registradoPor,
+                        VOLUMEN_GANANCIA,
+                        PORCENTAJE,
+                        urlProfile
+                    })
+            });
+        })*/
     </script>
     <script>
-        
-        
+
+
     </script>
 </body>
 
