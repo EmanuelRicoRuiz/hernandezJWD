@@ -23,7 +23,7 @@ async function ganancia(mes) {
 
         var datos = doc.data();
         if (datos.fecha[1] == mes) {
-           
+
             suma += datos.cantidad_abono
         }
 
@@ -345,13 +345,21 @@ function RegistrarCompra() {
 
     }
 }
-function verProveedor(element) {
+const OBproveedor = (id) => db.collection("proveedores").doc(id).get();
+const OBcompras = (id) => db.collection("compras").where("Proveedor", "==", id).get();
+const OBProducto=(id)=>db.collection("productos").doc(id).get();
+async function verProveedor(element) {
     var id = element.id;
     var feed = document.getElementById("tabTwo");
-    db.collection("proveedores").where("codigo", "==", id).get().then((querySnapshot) => {
-        querySnapshot.forEach((doc2) => {
-            var datos = doc2.data();
-            feed.innerHTML = `
+    var proveedor = await OBproveedor(id);
+    datosProveedor = proveedor.data();
+    var compras = await OBcompras(proveedor.id);
+    sumaDeuda=0;
+    compras.forEach(doc=>{
+        var datos=doc.data();
+        sumaDeuda+=datos.deuda;
+    })
+    feed.innerHTML = `
     <a onclick="ListarProveedores()" class="cursor"><img src="img/undo.png" width="30"></a><br><br>
     <table class="table table-striped table-bordered">
         <tr>
@@ -360,67 +368,99 @@ function verProveedor(element) {
             <td>Deuda</td>
         </tr>
         <tr>
-            <td>${doc2.id}</td>
-            <td>${datos.nombre}</td>
-            <td>$${ingresar(datos.deuda)}</td>
+            <td>${proveedor.id}</td>
+            <td>${datosProveedor.nombre}</td>
+            <td>$${ingresar(sumaDeuda)}</td>
         </tr>
     </table>
-    <br><h3>Lista de compras:</h3><br><div class="overflow-auto" id="tabla6"></div>`;
-            var tabla6 = document.getElementById("tabla6");
-            db.collection("compras").where("Proveedor", "==", id)
-                .get()
-                .then((querySnapshot) => {
-                    querySnapshot.forEach((doc) => {
-                        datos = doc.data();
-
-                        tabla6.innerHTML +=
-                            `<table  class="table table-striped table-bordered" id="${doc.id}"><tr>
-                            <td colspan=3>Número de factura:${doc.id}</td>
-                            <td colspan=2><a id="${doc.id}" onclick="eliminarCompra(this)"><img src="img/delete.png" width=30 class="cursor"></a></td
-                            </tr>
-            <tr>
-            <th>Codigo producto</th>
-            <th>cantidad</th>
-            <th>costo</th>
-            <th>fecha</th>
-            <th>Acciones</th>
-          </tr></table>`;
-                        costos = datos.costos;
-                        var suma = 0;
-
-                        for (let i = 0; i < costos.length; i++) {
-                            suma += costos[i] * datos.cantidades[i];
-                        }
-                        var tabla7 = document.getElementById(doc.id);
-                        for (let i = 0; i < costos.length; i++) {
-                            tabla7.innerHTML += `
+    <br><h3>Lista de compras:</h3><br><div class="overflow-auto" id="tabla6"></div>
+    `
+    
+    var tabla6=document.getElementById("tabla6");
+    compras.forEach(async (doc) => {
+        datos = doc.data();
+        tabla6.innerHTML += `<div class="overflow-auto"><table  class="table table-striped table-bordered" id="Cabecera${doc.id}">
                     <tr>
-                    <td>${datos.productos[i]}</td>
-                    <td>${datos.cantidades[i]}</td>
-                    <td>${datos.costos[i]}</td>
-                    <td>${datos.fecha1[i]}</td>
-                    <td><a id="${doc.id}/${i}" onclick="eliminarPCompra(this)"><img src="img/delete.png" width=30 class="cursor"></a>
-                    </td>
-                    </tr>`;
-                        }
-                        tabla7.innerHTML += `
+                        <th>Número de factura</th>
+                        <th>total compra</th>
+                        <th>saldo pendiente</th>
+                        <th>sumaCompra</th>
+                    </tr>
+                </table></div>`;
+
+            var tablaPedidos = document.getElementById("Cabecera" + doc.id);
+            suma=0;
+            for(let i=0;i<datos.costos.length;i++){
+                suma+=datos.costos[i]
+            }
+
+            tablaPedidos.innerHTML += `
                     <tr>
-                        <td colspan=5 id="tablaSuma">
-                            suma de la compra:${suma}<br>
-                            valor total de la compra: ${datos.valorFactura}<br>
-                            valor restante de la compra: ${datos.deuda}<br>
-                            <a id="${doc.id}" onclick="abonarDeuda(this)" class="cursor"><img src="img/abono.png" width=40></a>
+                        <td>${datos.NumeroFactura}</td>
+                        <td>${datos.valorFactura}</td>
+                        <td>${datos.deuda}</td>
+                        <td>${suma}</td>
+                        <td><a id="${doc.id}" onclick="eliminarCompra(this)"><img src="img/delete.png" width=30 class="cursor"></a>
+                        <a id="${doc.id}" onclick="abonarDeuda(this)" class="cursor"><img src="img/abono.png" width=40></a>
+                        <a class="cursor" id="${doc.id}" onclick="contenidoCompra(this)"><img src="img/contenido.png" width=30></a>
                         </td>
-                    </tr>`
+                    </tr>
+                    
+                    <tr>
+                        <td colspan=8   >
+                             <div id="contenido${doc.id}"></div>
+                        </td>
+                    </tr>
+                    
+                        `;
 
-                    })
-                });
+    })
+}
+async function contenidoCompra(element){
+    var container = document.getElementById(`contenido${element.id}`);
+    db.collection("compras").where("NumeroFactura","==",element.id).get().then((querySnapshot) => {
+        querySnapshot.forEach(async(doc) => {
+                var datos = doc.data();
+                container.innerHTML =
+                    `<center><button class="btn btn-success btn-block" id="${element.id}" onclick="ocultarPedido(this)">Ocultar contenido</button></td></center>
+                    <td colspan=10>
+                    <table  class="table table-striped table-bordered" id="tabla${element.id}">
+                        <tr>
+                            <th>Código del producto</th>
+                            <th>Nombre del producto</th>
+                            <th>Cantidad</th>
+                            <th>costo</th>
+                            <th>fecha</th>
+                            <th>acciones</th>
+                        </tr>
+                    </table>
+                    </td>
+                
+            `
+                var contenido = document.getElementById("tabla" + element.id);
+                for (let i = 0; i < datos.productos.length; i++) {
+                    var producto=await OBProducto(datos.productos[i]);
+                    producto=producto.data();
+                    contenido.innerHTML += `
+                        <tr>
+                            <th>${datos.productos[i]}</th>
+                            <th>${producto.DESCRIPCION}</th>
+                            <th>${datos.cantidades[i]}</th>
+                            <th>${datos.costos[i]}</th>
+                            <th>${datos.fecha1[i]}</th>
+                            <th><a id="${doc.id}/${i}" onclick="eliminarPCompra(this)"><img src="img/delete.png" width=30 class="cursor"></a></th>
+                        </tr>
+
+                `;
+                    
+                }
+            
         })
     })
 
 }
 function verProveedor2(id) {
-    
+
     var feed = document.getElementById("tabTwo");
     db.collection("proveedores").where("codigo", "==", id).get().then((querySnapshot) => {
         querySnapshot.forEach((doc2) => {
@@ -493,26 +533,26 @@ function verProveedor2(id) {
     })
 
 }
-async function eliminarProveedor(element){
+async function eliminarProveedor(element) {
     await db.collection("proveedores").doc(element.id).delete();
     Swal.fire('Borrado!', '', 'success');
     ListarProveedores();
 
 }
-async function eliminarCompra(element){
-    var id=element.id
-    var doc =await obtenerCompra(id);
-    var datos=doc.data();
-    var deuda=datos.deuda;
-    
-    var doc2=await obtenerProveedor(datos.Proveedor);
-    var datos2=doc2.data();
-    var deuda2=datos2.deuda;
-    var codigo=datos2.codigo;
-    var nombre=datos2.nombre;
-    console.log(deuda,deuda2)
-    deuda2-=deuda;
-    
+async function eliminarCompra(element) {
+    var id = element.id
+    var doc = await obtenerCompra(id);
+    var datos = doc.data();
+    var deuda = datos.deuda;
+
+    var doc2 = await obtenerProveedor(datos.Proveedor);
+    var datos2 = doc2.data();
+    var deuda2 = datos2.deuda;
+    var codigo = datos2.codigo;
+    var nombre = datos2.nombre;
+    console.log(deuda, deuda2)
+    deuda2 -= deuda;
+
     db.collection("compras").doc(doc.id).delete();
     actualizarProveedor(codigo, deuda2, nombre);
 }
@@ -923,7 +963,7 @@ function AgregarDeduccion() {
             `
         }
     } else {
-        
+
     }
 }
 function AgregarAuxilio() {
@@ -932,7 +972,7 @@ function AgregarAuxilio() {
     PorcentajeAuxilio = parseInt(PorcentajeAuxilio, 10);
 
     if (PorcentajeAuxilio != NaN && NombreAuxilio != "") {
-       
+
         auxilios.push(NombreAuxilio);
         auxiliosValor.push(PorcentajeAuxilio);
 
@@ -947,7 +987,7 @@ function AgregarAuxilio() {
             `
         }
     } else {
-       
+
     }
 }
 const obtenerSalarios = () => db.collection("salarios").get();
@@ -1018,7 +1058,7 @@ async function SacarNomina() {
         }
         var deducciones4 = document.getElementById("deducciones4");
         for (let i = 0; i < listaD.length; i++) {
-           
+
             deducciones4.innerHTML += `${salario.deducciones[i]}: ${listaD[i].toFixed(2)}<br>`
         }
     }
