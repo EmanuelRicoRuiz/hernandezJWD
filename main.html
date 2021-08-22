@@ -127,40 +127,8 @@
             });
             
         })
-    }
-        db.collection("productos").where("STOCK", "<", 0).get().then((querySnapshot) => {
-            querySnapshot.forEach(doc => {
-                var datos = doc.data();
-                console.log(datos)/*
-                var CODIGO = datos.CODIGO;
-                var DESCRIPCION = datos.DESCRIPCION;
-                var STOCK = datos.STOCK;
-                var LIMITE_INFERIOR = datos.LIMITE_INFERIOR;
-                var PRECIO_VENTA = datos.PRECIO_VENTA;
-                var VOLUMEN_GANANCIA = datos.VOLUMEN_GANANCIA;
-                var PRECIO_COMPRA = datos.PRECIO_COMPRA;
-                var registradoPor = datos.registradoPor;
-                var PORCENTAJE = datos.PORCENTAJE;
-                var CATEGORIA = datos.CATEGORIA;
-                var urlProfile = datos.urlProfile;
-                var reservado=datos.reservado;
-                STOCK+=Math.abs(reservado);
-                reservado=0;
-                db.collection("productos").doc(doc.id).set({
-                        CODIGO,
-                        DESCRIPCION,
-                        PRECIO_COMPRA,
-                        PRECIO_VENTA,
-                        STOCK,
-                        CATEGORIA,
-                        LIMITE_INFERIOR,
-                        registradoPor,
-                        VOLUMEN_GANANCIA,
-                        PORCENTAJE,
-                        urlProfile
-                    })
-            });
-        })*/
+    }*/
+        
     </script>
     <script>
 
