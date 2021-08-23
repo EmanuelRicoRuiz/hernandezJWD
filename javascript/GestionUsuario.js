@@ -850,9 +850,7 @@ db.collection("productos").get().then((querySnapshot) => {
       var CATEGORIA = datos.CATEGORIA;
       var urlProfile = datos.urlProfile;
       var reservado=datos.reservado;
-      if(reservado==undefined){
-        reservado=0; 
-      }
+      reservado=0;
       db.collection("productos").doc(doc.id).set({
               CODIGO,
               DESCRIPCION,

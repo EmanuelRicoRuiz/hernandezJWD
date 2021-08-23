@@ -1074,15 +1074,19 @@ async function guadarCambiosPedido(element) {
             console.log("entrè")
         }
         if (entrada) {
-
+            
 
             for (let i = 0; i < idProducto.length; i++) {
                 var query = await obtenerProducto(idProducto[i]);
+                query.forEach(async doc1 => {
+                    var datos1 = doc1.data();
+                    suma = suma + (cantidades[i] * (datos1.PRECIO_VENTA - (datos1.PRECIO_VENTA * (descuentos[i]) / 100)))
+                    sumaCosto = sumaCosto + (cantidades[i] * datos1.PRECIO_COMPRA)
+                })
                 for (let j = 0; j < idProductoVenta.length; j++) {
                     if (idProducto[i] == idProductoVenta[j]) {
                         query.forEach(async doc1 => {
-                            suma = suma + (cantidades[i] * (datos.PRECIO_VENTA - (datos.PRECIO_VENTA * (descuentos[i]) / 100)))
-                            sumaCosto = sumaCosto + (cantidades[i] * datos.PRECIO_COMPRA)
+                            
                             var datos1 = doc1.data();
                             var CODIGO = datos1.CODIGO;
                             var DESCRIPCION = datos1.DESCRIPCION;
@@ -1117,7 +1121,7 @@ async function guadarCambiosPedido(element) {
                     }
                 }
             }
-
+            
 
             var debe = suma;
             var rentabilidad = suma - sumaCosto;
@@ -1146,8 +1150,6 @@ async function guadarCambiosPedido(element) {
                 rentabilidad,
                 plazo,
                 fechaVencimiento
-
-
             })
 
 

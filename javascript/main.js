@@ -182,7 +182,7 @@ function menuInicio(permisos) {
     if (permisos[8]) {
         menu.innerHTML += `<a class="list-group-item list-group-item-action bg-light" onclick="contabilidad()" 
                     href="#">Contabilidad</a>`;
-        menu.innerHTML += `<a class="list-group-item list-group-item-action bg-light" onclick="ListaPosicionVentas()" 
+        menu.innerHTML += `<a class="list-group-item list-group-item-action bg-light" onclick="ListaPosicionVentasMes()" 
                     href="#">Posiciones</a>`;
     }
     if (permisos[9]) {
@@ -207,6 +207,12 @@ function menuInicio(permisos) {
 
     }
 
+}
+async function ListaPosicionVentasMes(){
+    var fecha=new Date();
+    var mes=fecha.getMonth()+1;
+    var año=fecha.getFullYear();
+    ListaPosicionVentas(mes,año)
 }
 async function misClientes() {
 

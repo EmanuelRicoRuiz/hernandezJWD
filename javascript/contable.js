@@ -347,17 +347,17 @@ function RegistrarCompra() {
 }
 const OBproveedor = (id) => db.collection("proveedores").doc(id).get();
 const OBcompras = (id) => db.collection("compras").where("Proveedor", "==", id).get();
-const OBProducto=(id)=>db.collection("productos").doc(id).get();
+const OBProducto = (id) => db.collection("productos").doc(id).get();
 async function verProveedor(element) {
     var id = element.id;
     var feed = document.getElementById("tabTwo");
     var proveedor = await OBproveedor(id);
     datosProveedor = proveedor.data();
     var compras = await OBcompras(proveedor.id);
-    sumaDeuda=0;
-    compras.forEach(doc=>{
-        var datos=doc.data();
-        sumaDeuda+=datos.deuda;
+    sumaDeuda = 0;
+    compras.forEach(doc => {
+        var datos = doc.data();
+        sumaDeuda += datos.deuda;
     })
     feed.innerHTML = `
     <a onclick="ListarProveedores()" class="cursor"><img src="img/undo.png" width="30"></a><br><br>
@@ -375,8 +375,8 @@ async function verProveedor(element) {
     </table>
     <br><h3>Lista de compras:</h3><br><div class="overflow-auto" id="tabla6"></div>
     `
-    
-    var tabla6=document.getElementById("tabla6");
+
+    var tabla6 = document.getElementById("tabla6");
     compras.forEach(async (doc) => {
         datos = doc.data();
         tabla6.innerHTML += `<div class="overflow-auto"><table  class="table table-striped table-bordered" id="Cabecera${doc.id}">
@@ -388,13 +388,13 @@ async function verProveedor(element) {
                     </tr>
                 </table></div>`;
 
-            var tablaPedidos = document.getElementById("Cabecera" + doc.id);
-            suma=0;
-            for(let i=0;i<datos.costos.length;i++){
-                suma+=datos.costos[i]
-            }
+        var tablaPedidos = document.getElementById("Cabecera" + doc.id);
+        suma = 0;
+        for (let i = 0; i < datos.costos.length; i++) {
+            suma += datos.costos[i]
+        }
 
-            tablaPedidos.innerHTML += `
+        tablaPedidos.innerHTML += `
                     <tr>
                         <td>${datos.NumeroFactura}</td>
                         <td>${datos.valorFactura}</td>
@@ -416,13 +416,13 @@ async function verProveedor(element) {
 
     })
 }
-async function contenidoCompra(element){
+async function contenidoCompra(element) {
     var container = document.getElementById(`contenido${element.id}`);
-    db.collection("compras").where("NumeroFactura","==",element.id).get().then((querySnapshot) => {
-        querySnapshot.forEach(async(doc) => {
-                var datos = doc.data();
-                container.innerHTML =
-                    `<center><button class="btn btn-success btn-block" id="${element.id}" onclick="ocultarPedido(this)">Ocultar contenido</button></td></center>
+    db.collection("compras").where("NumeroFactura", "==", element.id).get().then((querySnapshot) => {
+        querySnapshot.forEach(async (doc) => {
+            var datos = doc.data();
+            container.innerHTML =
+                `<center><button class="btn btn-success btn-block" id="${element.id}" onclick="ocultarPedido(this)">Ocultar contenido</button></td></center>
                     <td colspan=10>
                     <table  class="table table-striped table-bordered" id="tabla${element.id}">
                         <tr>
@@ -437,11 +437,11 @@ async function contenidoCompra(element){
                     </td>
                 
             `
-                var contenido = document.getElementById("tabla" + element.id);
-                for (let i = 0; i < datos.productos.length; i++) {
-                    var producto=await OBProducto(datos.productos[i]);
-                    producto=producto.data();
-                    contenido.innerHTML += `
+            var contenido = document.getElementById("tabla" + element.id);
+            for (let i = 0; i < datos.productos.length; i++) {
+                var producto = await OBProducto(datos.productos[i]);
+                producto = producto.data();
+                contenido.innerHTML += `
                         <tr>
                             <th>${datos.productos[i]}</th>
                             <th>${producto.DESCRIPCION}</th>
@@ -452,9 +452,9 @@ async function contenidoCompra(element){
                         </tr>
 
                 `;
-                    
-                }
-            
+
+            }
+
         })
     })
 
@@ -705,7 +705,12 @@ async function historialCompra(element) {
 
     })
 }
-async function ListaPosicionVentas() {
+
+async function ListaPosicionVentas(mes,año1) {
+    var login = document.getElementById("login-page");
+            login.innerHTML = "";
+            var main = document.getElementById("main");
+            main.innerHTML = `<img src="img/carga.gif" width=100>`
     querySnapshot1 = await obtenerVendedores();
     var posiciones = [];
     var lista = [];
@@ -716,9 +721,11 @@ async function ListaPosicionVentas() {
 
         querySnapshot2 = await obtenerVentas(doc.id);
         querySnapshot2.forEach((doc2) => {
-            var datos = doc2.data();
-            suma += datos.suma;
 
+            var datos = doc2.data();
+            if (datos.fecha[1] == mes&&datos.fecha[2]==año1) {
+                suma += datos.suma;
+            }
         })
         if (suma > 0) {
             lista.push(suma);
@@ -747,6 +754,34 @@ async function ListaPosicionVentas() {
             login.innerHTML = "";
             var main = document.getElementById("main");
             main.innerHTML = `
+            <center> <h1>Lista de posiciones de ventas</h1></center> 
+            <br>
+            <table>
+                <tr>
+                    <td>
+                    <select id="meses4" class="form-control">
+                    <option value="" >Seleccione el mes</option>
+                </select>
+                    </td>
+                
+                
+                    <td>
+                    <select id="años4" class="form-control">
+                    <option value="" >Seleccione el año</option>
+                </select>
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan=2>
+                       <center> 
+                       <br>
+                        <button onclick="LlamarMesAÑo()" class="btn btn-primary">Buscar</button>
+                        </center>
+                    </td>
+                </tr>
+            </table>
+            <br>
+            
             <table class="table table-striped table-bordered" id="tablaPosiciones">
                 <tr>
                     <th>Puesto</th>
@@ -755,6 +790,24 @@ async function ListaPosicionVentas() {
                 </tr>
             </table>
             `
+            var meses = document.getElementById("meses4");
+            for (let i = 1; i < 13; i++) {
+                var option = document.createElement("option");
+                option.value = i;
+                option.text = i;
+                meses.appendChild(option);
+
+            }
+            var años = document.getElementById("años4");
+            var hoy = new Date();
+            año = hoy.getFullYear();
+            for (let i = año; i > 2000 - 1; i--) {
+                var option = document.createElement("option");
+                option.value = i;
+                option.text = i;
+                años.appendChild(option);
+
+            }
             tablaPosiciones = document.getElementById("tablaPosiciones");
             for (let i = 0; i < lista.length; i++) {
                 tablaPosiciones.innerHTML += `
@@ -770,8 +823,16 @@ async function ListaPosicionVentas() {
 
 
     })
-
-
+}
+function LlamarMesAÑo(){
+    var mes=document.getElementById("meses4").value;
+    var año=document.getElementById("años4").value;
+    if(mes!=""&&año!=""){
+        ListaPosicionVentas(mes,año);
+    }else{
+        
+    }
+    
 }
 async function cartera(element) {
     var login = document.getElementById("login-page");
