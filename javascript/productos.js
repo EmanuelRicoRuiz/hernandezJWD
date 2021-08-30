@@ -869,6 +869,7 @@ function CambiarDescuentoEditado(element) {
 
 }
 const obtenerProducto = (id) => db.collection("productos").doc(id).get();
+const obtenerProducto25 = (id) => db.collection("productos").where("CODIGO","==",id).get();
 async function GuardarPedido() {
     var cliente = document.getElementById("clientes1").value;
     if (cliente != "") {
@@ -884,7 +885,7 @@ async function GuardarPedido() {
         var suma = 0
         var sumaCosto = 0
         for (let i = 0; i < idProducto.length; i++) {
-            var query = await obtenerProducto(idProducto[i]);
+            var query = await obtenerProducto25(idProducto[i]);
             query.forEach(doc => {
                 datos = doc.data();
                 var disponible = datos.STOCK - datos.reservado
@@ -895,7 +896,7 @@ async function GuardarPedido() {
         }
         if (entrada) {
             for (let i = 0; i < idProducto.length; i++) {
-                var query = await obtenerProducto(idProducto[i]);
+                var query = await obtenerProducto25(idProducto[i]);
                 query.forEach(doc => {
                     datos = doc.data();
                     suma = suma + (cantidades[i] * (datos.PRECIO_VENTA - (datos.PRECIO_VENTA * (descuentos[i]) / 100)))
