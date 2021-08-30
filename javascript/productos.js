@@ -638,7 +638,7 @@ function pintartablaEditada(ventaGarray) {
                 <tr>
                     <td>${datos.CODIGO}</td>
                     <td>${datos.DESCRIPCION}</td>
-                    <td>${datos.STOCK - datos.reservado+ventaGarray[i].cantidad}</td>
+                    <td>${datos.STOCK - datos.reservado + ventaGarray[i].cantidad}</td>
                     <td>${datos.PRECIO_VENTA}</td>
                     <td><a id="${datos.CODIGO}" class="cursor" onclick="CambiarCantidadEditada(this)">${ventaGarray[i].cantidad}</a></td>
                     <td><a id="${datos.CODIGO}" class="cursor" onclick="CambiarDescuentoEditado(this)">${ventaGarray[i].Descuento}%</a></td>
@@ -868,7 +868,7 @@ function CambiarDescuentoEditado(element) {
     })
 
 }
-const obtenerProducto = (id) => db.collection("productos").where("CODIGO", "==", id).get();
+const obtenerProducto = (id) => db.collection("productos").doc(id).get();
 async function GuardarPedido() {
     var cliente = document.getElementById("clientes1").value;
     if (cliente != "") {
@@ -1046,82 +1046,115 @@ async function guadarCambiosPedido(element) {
                 if (idProducto[i] == idProductoVenta[j]) {
                     var index = j;
                     encontrado = true;
-                    
+
                 }
             }
             console.log("entrè")
             if (!encontrado) {
                 var query = await obtenerProducto(idProducto[i]);
-                query.forEach(doc => {
-                    datos = doc.data();
 
-                    var disponible = datos.STOCK - datos.reservado;
-                    if (disponible < cantidades[i]) {
-                        entrada = false;
-                    }
-                })
+                datos = query.data();
+
+                var disponible = (datos.STOCK - datos.reservado);
+                if (disponible < cantidades[i]) {
+                    entrada = false;
+                }
+
             } else {
                 var query = await obtenerProducto(idProducto[i]);
-                query.forEach(doc => {
-                    datos = doc.data();
 
-                    var disponible = datos.STOCK - datos.reservado+cantidadesVenta[index];
-                    if (disponible < cantidades[i]) {
-                        entrada = false;
-                    }
-                })
+                datos = query.data();
+
+                var disponible = datos.STOCK - datos.reservado + cantidadesVenta[index];
+                if (disponible < cantidades[i]) {
+                    entrada = false;
+                }
+
             }
             console.log("entrè")
         }
         if (entrada) {
-            
 
+            
             for (let i = 0; i < idProducto.length; i++) {
                 var query = await obtenerProducto(idProducto[i]);
-                query.forEach(async doc1 => {
-                    var datos1 = doc1.data();
-                    suma = suma + (cantidades[i] * (datos1.PRECIO_VENTA - (datos1.PRECIO_VENTA * (descuentos[i]) / 100)))
-                    sumaCosto = sumaCosto + (cantidades[i] * datos1.PRECIO_COMPRA)
-                })
+                
+                var datos1 = query.data();
+                suma = suma + (cantidades[i] * (datos1.PRECIO_VENTA - (datos1.PRECIO_VENTA * (descuentos[i]) / 100)))
+                sumaCosto = sumaCosto + (cantidades[i] * datos1.PRECIO_COMPRA)
+                var encontrado=false;
                 for (let j = 0; j < idProductoVenta.length; j++) {
                     if (idProducto[i] == idProductoVenta[j]) {
-                        query.forEach(async doc1 => {
-                            
-                            var datos1 = doc1.data();
-                            var CODIGO = datos1.CODIGO;
-                            var DESCRIPCION = datos1.DESCRIPCION;
-                            var STOCK = datos1.STOCK;
-                            var LIMITE_INFERIOR = datos1.LIMITE_INFERIOR;
-                            var PRECIO_VENTA = datos1.PRECIO_VENTA;
-                            var VOLUMEN_GANANCIA = datos1.VOLUMEN_GANANCIA;
-                            var PRECIO_COMPRA = datos1.PRECIO_COMPRA;
-                            var registradoPor = datos1.registradoPor;
-                            var PORCENTAJE = datos1.PORCENTAJE;
-                            var reservado = datos1.reservado;
-                            var diferencia = reservado - cantidades[i]
-                            reservado -= diferencia;
-                            var CATEGORIA = datos1.CATEGORIA;
-                            var urlProfile = datos1.urlProfile;
-                            await db.collection("productos").doc(doc1.id).set({
-                                CODIGO,
-                                DESCRIPCION,
-                                PRECIO_COMPRA,
-                                PRECIO_VENTA,
-                                STOCK,
-                                CATEGORIA,
-                                LIMITE_INFERIOR,
-                                registradoPor,
-                                VOLUMEN_GANANCIA,
-                                PORCENTAJE,
-                                urlProfile,
-                                reservado
-                            })
-
+                        encontrado=true;
+                        var datos1 = query.data();
+                        var CODIGO = datos1.CODIGO;
+                        var DESCRIPCION = datos1.DESCRIPCION;
+                        var STOCK = datos1.STOCK;
+                        var LIMITE_INFERIOR = datos1.LIMITE_INFERIOR;
+                        var PRECIO_VENTA = datos1.PRECIO_VENTA;
+                        var VOLUMEN_GANANCIA = datos1.VOLUMEN_GANANCIA;
+                        var PRECIO_COMPRA = datos1.PRECIO_COMPRA;
+                        var registradoPor = datos1.registradoPor;
+                        var PORCENTAJE = datos1.PORCENTAJE;
+                        var reservado = datos1.reservado;
+                        var diferencia = reservado - cantidades[i]
+                        reservado -= diferencia;
+                        console.log(reservado)
+                        var CATEGORIA = datos1.CATEGORIA;
+                        var urlProfile = datos1.urlProfile;
+                        await db.collection("productos").doc(query.id).set({
+                            CODIGO,
+                            DESCRIPCION,
+                            PRECIO_COMPRA,
+                            PRECIO_VENTA,
+                            STOCK,
+                            CATEGORIA,
+                            LIMITE_INFERIOR,
+                            registradoPor,
+                            VOLUMEN_GANANCIA,
+                            PORCENTAJE,
+                            urlProfile,
+                            reservado
                         })
+
+
                     }
+                }
+                if(!encontrado){
+                    
+                        var datos = query.data();
+                        var CODIGO = datos.CODIGO;
+                        var DESCRIPCION = datos.DESCRIPCION;
+                        var STOCK = datos.STOCK;
+                        var LIMITE_INFERIOR = datos.LIMITE_INFERIOR;
+                        var PRECIO_VENTA = datos.PRECIO_VENTA;
+                        var VOLUMEN_GANANCIA = datos.VOLUMEN_GANANCIA;
+                        var PRECIO_COMPRA = datos.PRECIO_COMPRA;
+                        var registradoPor = datos.registradoPor;
+                        var PORCENTAJE = datos.PORCENTAJE;
+                        var reservado = datos.reservado;
+                        reservado += cantidades[i];
+                        var CATEGORIA = datos.CATEGORIA;
+                        var urlProfile = datos.urlProfile;
+                        db.collection("productos").doc(query.id).set({
+                            CODIGO,
+                            DESCRIPCION,
+                            PRECIO_COMPRA,
+                            PRECIO_VENTA,
+                            STOCK,
+                            CATEGORIA,
+                            LIMITE_INFERIOR,
+                            registradoPor,
+                            VOLUMEN_GANANCIA,
+                            PORCENTAJE,
+                            urlProfile,
+                            reservado
+                        })
+                    
                 }
             }
             
+
 
             var debe = suma;
             var rentabilidad = suma - sumaCosto;
