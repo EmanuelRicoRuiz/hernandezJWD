@@ -639,7 +639,7 @@ function tabTwoVentasG(mes, año) {
     <div>
     <p id="aviso1">no hay abonos este mes.</p>
         <table id="tablaRecaudo" class="table table-striped table-bordered">
-        <tr><th colspan=6><center>Lista de Abonos</center></th></tr>
+        <tr><th colspan=7><center>Lista de Abonos</center></th></tr>
             <tr>
                 <th>Número de factura</th>
                 <th>Cantidad del abono</th>
@@ -647,6 +647,8 @@ function tabTwoVentasG(mes, año) {
                 <th>Rentabilidad</th>
                 <th>Vendedor</th>
                 <th>Ganacia</th>
+                <th>Recibo</th>
+                <th>Acciones</th>
             </tr>
         </table>
     </div>`;
@@ -657,6 +659,7 @@ function tabTwoVentasG(mes, año) {
     var user = firebase.auth().currentUser;
     user = user.uid;
     comision = 0
+    var ganancia =0;
     db.collection("abonos").get().then((querySnapshot) => {
         querySnapshot.forEach((doc) => {
             var datos = doc.data();
@@ -672,7 +675,7 @@ function tabTwoVentasG(mes, año) {
                             var avis = document.getElementById("aviso1");
                             avis.innerHTML = "";
                             suma += datos.cantidad_abono;
-
+                            ganancia+=datos.rentabilidad / 100 * datos.cantidad_abono
 
                             var tablaRecaudo = document.getElementById("tablaRecaudo");
 
@@ -680,13 +683,16 @@ function tabTwoVentasG(mes, año) {
                             tablaRecaudo.innerHTML += `
                                     <tr>
                                         <td>${datos.NumeroFactura}</td>
-                                        <td>${ingresar(datos.cantidad_abono)}</td>
+                                        <td id="cantidad${doc.id}">${ingresar(datos.cantidad_abono)}</td>
                                         <td>${datos.fecha[0]}/${datos.fecha[1]}/${datos.fecha[2]}</td>
                                         <td>${datos.rentabilidad.toFixed(2)}</td>
                                         <td>${nombre} ${apellido}</td>
                                         <td>${(datos.rentabilidad / 100 * datos.cantidad_abono).toFixed(2)}</td>
+                                        <td id="recibo${doc.id}">${datos.recibo}</td>
+                                        <td id="container1${doc.id}"><a class="cursor" id="${doc.id}" onclick="EditarAbono(this)"><img src="img/editar.png" width=20 title="Editar"></a></td>
                                     </tr>
                                     `
+                                    
                         }
                         var recaudo1 = document.getElementById("ValorRecaudo");
                         recaudo1.innerHTML = `
@@ -698,6 +704,9 @@ function tabTwoVentasG(mes, año) {
                                 </tr>
                                 <tr>
                                     <td>Recaudo: $${ingresar(suma)}</td>
+                                </tr>
+                                <tr>
+                                    <td>ganancia: $${ingresar(ganancia)}</td>
                                 </tr>
                                 
                             </table>
@@ -1051,7 +1060,7 @@ function listaPedidos1() {
                     </tr>
                     
                     <tr>
-                        <td colspan=8   >
+                        <td colspan=10>
                              <div id="contenido${doc.id}"></div>
                         </td>
                     </tr>

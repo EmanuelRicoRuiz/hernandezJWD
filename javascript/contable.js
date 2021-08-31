@@ -706,11 +706,11 @@ async function historialCompra(element) {
     })
 }
 
-async function ListaPosicionVentas(mes,año1) {
+async function ListaPosicionVentas(mes, año1) {
     var login = document.getElementById("login-page");
-            login.innerHTML = "";
-            var main = document.getElementById("main");
-            main.innerHTML = `<img src="img/carga.gif" width=100>`
+    login.innerHTML = "";
+    var main = document.getElementById("main");
+    main.innerHTML = `<img src="img/carga.gif" width=100>`
     querySnapshot1 = await obtenerVendedores();
     var posiciones = [];
     var lista = [];
@@ -723,7 +723,7 @@ async function ListaPosicionVentas(mes,año1) {
         querySnapshot2.forEach((doc2) => {
 
             var datos = doc2.data();
-            if (datos.fecha[1] == mes&&datos.fecha[2]==año1) {
+            if (datos.fecha[1] == mes && datos.fecha[2] == año1) {
                 suma += datos.suma;
             }
         })
@@ -824,15 +824,15 @@ async function ListaPosicionVentas(mes,año1) {
 
     })
 }
-function LlamarMesAÑo(){
-    var mes=document.getElementById("meses4").value;
-    var año=document.getElementById("años4").value;
-    if(mes!=""&&año!=""){
-        ListaPosicionVentas(mes,año);
-    }else{
-        
+function LlamarMesAÑo() {
+    var mes = document.getElementById("meses4").value;
+    var año = document.getElementById("años4").value;
+    if (mes != "" && año != "") {
+        ListaPosicionVentas(mes, año);
+    } else {
+
     }
-    
+
 }
 async function cartera(element) {
     var login = document.getElementById("login-page");
@@ -1123,4 +1123,54 @@ async function SacarNomina() {
             deducciones4.innerHTML += `${salario.deducciones[i]}: ${listaD[i].toFixed(2)}<br>`
         }
     }
+}
+const obtenerAbonoEditar = (id) => db.collection("abonos").doc(id).get();
+async function EditarAbono(element) {
+    var cantidad = document.getElementById(`cantidad${element.id}`);
+    var recibo = document.getElementById(`recibo${element.id}`);
+    cantidad.innerHTML = `<input class="form-control" id="cantidad1${element.id}">`
+    recibo.innerHTML = `<input class="form-control" id="recibo1${element.id}">`
+    var cantidad1 = document.getElementById(`cantidad1${element.id}`);
+    var recibo1 = document.getElementById(`recibo1${element.id}`);
+    var doc = await obtenerAbonoEditar(element.id);
+    var datos = doc.data();
+    cantidad1.value = datos.cantidad_abono;
+    recibo1.value = datos.recibo;
+    var container = document.getElementById(`container1${doc.id}`)
+    container.innerHTML = `
+        <div class="btn-toolbar">
+            <a class="cursor btn" id="${doc.id}" onclick="guardarCambiosAbono(this)"><img src="img/checked.png" width=20 title="guardar"></a>
+            <a class="cursor btn" id="${doc.id}" onclick="cancelarCambios(this)"><img src="img/remove.png" width=20 title="cancelar"></a>
+        </div>
+    `
+}
+async function cancelarCambios(element) {
+    var cantidad = document.getElementById(`cantidad${element.id}`);
+    var recibo = document.getElementById(`recibo${element.id}`);
+    var container = document.getElementById(`container1${element.id}`)
+    var doc = await obtenerAbonoEditar(element.id);
+    var datos = doc.data();
+    cantidad.innerHTML = ingresar(datos.cantidad_abono);
+    recibo.innerHTML = datos.recibo;
+    container.innerHTML = `<a class="cursor" id="${doc.id}" onclick="EditarAbono(this)"><img src="img/editar.png" width=20 title="Editar"></a>`
+}
+async function guardarCambiosAbono(element) {
+    var cantidad_abono = document.getElementById(`cantidad1${element.id}`).value;
+    var recibo = document.getElementById(`recibo1${element.id}`).value;
+    var container = document.getElementById(`container1${element.id}`)
+    container.innerHTML = `<a class="cursor" id="${element.id}" onclick="EditarAbono(this)"><img src="img/editar.png" width=20 title="Editar"></a>`
+    var doc = await obtenerAbonoEditar(element.id);
+    var datos = doc.data();
+    var NumeroFactura = datos.NumeroFactura;
+    var fecha = datos.fecha;
+    var rentabilidad = datos.rentabilidad;
+    cantidad_abono=parseInt(cantidad_abono,10);
+    db.collection("abonos").doc(element.id).set({
+        rentabilidad,
+        NumeroFactura,
+        cantidad_abono,
+        fecha,
+        recibo
+    })
+    Swal.fire('Editado!', '', 'success');
 }

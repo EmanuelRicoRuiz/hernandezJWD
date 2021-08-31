@@ -869,7 +869,7 @@ function CambiarDescuentoEditado(element) {
 
 }
 const obtenerProducto = (id) => db.collection("productos").doc(id).get();
-const obtenerProducto25 = (id) => db.collection("productos").where("CODIGO","==",id).get();
+const obtenerProducto25 = (id) => db.collection("productos").where("CODIGO", "==", id).get();
 async function GuardarPedido() {
     var cliente = document.getElementById("clientes1").value;
     if (cliente != "") {
@@ -1076,17 +1076,17 @@ async function guadarCambiosPedido(element) {
         }
         if (entrada) {
 
-            
+
             for (let i = 0; i < idProducto.length; i++) {
                 var query = await obtenerProducto(idProducto[i]);
-                
+
                 var datos1 = query.data();
                 suma = suma + (cantidades[i] * (datos1.PRECIO_VENTA - (datos1.PRECIO_VENTA * (descuentos[i]) / 100)))
                 sumaCosto = sumaCosto + (cantidades[i] * datos1.PRECIO_COMPRA)
-                var encontrado=false;
+                var encontrado = false;
                 for (let j = 0; j < idProductoVenta.length; j++) {
                     if (idProducto[i] == idProductoVenta[j]) {
-                        encontrado=true;
+                        encontrado = true;
                         var datos1 = query.data();
                         var CODIGO = datos1.CODIGO;
                         var DESCRIPCION = datos1.DESCRIPCION;
@@ -1121,40 +1121,40 @@ async function guadarCambiosPedido(element) {
 
                     }
                 }
-                if(!encontrado){
-                    
-                        var datos = query.data();
-                        var CODIGO = datos.CODIGO;
-                        var DESCRIPCION = datos.DESCRIPCION;
-                        var STOCK = datos.STOCK;
-                        var LIMITE_INFERIOR = datos.LIMITE_INFERIOR;
-                        var PRECIO_VENTA = datos.PRECIO_VENTA;
-                        var VOLUMEN_GANANCIA = datos.VOLUMEN_GANANCIA;
-                        var PRECIO_COMPRA = datos.PRECIO_COMPRA;
-                        var registradoPor = datos.registradoPor;
-                        var PORCENTAJE = datos.PORCENTAJE;
-                        var reservado = datos.reservado;
-                        reservado += cantidades[i];
-                        var CATEGORIA = datos.CATEGORIA;
-                        var urlProfile = datos.urlProfile;
-                        db.collection("productos").doc(query.id).set({
-                            CODIGO,
-                            DESCRIPCION,
-                            PRECIO_COMPRA,
-                            PRECIO_VENTA,
-                            STOCK,
-                            CATEGORIA,
-                            LIMITE_INFERIOR,
-                            registradoPor,
-                            VOLUMEN_GANANCIA,
-                            PORCENTAJE,
-                            urlProfile,
-                            reservado
-                        })
-                    
+                if (!encontrado) {
+
+                    var datos = query.data();
+                    var CODIGO = datos.CODIGO;
+                    var DESCRIPCION = datos.DESCRIPCION;
+                    var STOCK = datos.STOCK;
+                    var LIMITE_INFERIOR = datos.LIMITE_INFERIOR;
+                    var PRECIO_VENTA = datos.PRECIO_VENTA;
+                    var VOLUMEN_GANANCIA = datos.VOLUMEN_GANANCIA;
+                    var PRECIO_COMPRA = datos.PRECIO_COMPRA;
+                    var registradoPor = datos.registradoPor;
+                    var PORCENTAJE = datos.PORCENTAJE;
+                    var reservado = datos.reservado;
+                    reservado += cantidades[i];
+                    var CATEGORIA = datos.CATEGORIA;
+                    var urlProfile = datos.urlProfile;
+                    db.collection("productos").doc(query.id).set({
+                        CODIGO,
+                        DESCRIPCION,
+                        PRECIO_COMPRA,
+                        PRECIO_VENTA,
+                        STOCK,
+                        CATEGORIA,
+                        LIMITE_INFERIOR,
+                        registradoPor,
+                        VOLUMEN_GANANCIA,
+                        PORCENTAJE,
+                        urlProfile,
+                        reservado
+                    })
+
                 }
             }
-            
+
 
 
             var debe = suma;
@@ -1381,93 +1381,103 @@ function GuardarCambiosProducto() {
     }
 }
 function AbonarPedido(element) {
+    var container = document.getElementById(`contenido${element.id}`);
+    container.innerHTML = `<center>Abonar<table>
+        <tr>
+            <td>
+                <input class="form-control" placeholder="Cantidad" id="cantidad_abono">
+            </td>
+            <td>
+                <input class="form-control" placeholder="Recibo N°" id="recibo">
+            </td>
+        </tr>
+        <tr>
+            <td colspan=2>
+                
+                <div class="btn-toolbar justify-content-center">
+                    <center>
+                        <button id="${element.id}" class="btn btn-success" onclick="efectuarAbono(this)">Efectuar</button>
+                        <button id="${element.id}" class="btn btn-danger" onclick="cancelarAbono(this)">Cancelar</button>
+                    </center>
+                </div>
+                
+            </td>
+        </tr>
+
+    </table></center>`
+}
+const obtenerAbono=(num)=>db.collection("abonos").where("recibo","==",num).get();
+async function efectuarAbono(element) {
     var entrada = true;
-    Swal.fire({
-        title: 'Ingrese el dinero a abonar',
-        input: 'text',
-        inputAttributes: {
-            autocapitalize: 'off'
-        },
-        showCancelButton: true,
-        confirmButtonText: 'Ingresar',
-        showLoaderOnConfirm: true,
-        CancelButtonText: 'Cancelar'
-
-    }).then((result) => {
-        if (result.isConfirmed) {
-            cantidad_abono = result.value;
-            cantidad_abono = parseInt(cantidad_abono, 10);
-            db.collection("ventas").get().then((querySnapshot) => {
-                querySnapshot.forEach((doc) => {
-                    if (element.id == doc.id) {
-                        var datos = doc.data();
-                        cantidades = datos.cantidades;
-                        descuentos = datos.descuentos;
-                        NumeroFactura = datos.NumeroFactura
-                        idProducto = datos.idProducto;
-                        entregado = datos.entregado;
-                        vendedor = datos.vendedor;
-                        fecha = datos.fecha
-                        pagado = datos.pagado
-                        suma = datos.suma
-                        debe = datos.debe;
-                        cliente = datos.cliente;
-                        plazo = datos.plazo;
-                        rentabilidad = datos.rentabilidad
-                        fechaVencimiento = datos.fechaVencimiento
-                        if (cantidad_abono > suma || cantidad_abono > debe) {
-                            Swal.fire({
-                                icon: 'info',
-                                title: 'el abono no puede superar la suma',
-                                showConfirmButton: false,
-                                timer: 1500
-                            })
-                            entrada = false;
-                        } else if (cantidad_abono == suma) {
-                            pagado = true;
-                            debe = 0;
-                        } else {
-                            debe = debe - cantidad_abono;
-                            if (debe == 0) {
-                                pagado = true;
-                            }
-                        }
-
-                        if (entrada) {
-                            db.collection("ventas").doc(doc.id).set({
-                                cantidades,
-                                idProducto,
-                                entregado,
-                                vendedor,
-                                fecha,
-                                pagado,
-                                suma,
-                                debe,
-                                cliente,
-                                NumeroFactura,
-                                descuentos,
-                                rentabilidad,
-                                plazo,
-                                fechaVencimiento
-                            })
-
-                            var hoy = new Date();
-                            var fecha = [hoy.getDate(), hoy.getMonth() + 1, hoy.getFullYear()];
-                            db.collection("abonos").doc().set({
-                                rentabilidad,
-                                NumeroFactura,
-                                cantidad_abono,
-                                fecha
-                            })
-
-                        }
-
-                    }
-
-                })
+    var cantidad_abono = document.getElementById("cantidad_abono").value;
+    var recibo = document.getElementById("recibo").value;
+    cantidad_abono = parseInt(cantidad_abono, 10);
+    db.collection("ventas").doc(element.id).get().then((doc) => {
+        var datos = doc.data();
+        cantidades = datos.cantidades;
+        descuentos = datos.descuentos;
+        NumeroFactura = datos.NumeroFactura
+        idProducto = datos.idProducto;
+        entregado = datos.entregado;
+        vendedor = datos.vendedor;
+        fecha = datos.fecha
+        pagado = datos.pagado
+        suma = datos.suma
+        debe = datos.debe;
+        cliente = datos.cliente;
+        plazo = datos.plazo;
+        rentabilidad = datos.rentabilidad
+        fechaVencimiento = datos.fechaVencimiento
+        if (cantidad_abono > suma || cantidad_abono > debe) {
+            Swal.fire({
+                icon: 'info',
+                title: 'el abono no puede superar la suma',
+                showConfirmButton: false,
+                timer: 1500
             })
+            entrada = false;
+        } else if (cantidad_abono == suma) {
+            pagado = true;
+            debe = 0;
+        } else {
+            debe = debe - cantidad_abono;
+            if (debe == 0) {
+                pagado = true;
+            }
+        }
+        if (entrada) {
+            db.collection("ventas").doc(doc.id).set({
+                cantidades,
+                idProducto,
+                entregado,
+                vendedor,
+                fecha,
+                pagado,
+                suma,
+                debe,
+                cliente,
+                NumeroFactura,
+                descuentos,
+                rentabilidad,
+                plazo,
+                fechaVencimiento
+            })
+            var hoy = new Date();
+            var fecha = [hoy.getDate(), hoy.getMonth() + 1, hoy.getFullYear()];
+            db.collection("abonos").doc().set({
+                rentabilidad,
+                NumeroFactura,
+                cantidad_abono,
+                fecha,
+                recibo
+            })
+            Swal.fire('Abonado!', '', 'success');
         }
     })
+}
+function cancelarAbono(element){
+    var container = document.getElementById(`contenido${element.id}`);
+    container.innerHTML="";
 }
 const obtenerProducto1 = (id) => db.collection("productos").doc(id).get();
 const obtenerVenta1 = (id) => db.collection("ventas").doc(id).get();

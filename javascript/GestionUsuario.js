@@ -673,7 +673,7 @@ function GuardarCambios(element) {
           uid = datos.uid;
           cuota = document.getElementById("cuota0").value;
           cuota = parseInt(cuota, 10);
-          
+
           if (apellido != "" && nombre != "" && tipoDeUsuario != "") {
             db.collection("usuarios").doc(uid).set({
               apellido,
@@ -866,4 +866,22 @@ db.collection("productos").get().then((querySnapshot) => {
               reservado
           })
   });
+})*/
+/*
+db.collection("abonos").get().then((querySnapshot) => {
+  querySnapshot.forEach((doc) => {
+    var datos = doc.data();
+    var fecha = datos.fecha;
+    var NumeroFactura = datos.NumeroFactura;
+    var cantidad_abono = datos.cantidad_abono;
+    var rentabilidad = datos.rentabilidad;
+    var recibo = "null";
+    db.collection("abonos").doc(doc.id).set({
+      rentabilidad,
+      NumeroFactura,
+      cantidad_abono,
+      fecha,
+      recibo
+    })
+  })
 })*/
