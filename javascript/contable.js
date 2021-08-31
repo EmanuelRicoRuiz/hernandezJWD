@@ -1154,23 +1154,94 @@ async function cancelarCambios(element) {
     recibo.innerHTML = datos.recibo;
     container.innerHTML = `<a class="cursor" id="${doc.id}" onclick="EditarAbono(this)"><img src="img/editar.png" width=20 title="Editar"></a>`
 }
+const obtenerVentaAbono=(id)=>db.collection("ventas").where("NumeroFactura","==",id).get();
 async function guardarCambiosAbono(element) {
     var cantidad_abono = document.getElementById(`cantidad1${element.id}`).value;
     var recibo = document.getElementById(`recibo1${element.id}`).value;
     var container = document.getElementById(`container1${element.id}`)
     container.innerHTML = `<a class="cursor" id="${element.id}" onclick="EditarAbono(this)"><img src="img/editar.png" width=20 title="Editar"></a>`
     var doc = await obtenerAbonoEditar(element.id);
-    var datos = doc.data();
-    var NumeroFactura = datos.NumeroFactura;
-    var fecha = datos.fecha;
-    var rentabilidad = datos.rentabilidad;
+    var datosAbono = doc.data();
+    var NumeroFactura = datosAbono.NumeroFactura;
+    var fecha = datosAbono.fecha;
+    var rentabilidad = datosAbono.rentabilidad;
+    var cantidadA=datosAbono.cantidad_abono;
     cantidad_abono=parseInt(cantidad_abono,10);
-    db.collection("abonos").doc(element.id).set({
-        rentabilidad,
-        NumeroFactura,
-        cantidad_abono,
-        fecha,
-        recibo
+    var venta=await obtenerVentaAbono(NumeroFactura);
+    var debe;
+    var doc;
+
+    venta.forEach((doc2)=>{
+        var datos=doc2.data();
+        debe=datos.debe;
+        var cantidades = datos.cantidades;
+        var descuentos = datos.descuentos;
+        var NumeroFactura = datos.NumeroFactura
+        var idProducto = datos.idProducto;
+        var entregado = datos.entregado;
+        var vendedor = datos.vendedor;
+        var fecha = datos.fecha
+        var pagado = datos.pagado
+        var suma = datos.suma
+        var cliente = datos.cliente;
+        var plazo = datos.plazo;
+        var rentabilidad = datos.rentabilidad
+        var fechaVencimiento = datos.fechaVencimiento
+        document=doc2.id
     })
-    Swal.fire('Editado!', '', 'success');
+    debe+=cantidadA;
+    if(debe<cantidad_abono){
+        Swal.fire({
+            icon: 'info',
+            title: 'el abono no puede superar la suma',
+            showConfirmButton: false,
+            timer: 1500
+        })
+    }else{
+        db.collection("abonos").doc(element.id).set({
+            rentabilidad,
+            NumeroFactura,
+            cantidad_abono,
+            fecha,
+            recibo
+        })
+        debe-=cantidad_abono;
+        venta.forEach((doc2)=>{
+            var datos=doc2.data();
+            var cantidades = datos.cantidades;
+            var descuentos = datos.descuentos;
+            var NumeroFactura = datos.NumeroFactura
+            var idProducto = datos.idProducto;
+            var entregado = datos.entregado;
+            var vendedor = datos.vendedor;
+            var fecha = datos.fecha
+            var pagado = datos.pagado
+            var suma = datos.suma
+            var cliente = datos.cliente;
+            var plazo = datos.plazo;
+            var rentabilidad = datos.rentabilidad
+            var fechaVencimiento = datos.fechaVencimiento
+            db.collection("ventas").doc(doc2.id).set({
+                cantidades,
+                idProducto,
+                entregado,
+                vendedor,
+                fecha,
+                pagado,
+                suma,
+                debe,
+                cliente,
+                NumeroFactura,
+                descuentos,
+                rentabilidad,
+                plazo,
+                fechaVencimiento
+            })
+            
+        })
+        
+        Swal.fire('Editado!', '', 'success');
+    }
+    /*
+    */
 }

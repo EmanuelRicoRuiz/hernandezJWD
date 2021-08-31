@@ -646,7 +646,7 @@ function tabTwoVentasG(mes, año) {
                 <th>Fecha</th>
                 <th>Rentabilidad</th>
                 <th>Vendedor</th>
-                <th>Ganacia</th>
+                <th>Ganancia</th>
                 <th>Recibo</th>
                 <th>Acciones</th>
             </tr>
@@ -706,7 +706,7 @@ function tabTwoVentasG(mes, año) {
                                     <td>Recaudo: $${ingresar(suma)}</td>
                                 </tr>
                                 <tr>
-                                    <td>ganancia: $${ingresar(ganancia)}</td>
+                                    <td>Ganancia: $${ingresar(ganancia)}</td>
                                 </tr>
                                 
                             </table>
