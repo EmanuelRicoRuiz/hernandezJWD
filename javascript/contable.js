@@ -848,7 +848,16 @@ async function cartera(element) {
     querySnapshot.forEach(doc => {
         var datos = doc.data();
         if (datos.debe > 0) {
-            main.innerHTML = ""
+            main.innerHTML = `<h4>Lista Facturas pendientes: </h4><br>
+            <a class="cursor" id="${element.id}" onclick="reporteCarteraPDF(this)"><img src="img/impresora.png" width=30></a><br><br>
+            `
+
+        }
+    })
+    querySnapshot.forEach(doc => {
+        var datos = doc.data();
+        if (datos.debe > 0) {
+
             main.innerHTML += `<div class="overflow-auto"><table  class="table table-striped table-bordered" id="Cabecera${doc.id}">
             <tr>
                 <th>Número de factura</th>
@@ -1154,7 +1163,7 @@ async function cancelarCambios(element) {
     recibo.innerHTML = datos.recibo;
     container.innerHTML = `<a class="cursor" id="${doc.id}" onclick="EditarAbono(this)"><img src="img/editar.png" width=20 title="Editar"></a>`
 }
-const obtenerVentaAbono=(id)=>db.collection("ventas").where("NumeroFactura","==",id).get();
+const obtenerVentaAbono = (id) => db.collection("ventas").where("NumeroFactura", "==", id).get();
 async function guardarCambiosAbono(element) {
     var cantidad_abono = document.getElementById(`cantidad1${element.id}`).value;
     var recibo = document.getElementById(`recibo1${element.id}`).value;
@@ -1165,15 +1174,15 @@ async function guardarCambiosAbono(element) {
     var NumeroFactura = datosAbono.NumeroFactura;
     var fecha = datosAbono.fecha;
     var rentabilidad = datosAbono.rentabilidad;
-    var cantidadA=datosAbono.cantidad_abono;
-    cantidad_abono=parseInt(cantidad_abono,10);
-    var venta=await obtenerVentaAbono(NumeroFactura);
+    var cantidadA = datosAbono.cantidad_abono;
+    cantidad_abono = parseInt(cantidad_abono, 10);
+    var venta = await obtenerVentaAbono(NumeroFactura);
     var debe;
     var doc;
 
-    venta.forEach((doc2)=>{
-        var datos=doc2.data();
-        debe=datos.debe;
+    venta.forEach((doc2) => {
+        var datos = doc2.data();
+        debe = datos.debe;
         var cantidades = datos.cantidades;
         var descuentos = datos.descuentos;
         var NumeroFactura = datos.NumeroFactura
@@ -1187,17 +1196,17 @@ async function guardarCambiosAbono(element) {
         var plazo = datos.plazo;
         var rentabilidad = datos.rentabilidad
         var fechaVencimiento = datos.fechaVencimiento
-        document=doc2.id
+        document = doc2.id
     })
-    debe+=cantidadA;
-    if(debe<cantidad_abono){
+    debe += cantidadA;
+    if (debe < cantidad_abono) {
         Swal.fire({
             icon: 'info',
             title: 'el abono no puede superar la suma',
             showConfirmButton: false,
             timer: 1500
         })
-    }else{
+    } else {
         db.collection("abonos").doc(element.id).set({
             rentabilidad,
             NumeroFactura,
@@ -1205,9 +1214,9 @@ async function guardarCambiosAbono(element) {
             fecha,
             recibo
         })
-        debe-=cantidad_abono;
-        venta.forEach((doc2)=>{
-            var datos=doc2.data();
+        debe -= cantidad_abono;
+        venta.forEach((doc2) => {
+            var datos = doc2.data();
             var cantidades = datos.cantidades;
             var descuentos = datos.descuentos;
             var NumeroFactura = datos.NumeroFactura
@@ -1237,11 +1246,76 @@ async function guardarCambiosAbono(element) {
                 plazo,
                 fechaVencimiento
             })
-            
+
         })
-        
+
         Swal.fire('Editado!', '', 'success');
     }
     /*
     */
+}
+const obtenerVentaReporte = (id) => db.collection("ventas").where("cliente", "==", id).where("debe", ">", 0).get();
+const reporteCarteraPDF = async (element) => {
+
+    var id = element.id;
+    console.log(id)
+    var cliente = await obtenerCliente(id);
+    var query = await obtenerVentaReporte(id);
+    cliente = cliente.data();
+    var doc = jsPDF('p', 'mm', [279.4, 216]);
+    
+    var x = 5;
+    var y = 30;
+    doc.setFontType("bold");
+    doc.text(x, y, `Reporte de cartera de: ${cliente.RazonSocial}`)
+    y += 15;
+    doc.setFontSize(7);
+    doc.text(x, y, "Numero factura");
+    x += 25;
+    doc.text(x, y, "Debe");
+    x += 25;
+    doc.text(x, y, "estado de entrega");
+    x += 25;
+    doc.text(x, y, "estado de pago");
+    x += 25;
+    doc.text(x, y, "plazo");
+    x += 15;
+    doc.text(x, y, "Suma de la venta");
+    x += 25;
+    doc.text(x, y, `Fecha de venta`);
+    x += 25;
+    doc.text(x, y, `Fecha de vencimiento`);
+    x=5
+    y+=5
+    doc.setFontType("normal");
+    var cont=0;
+    query.forEach(element1 => {
+
+        var datos = element1.data();
+
+        console.log(datos)
+        doc.text(x, y, datos.NumeroFactura.toString());
+        x += 25;
+        doc.text(x, y, datos.debe.toString());
+        x += 25;
+        doc.text(x, y, datos.entregado.toString());
+        x += 25;
+        doc.text(x, y, datos.pagado.toString());
+        x += 25;
+        doc.text(x, y, datos.plazo.toString());
+        x += 15;
+        doc.text(x, y, datos.suma.toString());
+        x += 25;
+        doc.text(x, y, `${datos.fecha[0]}/${datos.fecha[1]}/${datos.fecha[2]}`);
+        x += 25;
+        doc.text(x, y, `${datos.fechaVencimiento[0]}/${datos.fechaVencimiento[1]}/${datos.fechaVencimiento[2]}`);
+        x += 25;
+        y += 5;
+        x = 5
+        cont+=1
+        if(cont%18==0){
+            doc.addPage();
+        }
+    })
+    doc.save(`Reporte${cliente.RazonSocial}`);
 }

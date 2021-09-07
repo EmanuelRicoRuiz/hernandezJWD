@@ -829,32 +829,7 @@ function tabOneVentasG(mes, año) {
         })
     })
 }
-function FiltrarG(element) {
-    var id = element.id;
-    if (id == "1") {
-        var meses = document.getElementById("meses1").value;
-        var años = document.getElementById("años1").value;
-        if (meses != "" && años != "") {
-            tabOneVentas(meses, años);
-            LlenarFechas(true, false, false);
-        }
 
-    } else if (id == "2") {
-        var meses = document.getElementById("meses2").value;
-        var años = document.getElementById("años2").value;
-        if (meses != "" && años != "") {
-            tabTwoVentas(meses, años);
-            LlenarFechas(false, true, false);
-        }
-    } else if (id == "3") {
-        var meses = document.getElementById("meses3").value;
-        var años = document.getElementById("años3").value;
-        if (meses != "" && años != "") {
-            tabTreeVentas(meses, años);
-            LlenarFechas(false, false, true);
-        }
-    }
-}
 function Proveedores() {
 
     var login = document.getElementById("login-page");

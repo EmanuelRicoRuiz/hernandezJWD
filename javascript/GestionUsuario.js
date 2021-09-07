@@ -827,10 +827,40 @@ db.collection("ventas").where("entregado", "==", false).get().then((querySnapsho
   })
 })
 
-db.collection("productos").where("STOCK","<",0).get().then((querySnapshot)=>{
+db.collection("productos").where("reservado",">",0).get().then((querySnapshot)=>{
   querySnapshot.forEach((doc)=>{
-    var datos=doc.data();
-    console.log(datos);
+   
+    var datos2 = doc.data();
+    console.log(datos2)
+    
+    
+    
+      var CODIGO = datos2.CODIGO;
+      var DESCRIPCION = datos2.DESCRIPCION;
+      var PRECIO_COMPRA = datos2.PRECIO_COMPRA;
+      var PRECIO_VENTA = datos2.PRECIO_VENTA;
+      var STOCK = datos2.STOCK;
+      var CATEGORIA = datos2.CATEGORIA;
+      var LIMITE_INFERIOR = datos2.LIMITE_INFERIOR;
+      var registradoPor = datos2.registradoPor;
+      var VOLUMEN_GANANCIA = datos2.VOLUMEN_GANANCIA;
+      var PORCENTAJE = datos2.PORCENTAJE
+      var urlProfile = datos2.urlProfile;
+      var reservado = 0
+      db.collection("productos").doc(doc.id).set({
+        CODIGO,
+        DESCRIPCION,
+        PRECIO_COMPRA,
+        PRECIO_VENTA,
+        STOCK,
+        CATEGORIA,
+        LIMITE_INFERIOR,
+        registradoPor,
+        VOLUMEN_GANANCIA,
+        PORCENTAJE,
+        urlProfile,
+        reservado
+      })
   })
 })
 
