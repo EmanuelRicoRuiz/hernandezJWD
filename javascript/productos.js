@@ -1511,7 +1511,7 @@ async function cambiarEstado(element) {
             var CATEGORIA = datos2.CATEGORIA;
             var urlProfile = datos2.urlProfile;
             var reservado = datos2.reservado;
-            reservado -= cantidades[i]
+            reservado =reservado-cantidades[i]
             STOCK = STOCK - cantidades[i];
             await db.collection("productos").doc(producto.id).set({
                 CODIGO,

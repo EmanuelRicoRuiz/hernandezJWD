@@ -4,37 +4,113 @@ function contabilidad() {
     _0x3ab4x2['innerHTML'] = '';
     _0x3ab4x3['innerHTML'] = '';
     var _0x3ab4x4 = new Date();
-    _0x3ab4x2['innerHTML'] = `${'<div class="wrap">\x0D\x0A    <center>\x0D\x0A    <ul class="tabs">\x0D\x0A        <li><a href="#tab1"><span class="fa fa-home"></span><span class="tab-text">Gastos</span></a></li>\x0D\x0A        <li><a href="#tab2"><span class="fa fa-group"></span><span class="tab-text">Deudas</span></a></li>\x0D\x0A        <li><a href="#tab3"><span class="fa fa-group"></span><span class="tab-text">Ganancia</span></a></li>\x0D\x0A  <li><a href="#tab4"><span class="fa fa-home"></span><span class="tab-text">Cartera</span></a></li>\x0D\x0A  </ul>\x0D\x0A    </center>\x0D\x0A    <div class="secciones">\x0D\x0A        <article id="tab1">\x0D\x0A\x0D\x0A            <div id="tabOne">\x0D\x0A              \x0D\x0A            <form>\x0D\x0A                <div class="col-md-8">\x0D\x0A                    <div class="form-group">\x0D\x0A                        <input type="text" class="form-control" placeholder="Valor del gasto" id="valor">\x0D\x0A                    </div>\x0D\x0A                    <div class="form-group">\x0D\x0A                        <input type="text" class="form-control" placeholder="Descripci\xF3n del gasto" id="Descripcion">\x0D\x0A                    </div>\x0D\x0A                    <div class="form-group">\x0D\x0A                        <button class="btn btn-success" onclick="GuardarGasto()">Guardar Gasto</button>\x0D\x0A                    </div>\x0D\x0A                </div>\x0D\x0A            </form>\x0D\x0A            <div id="ListaGastos">\x0D\x0A\x0D\x0A            </div>\x0D\x0A            \x0D\x0A            \x0D\x0A            </div>\x0D\x0A        </article>\x0D\x0A        <article id="tab2">\x0D\x0A            <div id="tabTwo">\x0D\x0A            \x0D\x0A            </div>\x0D\x0A        </article>\x0D\x0A        <article id="tab3">\x0D\x0A            <div id="tabTree">\x0D\x0A            \x0D\x0A            </div>\x0D\x0A        </article>\x0D\x0A\x0D\x0A   <article id="tab4">\x0D\x0A            <div id="tabFour">\x0D\x0A            \x0D\x0A            </div>\x0D\x0A        </article>\x0D\x0A\x0D\x0A     \x0D\x0A    </div>\x0D\x0A</div>'}`;
+    _0x3ab4x2['innerHTML'] = `${'<div class="wrap">\x0D\x0A    <center>\x0D\x0A    <ul class="tabs">\x0D\x0A        <li><a href="#tab1"><span class="fa fa-home"></span><span class="tab-text">Gastos</span></a></li>\x0D\x0A        <li><a href="#tab2"><span class="fa fa-group"></span><span class="tab-text">Deudas</span></a></li>\x0D\x0A        <li><a href="#tab3"><span class="fa fa-group"></span><span class="tab-text">Cartera vendedor</span></a></li>\x0D\x0A  <li><a href="#tab4"><span class="fa fa-home"></span><span class="tab-text">Cartera</span></a></li>\x0D\x0A  </ul>\x0D\x0A    </center>\x0D\x0A    <div class="secciones">\x0D\x0A        <article id="tab1">\x0D\x0A\x0D\x0A            <div id="tabOne">\x0D\x0A              \x0D\x0A            <form>\x0D\x0A                <div class="col-md-8">\x0D\x0A                    <div class="form-group">\x0D\x0A                        <input type="text" class="form-control" placeholder="Valor del gasto" id="valor">\x0D\x0A                    </div>\x0D\x0A                    <div class="form-group">\x0D\x0A                        <input type="text" class="form-control" placeholder="Descripci\xF3n del gasto" id="Descripcion">\x0D\x0A                    </div>\x0D\x0A                    <div class="form-group">\x0D\x0A                        <button class="btn btn-success" onclick="GuardarGasto()">Guardar Gasto</button>\x0D\x0A                    </div>\x0D\x0A                </div>\x0D\x0A            </form>\x0D\x0A            <div id="ListaGastos">\x0D\x0A\x0D\x0A            </div>\x0D\x0A            \x0D\x0A            \x0D\x0A            </div>\x0D\x0A        </article>\x0D\x0A        <article id="tab2">\x0D\x0A            <div id="tabTwo">\x0D\x0A            \x0D\x0A            </div>\x0D\x0A        </article>\x0D\x0A        <article id="tab3">\x0D\x0A            <div id="tabTree">\x0D\x0A            \x0D\x0A            </div>\x0D\x0A        </article>\x0D\x0A\x0D\x0A   <article id="tab4">\x0D\x0A            <div id="tabFour">\x0D\x0A            \x0D\x0A            </div>\x0D\x0A        </article>\x0D\x0A\x0D\x0A     \x0D\x0A    </div>\x0D\x0A</div>'}`;
     cargarTabs();
     listarGastos();
     deudas();
     carteraGeneral();
     var hoy = new Date();
+    carteraVendedor();
 
-    ganancia(hoy.getMonth() + 1);
 }
 const getAbonos = () => db.collection("abonos").get();
-async function ganancia(mes) {
+const getCarteraVendedor = (id) => db.collection("ventas").where("vendedor", "==", id).get();
+const getVendedores = () => db.collection("usuarios").where("cuota", ">", 0).get();
+async function carteraVendedor() {
     var tabTree = document.getElementById("tabTree");
-    tabTree.innerHTML = `<table></table>`
-    query = await getAbonos();
-    suma = 0;
-    query.forEach(doc => {
+    var vendedores = await getVendedores();
+    tabTree.innerHTML = `
+    
+    <table class="table table-striped table-bordered" id="vendedoresCartera">
+        <tr>
+            <th>Nombre</th>
+            <th>Apellido</th>
+            <th>Cuota</th>
+            <th>Cartera</th>
+        </tr>
+    </table>`
+    var vendedoresCartera = document.getElementById("vendedoresCartera");
+    vendedores.forEach(doc => {
+        var datos = doc.data()
+        vendedoresCartera.innerHTML += `
+        <tr>
+            <td>${datos.nombre}</td>
+            <td>${datos.apellido}</td>
+            <td>${datos.cuota}</td>
+            <td><a class="cursor" id="${doc.id}" onclick="VisualizarCartera(this)"><img src="img/cartera.png" width=30></a></td>
+        </tr>
 
-        var datos = doc.data();
-        if (datos.fecha[1] == mes) {
-
-            suma += datos.cantidad_abono
-        }
-
+        `
     })
-    tabTree.innerHTML = `${suma}`
+
+
+}
+const VisualizarCartera = async (element) => {
+    var id = element.id;
+    var tabTree = document.getElementById("tabTree");
+    tabTree.innerHTML = `<img src="img/carga.gif">`
+    tabTree.innerHTML = `<a class="cursor" onclick="carteraVendedor()"><img src="img/undo.png" width=30></a>
+    `
+    var carteraV = await getCarteraVendedor(id);
+    tabTree.innerHTML += `
+    <center><a class="cursor" id="${id}" onclick="reporteCarteraVendedor(this)"><img src="img/impresora.png" width=30></a></center><br><br>
+    <div class="overflow-auto"><table  class="table table-striped table-bordered" id="cabeceraV">
+            <tr>
+                <th>Número de factura</th>
+                <th>Cliente</th>
+                <th>Estado de entrega</th>
+                <th>Estado de pago</th>
+                <th>Valor</th>
+                <th>debe</th>
+                <th>fecha</th>
+                <th>plazo</th>
+                <th>fecha de vencimiento</th>
+                <th colspan=3>Acciones</th>
+            </tr>
+        </table></div>`;
+    carteraV.forEach(async doc => {
+        var datos = doc.data();
+        if (datos.debe > 0) {
+            var tablaPedidos = document.getElementById("cabeceraV");
+
+            cliente = await obtenerCliente(datos.cliente);
+            cliente = cliente.data();
+
+            tablaPedidos.innerHTML += `
+            <tr>
+                <td>${datos.NumeroFactura}</td>
+                <td>${cliente.RazonSocial}</td>
+                <td>${datos.entregado}</td>
+                <td>${datos.pagado}</td>
+                <td>${ingresar(datos.suma)}</td>
+                <td>${ingresar(datos.debe)}</td>
+                <td>${datos.fecha[0]}/${datos.fecha[1]}/${datos.fecha[2]}</td>
+                <td>${datos.plazo} dias</td>
+                <td>${datos.fechaVencimiento[0]}/${datos.fechaVencimiento[1]}/${datos.fechaVencimiento[2]}</td>
+                <td><a class="cursor" id="${doc.id}" onclick="AbonarPedido(this)"><img src="img/abono.png" width=30></a><br>
+                <a class="cursor" id="${doc.id}" onclick="facturaPdf(this)"><img src="img/factura.png" width=30></a><br>
+                <a class="cursor" id="${doc.id}" onclick="contenidoPedido(this)"><img src="img/contenido.png" width=30></a></td>
+                
+            </tr>
+            <tr>
+                <td colspan=9>
+                     <div id="contenido${doc.id}"></div>
+                </td>
+            </tr>
+            
+                `
+        }
+    })
+
+
 }
 async function carteraGeneral() {
     var tabFour = document.getElementById("tab4");
     tabFour.innerHTML = `<h3 id="titulo">No hay facturas pendientes.</h3>
     `
-    tabFour.innerHTML += `<div class="overflow-auto"><table  class="table table-striped table-bordered" id="cabecera">
+    tabFour.innerHTML += `
+    <center><a class="cursor"  onclick="reporteCarteraGeneral()"><img src="img/impresora.png" width=30></a></center><br><br>
+    <div class="overflow-auto"><table  class="table table-striped table-bordered" id="cabecera">
             <tr>
                 <th>Número de factura</th>
                 <th>Cliente</th>
@@ -639,7 +715,7 @@ function abonarDeuda(element) {
     })
 }
 const obtenerVendedores = () => db.collection("usuarios").get();
-const obtenerTodasVentas = () => db.collection("ventas").get();
+const obtenerTodasVentas = () => db.collection("ventas").where("debe", ">", 0).get();
 const obtenerVentas = (id) => db.collection("ventas").where("vendedor", "==", id).get();
 const obtenerVentasCliente = (id) => db.collection("ventas").where("cliente", "==", id).get();
 const obtenerCliente = (id) => db.collection("clientes").doc(id).get();
@@ -1263,7 +1339,7 @@ const reporteCarteraPDF = async (element) => {
     var query = await obtenerVentaReporte(id);
     cliente = cliente.data();
     var doc = jsPDF('p', 'mm', [279.4, 216]);
-    
+
     var x = 5;
     var y = 30;
     doc.setFontType("bold");
@@ -1285,18 +1361,18 @@ const reporteCarteraPDF = async (element) => {
     doc.text(x, y, `Fecha de venta`);
     x += 25;
     doc.text(x, y, `Fecha de vencimiento`);
-    x=5
-    y+=5
+    x = 5
+    y += 5
     doc.setFontType("normal");
-    var cont=0;
+    var cont = 0;
     query.forEach(element1 => {
 
         var datos = element1.data();
 
-        console.log(datos)
+
         doc.text(x, y, datos.NumeroFactura.toString());
         x += 25;
-        doc.text(x, y, datos.debe.toString());
+        doc.text(x, y, ingresar(datos.debe));
         x += 25;
         doc.text(x, y, datos.entregado.toString());
         x += 25;
@@ -1304,7 +1380,7 @@ const reporteCarteraPDF = async (element) => {
         x += 25;
         doc.text(x, y, datos.plazo.toString());
         x += 15;
-        doc.text(x, y, datos.suma.toString());
+        doc.text(x, y, ingresar(datos.suma));
         x += 25;
         doc.text(x, y, `${datos.fecha[0]}/${datos.fecha[1]}/${datos.fecha[2]}`);
         x += 25;
@@ -1312,10 +1388,148 @@ const reporteCarteraPDF = async (element) => {
         x += 25;
         y += 5;
         x = 5
-        cont+=1
-        if(cont%18==0){
+        cont += 1
+        if (cont % 46 == 0) {
             doc.addPage();
+            y = 30
         }
     })
     doc.save(`Reporte${cliente.RazonSocial}`);
+}
+
+const reporteCarteraGeneral = async (element) => {
+
+    var fecha = new Date();
+    var query = await obtenerTodasVentas();
+    var doc = jsPDF('p', 'mm', [279.4, 216]);
+    var x = 5;
+    var y = 30;
+    doc.setFontType("bold");
+    doc.text(x, y, `Reporte de cartera general ${fecha.getDate()}/${fecha.getMonth() + 1}/${fecha.getFullYear()}`)
+    y += 15;
+    doc.setFontSize(7);
+    doc.text(x, y, "Numero factura");
+    x += 25;
+    doc.text(x, y, "Debe");
+    x += 25;
+    doc.text(x, y, "estado de entrega");
+    x += 25;
+    doc.text(x, y, "estado de pago");
+    x += 25;
+    doc.text(x, y, "plazo");
+    x += 15;
+    doc.text(x, y, "Suma de la venta");
+    x += 25;
+    doc.text(x, y, `Fecha de venta`);
+    x += 25;
+    doc.text(x, y, `Fecha de vencimiento`);
+    x = 5
+    y += 5
+    doc.setFontType("normal");
+    var cont = 0;
+    query.forEach(element1 => {
+
+        var datos = element1.data();
+
+
+        doc.text(x, y, datos.NumeroFactura.toString());
+        x += 25;
+        doc.text(x, y, ingresar(datos.debe));
+        x += 25;
+        doc.text(x, y, datos.entregado.toString());
+        x += 25;
+        doc.text(x, y, datos.pagado.toString());
+        x += 25;
+        doc.text(x, y, datos.plazo.toString());
+        x += 15;
+        doc.text(x, y, ingresar(datos.suma));
+        x += 25;
+        doc.text(x, y, `${datos.fecha[0]}/${datos.fecha[1]}/${datos.fecha[2]}`);
+        x += 25;
+        doc.text(x, y, `${datos.fechaVencimiento[0]}/${datos.fechaVencimiento[1]}/${datos.fechaVencimiento[2]}`);
+        x += 25;
+        y += 5;
+        x = 5
+        cont += 1
+        if (cont % 46 == 0) {
+            doc.addPage();
+            y = 30
+        }
+    })
+
+    doc.save(`ReporteGeneralCartera${fecha.getDate()}/${fecha.getMonth() + 1}/${fecha.getFullYear()}`);
+}
+const obtenerVendedor1 = (id) => db.collection("usuarios").doc(id).get();
+const reporteCarteraVendedor = async (element) => {
+    var id = element.id;
+
+    var carteraV = await getCarteraVendedor(id);
+
+    var vendedor = await obtenerVendedor1(id);
+    vendedor = vendedor.data();
+    var doc = jsPDF('p', 'mm', [279.4, 216]);
+
+    var x = 5;
+    var y = 30;
+    doc.setFontType("bold");
+    doc.text(x, y, `Reporte de cartera de: ${vendedor.nombre} ${vendedor.apellido}`)
+    y += 15;
+    doc.setFontSize(7);
+    doc.text(x, y, "Numero factura");
+    x += 20;
+    doc.text(x, y, "Cliente");
+    x += 50;
+    doc.text(x, y, "Debe");
+    x += 20;
+    doc.text(x, y, "entregado");
+    x += 20;
+    doc.text(x, y, "plazo");
+    x += 15;
+    doc.text(x, y, "Suma");
+    x += 20;
+    doc.text(x, y, `Fecha de venta`);
+    x += 20;
+    doc.text(x, y, `Fecha de vencimiento`);
+    x = 5
+    y += 5
+    doc.setFontType("normal");
+    var cont = 0;
+    
+    
+    await carteraV.forEach(async element1 => {
+        var datos = element1.data();
+        if (datos.debe > 0) {
+           
+            doc.text(x, y, datos.NumeroFactura.toString());
+            x += 20;
+            doc.text(x, y, datos.cliente);
+            x += 50;
+            doc.text(x, y, ingresar(datos.debe));
+            x += 20;
+            doc.text(x, y, datos.entregado.toString());
+            x += 20;
+            doc.text(x, y, datos.plazo.toString());
+            x += 15;
+            doc.text(x, y, ingresar(datos.suma));
+            x += 20;
+            doc.text(x, y, `${datos.fecha[0]}/${datos.fecha[1]}/${datos.fecha[2]}`);
+            x += 20;
+            doc.text(x, y, `${datos.fechaVencimiento[0]}/${datos.fechaVencimiento[1]}/${datos.fechaVencimiento[2]}`);
+            x += 20;
+            y += 5;
+            x = 5
+            cont += 1
+            if (cont % 46 == 0) {
+                doc.addPage();
+                y = 30
+            }
+            
+        }
+       
+
+        
+    })
+     
+    doc.save(`Reporte${vendedor.nombre}${vendedor.apellido}`);
+    
 }

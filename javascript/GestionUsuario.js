@@ -914,4 +914,49 @@ db.collection("abonos").get().then((querySnapshot) => {
       recibo
     })
   })
-})*/
+})
+db.collection("productos").get().then(querySnapshot => {
+  querySnapshot.forEach(async doc => {
+    var datos2 = doc.data();
+    var CODIGO = datos2.CODIGO;
+    var DESCRIPCION = datos2.DESCRIPCION;
+    var STOCK = datos2.STOCK;
+    var LIMITE_INFERIOR = datos2.LIMITE_INFERIOR;
+    var PRECIO_VENTA = datos2.PRECIO_VENTA;
+    var VOLUMEN_GANANCIA = datos2.VOLUMEN_GANANCIA;
+    var PRECIO_COMPRA = datos2.PRECIO_COMPRA;
+    var registradoPor = datos2.registradoPor;
+    var PORCENTAJE = datos2.PORCENTAJE;
+    var CATEGORIA = datos2.CATEGORIA;
+    var urlProfile = datos2.urlProfile;
+    var reservado = 0;
+    await db.collection("ventas").where("entregado", "==", false).where("idProducto", "array-contains", doc.id).get().then(querySnapshot => {
+      querySnapshot.forEach(element => {
+        var datos = element.data();
+        if (!datos.entregado) {
+          console.log(datos2);
+          for (let i = 0; i < datos.cantidades.length; i++) {
+            reservado = reservado + datos.cantidades[i];
+          }
+        }
+
+      });
+    })
+    await db.collection("productos").doc(doc.id).set({
+      CODIGO,
+      DESCRIPCION,
+      PRECIO_COMPRA,
+      PRECIO_VENTA,
+      STOCK,
+      CATEGORIA,
+      LIMITE_INFERIOR,
+      registradoPor,
+      VOLUMEN_GANANCIA,
+      PORCENTAJE,
+      urlProfile,
+      reservado
+    })
+  })
+})
+*/
+
