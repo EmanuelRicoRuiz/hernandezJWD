@@ -638,7 +638,7 @@ function pintartablaEditada(ventaGarray) {
                 <tr>
                     <td>${datos.CODIGO}</td>
                     <td>${datos.DESCRIPCION}</td>
-                    <td>${datos.STOCK - datos.reservado + ventaGarray[i].cantidad}</td>
+                    <td>${(datos.STOCK - datos.reservado) + ventaGarray[i].cantidadInicial}</td>
                     <td>${datos.PRECIO_VENTA}</td>
                     <td><a id="${datos.CODIGO}" class="cursor" onclick="CambiarCantidadEditada(this)">${ventaGarray[i].cantidad}</a></td>
                     <td><a id="${datos.CODIGO}" class="cursor" onclick="CambiarDescuentoEditado(this)">${ventaGarray[i].Descuento}%</a></td>

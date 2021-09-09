@@ -433,8 +433,9 @@ async function editarPedido(element) {
         var cantidad = cantidad1[i];
         var idProducto = idProducto1[i];
         var Descuento = Descuento1[i];
+        var cantidadInicial=cantidad1[i]
         var ventaG = {
-            cantidad, idProducto, Descuento
+            cantidad, idProducto, Descuento, cantidadInicial
         }
         ventaGarray.push(ventaG);
     }
