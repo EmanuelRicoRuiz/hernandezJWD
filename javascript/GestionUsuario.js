@@ -935,9 +935,14 @@ db.collection("productos").get().then(querySnapshot => {
         var datos = element.data();
         if (!datos.entregado) {
           console.log(datos2);
-          for (let i = 0; i < datos.cantidades.length; i++) {
-            reservado = reservado + datos.cantidades[i];
+          var indice;
+          for (let i = 0; i < datos.idProducto.length; i++) {
+            if(datos.idProducto[i]==doc.id){
+              indice=i
+              break
+            }
           }
+          reservado=reservado+datos.cantidades[indice]
         }
 
       });
@@ -958,5 +963,6 @@ db.collection("productos").get().then(querySnapshot => {
     })
   })
 })
-*/
 
+
+*/

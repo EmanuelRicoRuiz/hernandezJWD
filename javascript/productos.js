@@ -1098,8 +1098,8 @@ async function guadarCambiosPedido(element) {
                         var registradoPor = datos1.registradoPor;
                         var PORCENTAJE = datos1.PORCENTAJE;
                         var reservado = datos1.reservado;
-                        var diferencia = reservado - cantidades[i]
-                        reservado -= diferencia;
+                        reservado=reservado-cantidadesVenta[j];
+                        reservado=reservado+cantidades[i];
                         console.log(reservado)
                         var CATEGORIA = datos1.CATEGORIA;
                         var urlProfile = datos1.urlProfile;
