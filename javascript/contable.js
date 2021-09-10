@@ -106,6 +106,7 @@ const VisualizarCartera = async (element) => {
             tablaPedidos.appendChild(fila1);
             let fila2=document.createElement("tr");
             let contenido=document.createElement("td");
+            contenido.colSpan=9
             contenido.innerHTML=`<div id="contenido${doc.id}"></div>`
             fila2.appendChild(contenido);
             tablaPedidos.appendChild(fila2);
@@ -501,7 +502,7 @@ async function verProveedor(element) {
         var tablaPedidos = document.getElementById("Cabecera" + doc.id);
         suma = 0;
         for (let i = 0; i < datos.costos.length; i++) {
-            suma += datos.costos[i]
+            suma += datos.costos[i]*datos.cantidades[i]
         }
 
         tablaPedidos.innerHTML += `

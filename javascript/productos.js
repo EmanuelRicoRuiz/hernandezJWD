@@ -534,10 +534,11 @@ function EmitirEditar() {
             if (Descuento != "") {
                 cantidad = parseInt(cantidad, 10);
                 Descuento = parseFloat(Descuento, 10);
-                cantidadInicial=parseInt(cantidad,10);
-                viejo=false
+                cantidadInicial = parseInt(cantidad, 10);
+                viejo = false
+                idVenta = null
                 var ventaG = {
-                    cantidad, idProducto, Descuento, cantidadInicial,viejo
+                    cantidad, idProducto, Descuento, cantidadInicial, viejo, idVenta
                 }
                 ventaGarray.push(ventaG);
 
@@ -636,8 +637,11 @@ function pintartablaEditada(ventaGarray) {
         db.collection("productos").where("CODIGO", "==", ventaGarray[i].idProducto).get().then((querySnapshot) => {
             querySnapshot.forEach((doc) => {
                 var datos = doc.data();
-                if(ventaGarray[i].viejo){
-                    items.innerHTML += `
+                console.log(ventaGarray[i])
+
+                if (ventaGarray[i].cantidad != 0) {
+                    if (ventaGarray[i].viejo) {
+                        items.innerHTML += `
                 <tr>
                     <td>${datos.CODIGO}</td>
                     <td>${datos.DESCRIPCION}</td>
@@ -649,8 +653,8 @@ function pintartablaEditada(ventaGarray) {
                     
                 </tr>
                 `;
-                }else{
-                    items.innerHTML += `
+                    } else {
+                        items.innerHTML += `
                 <tr>
                     <td>${datos.CODIGO}</td>
                     <td>${datos.DESCRIPCION}</td>
@@ -662,8 +666,11 @@ function pintartablaEditada(ventaGarray) {
                     
                 </tr>
                 `;
+                    }
                 }
-                
+
+
+
 
 
             })
@@ -711,8 +718,10 @@ function pintarTabla(ventaGarray) {
 function EliminarItemEditado(element) {
     var idElemento = element.id;
     for (let i = 0; i < ventaGarray.length; i++) {
+        console.log(ventaGarray, idElemento)
         if (idElemento == ventaGarray[i].idProducto) {
-            ventaGarray.splice(i, 1);
+            ventaGarray[i].cantidad = 0;
+            ventaGarray[i].Descuento = 0;
 
         }
     }
@@ -1116,8 +1125,8 @@ async function guadarCambiosPedido(element) {
                         var registradoPor = datos1.registradoPor;
                         var PORCENTAJE = datos1.PORCENTAJE;
                         var reservado = datos1.reservado;
-                        reservado=reservado-cantidadesVenta[j];
-                        reservado=reservado+cantidades[i];
+                        reservado = reservado - cantidadesVenta[j];
+                        reservado = reservado + cantidades[i];
                         console.log(reservado)
                         var CATEGORIA = datos1.CATEGORIA;
                         var urlProfile = datos1.urlProfile;
@@ -1140,7 +1149,6 @@ async function guadarCambiosPedido(element) {
                     }
                 }
                 if (!encontrado) {
-
                     var datos = query.data();
                     var CODIGO = datos.CODIGO;
                     var DESCRIPCION = datos.DESCRIPCION;
@@ -1169,6 +1177,15 @@ async function guadarCambiosPedido(element) {
                         urlProfile,
                         reservado
                     })
+
+                }
+
+            }
+            for (let i = 0; i < idProducto.length; i++) {
+                if (cantidades[i] == 0) {
+                    cantidades.splice(i, 1)
+                    idProducto.splice(i, 1)
+                    descuentos.splice(i, 1)
 
                 }
             }
@@ -1424,7 +1441,7 @@ function AbonarPedido(element) {
 
     </table></center>`
 }
-const obtenerAbono=(num)=>db.collection("abonos").where("recibo","==",num).get();
+const obtenerAbono = (num) => db.collection("abonos").where("recibo", "==", num).get();
 async function efectuarAbono(element) {
     var entrada = true;
     var cantidad_abono = document.getElementById("cantidad_abono").value;
@@ -1493,9 +1510,9 @@ async function efectuarAbono(element) {
         }
     })
 }
-function cancelarAbono(element){
+function cancelarAbono(element) {
     var container = document.getElementById(`contenido${element.id}`);
-    container.innerHTML="";
+    container.innerHTML = "";
 }
 const obtenerProducto1 = (id) => db.collection("productos").doc(id).get();
 const obtenerVenta1 = (id) => db.collection("ventas").doc(id).get();
@@ -1529,7 +1546,7 @@ async function cambiarEstado(element) {
             var CATEGORIA = datos2.CATEGORIA;
             var urlProfile = datos2.urlProfile;
             var reservado = datos2.reservado;
-            reservado =reservado-cantidades[i]
+            reservado = reservado - cantidades[i]
             STOCK = STOCK - cantidades[i];
             await db.collection("productos").doc(producto.id).set({
                 CODIGO,
