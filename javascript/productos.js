@@ -534,8 +534,9 @@ function EmitirEditar() {
             if (Descuento != "") {
                 cantidad = parseInt(cantidad, 10);
                 Descuento = parseFloat(Descuento, 10);
+                cantidadInicial=parseInt(cantidad,10);
                 var ventaG = {
-                    cantidad, idProducto, Descuento
+                    cantidad, idProducto, Descuento, cantidadInicial
                 }
                 ventaGarray.push(ventaG);
 

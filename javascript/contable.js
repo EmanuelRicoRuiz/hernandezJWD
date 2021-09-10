@@ -52,14 +52,13 @@ const VisualizarCartera = async (element) => {
     tabTree.innerHTML = `<a class="cursor" onclick="carteraVendedor()"><img src="img/undo.png" width=30></a>
     `
     var carteraV = await getCarteraVendedor(id);
-    tabTree.innerHTML += `
+    tabTree.innerHTML += `<div class="delimitado">
     <center><a class="cursor" id="${id}" onclick="reporteCarteraVendedor(this)"><img src="img/impresora.png" width=30></a></center><br><br>
-    <div class="overflow-auto"><table  class="table table-striped table-bordered" id="cabeceraV">
+    <table  class="table table-striped table-bordered" id="cabeceraV">
             <tr>
                 <th>Número de factura</th>
                 <th>Cliente</th>
                 <th>Estado de entrega</th>
-                <th>Estado de pago</th>
                 <th>Valor</th>
                 <th>debe</th>
                 <th>fecha</th>
@@ -72,10 +71,45 @@ const VisualizarCartera = async (element) => {
         var datos = doc.data();
         if (datos.debe > 0) {
             var tablaPedidos = document.getElementById("cabeceraV");
-
             cliente = await obtenerCliente(datos.cliente);
             cliente = cliente.data();
-
+            let fila1=document.createElement("tr");
+            let NumeroFacturaTD=document.createElement("td");
+            NumeroFacturaTD.innerHTML=`${datos.NumeroFactura}`
+            let RazonSocialTD=document.createElement("td");
+            RazonSocialTD.innerHTML=`${cliente.RazonSocial}`
+            let entregadoTD=document.createElement("td");
+            entregadoTD.innerHTML=`${datos.entregado}`
+            let sumaTD=document.createElement("td");
+            sumaTD.innerHTML=`${datos.suma}`
+            let debeTD=document.createElement("td");
+            debeTD.innerHTML=`${datos.debe}`
+            let plazoTD=document.createElement("td");
+            plazoTD.innerHTML=`${datos.plazo}`
+            let fechaVTD=document.createElement("td");
+            fechaVTD.innerHTML=`${datos.fecha[0]}/${datos.fecha[1]}/${datos.fecha[2]}`
+            let fechaFTD=document.createElement("td");
+            fechaFTD.innerHTML=`${datos.fechaVencimiento[0]}/${datos.fechaVencimiento[1]}/${datos.fechaVencimiento[2]}`
+            let Cacciones = document.createElement("td");
+            Cacciones.innerHTML =`<a class="cursor" id="${doc.id}" onclick="AbonarPedido(this)"><img src="img/abono.png" width=30></a><br>
+            <a class="cursor" id="${doc.id}" onclick="facturaPdf(this)"><img src="img/factura.png" width=30></a><br>
+            <a class="cursor" id="${doc.id}" onclick="contenidoPedido(this)"><img src="img/contenido.png" width=30></a>`
+            fila1.appendChild(NumeroFacturaTD)
+            fila1.appendChild(RazonSocialTD)
+            fila1.appendChild(entregadoTD)
+            fila1.appendChild(sumaTD)
+            fila1.appendChild(debeTD)
+            fila1.appendChild(plazoTD)
+            fila1.appendChild(fechaVTD)
+            fila1.appendChild(fechaFTD)
+            fila1.appendChild(Cacciones)
+            tablaPedidos.appendChild(fila1);
+            let fila2=document.createElement("tr");
+            let contenido=document.createElement("td");
+            contenido.innerHTML=`<div id="contenido${doc.id}"></div>`
+            fila2.appendChild(contenido);
+            tablaPedidos.appendChild(fila2);
+/*
             tablaPedidos.innerHTML += `
             <tr>
                 <td>${datos.NumeroFactura}</td>
@@ -98,7 +132,7 @@ const VisualizarCartera = async (element) => {
                 </td>
             </tr>
             
-                `
+                `*/
         }
     })
 
