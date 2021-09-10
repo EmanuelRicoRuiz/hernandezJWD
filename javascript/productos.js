@@ -535,8 +535,9 @@ function EmitirEditar() {
                 cantidad = parseInt(cantidad, 10);
                 Descuento = parseFloat(Descuento, 10);
                 cantidadInicial=parseInt(cantidad,10);
+                viejo=false
                 var ventaG = {
-                    cantidad, idProducto, Descuento, cantidadInicial
+                    cantidad, idProducto, Descuento, cantidadInicial,viejo
                 }
                 ventaGarray.push(ventaG);
 
@@ -635,7 +636,8 @@ function pintartablaEditada(ventaGarray) {
         db.collection("productos").where("CODIGO", "==", ventaGarray[i].idProducto).get().then((querySnapshot) => {
             querySnapshot.forEach((doc) => {
                 var datos = doc.data();
-                items.innerHTML += `
+                if(ventaGarray[i].viejo){
+                    items.innerHTML += `
                 <tr>
                     <td>${datos.CODIGO}</td>
                     <td>${datos.DESCRIPCION}</td>
@@ -647,6 +649,21 @@ function pintartablaEditada(ventaGarray) {
                     
                 </tr>
                 `;
+                }else{
+                    items.innerHTML += `
+                <tr>
+                    <td>${datos.CODIGO}</td>
+                    <td>${datos.DESCRIPCION}</td>
+                    <td>${(datos.STOCK - datos.reservado)}</td>
+                    <td>${datos.PRECIO_VENTA}</td>
+                    <td><a id="${datos.CODIGO}" class="cursor" onclick="CambiarCantidadEditada(this)">${ventaGarray[i].cantidad}</a></td>
+                    <td><a id="${datos.CODIGO}" class="cursor" onclick="CambiarDescuentoEditado(this)">${ventaGarray[i].Descuento}%</a></td>
+                    <th><a id="${datos.CODIGO}" class="cursor" onclick="EliminarItemEditado(this)"><img src="img/delete.png" width=20></a></th>
+                    
+                </tr>
+                `;
+                }
+                
 
 
             })
