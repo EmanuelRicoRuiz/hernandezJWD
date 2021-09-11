@@ -966,4 +966,36 @@ db.collection("productos").get().then(querySnapshot => {
 
 
 */
-
+/*
+db.collection("productos").where("STOCK", "==", NaN).get().then(query => {
+    query.forEach(doc => {
+        var datos2 = doc.data();
+        var CODIGO = datos2.CODIGO;
+        var DESCRIPCION = datos2.DESCRIPCION;
+        var STOCK = 0;
+        var LIMITE_INFERIOR = datos2.LIMITE_INFERIOR;
+        var PRECIO_VENTA = datos2.PRECIO_VENTA;
+        var VOLUMEN_GANANCIA = datos2.VOLUMEN_GANANCIA;
+        var PRECIO_COMPRA = datos2.PRECIO_COMPRA;
+        var registradoPor = datos2.registradoPor;
+        var PORCENTAJE = datos2.PORCENTAJE;
+        var CATEGORIA = datos2.CATEGORIA;
+        var urlProfile = datos2.urlProfile;
+        var reservado=datos2.reservado;
+        db.collection("productos").doc(doc.id).set({
+            CODIGO,
+            DESCRIPCION,
+            PRECIO_COMPRA,
+            PRECIO_VENTA,
+            STOCK,
+            CATEGORIA,
+            LIMITE_INFERIOR,
+            registradoPor,
+            VOLUMEN_GANANCIA,
+            PORCENTAJE,
+            urlProfile,
+            reservado
+          })
+        console.log(datos2);
+    })
+})*/
