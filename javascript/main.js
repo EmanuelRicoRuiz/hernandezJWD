@@ -214,6 +214,7 @@ async function ListaPosicionVentasMes(){
     var año=fecha.getFullYear();
     ListaPosicionVentas(mes,año)
 }
+let arrayClientes;
 async function misClientes() {
 
     var login = document.getElementById("login-page");
@@ -232,6 +233,12 @@ async function misClientes() {
     
                 <div id="tabOne">
                   <h3>Lista de clientes</h3>
+                    <div class="form-group">
+                        <input id="BuscadorMicliente" type="text" class="form-control" placeholder="Ingrese el codigo o el nombre el cliente">
+                    </div>
+                    <div class="form-group">
+                        <button class="btn btn-info" onclick="BuscarMiCliente()">Buscar</button>
+                    </div>
                     <div id="ListaClientes" class="overflow-auto"></div>
                 <div id="nombre">
     
@@ -270,16 +277,14 @@ async function misClientes() {
     user = user.uid;
 
     db.collection("clientes").where("vendedor", "==", user).get().then((querySnapshot) => {
+        arrayClientes=querySnapshot;
         querySnapshot.forEach(async (doc) => {
             var datos = doc.data();
             var RazonSocial = datos.RazonSocial
             var nit = datos.nit;
             var Direccion = datos.Direccion;
-
             var tabla8 = document.getElementById("tabla8");
-
             var doc2 = await obtenerVendedor(datos.vendedor);
-
             vendedor = doc2.data();
             tabla8.innerHTML += `
                 <tr>
@@ -348,6 +353,113 @@ async function misClientes() {
         </div>
     </div>
     <br><hr><br></center>`;
+
+
+}
+const BuscarMiCliente=()=>{
+    var texto = document.getElementById("BuscadorMicliente").value;
+    var tabla8 = document.getElementById("tabla8");
+    tabla8.innerHTML=`
+    <tr>
+        <th>Nit</th>
+        <th>Razón social</th>
+        <th>Direccion</th>
+        <th>Vendedor</th>
+        <th>Ciudad</th>
+        <th>Teléfono</th>
+        <th>Barrio</th>
+        <th>Plazo de pago</th>
+        <th colspan=4>Acciones</th>
+    </tr>`;
+    arrayClientes.forEach(async (doc) => {
+        var datos = doc.data();
+        var texto = document.getElementById("BuscadorMicliente").value.toLowerCase();
+        var razon=datos.RazonSocial.toLowerCase();
+        var codigo =datos.nit.toLowerCase();
+        if (razon.indexOf(texto) !== -1) {
+            try {
+                console.log(datos)
+                var doc2 = await obtenerVendedor(datos.vendedor);
+                vendedor = doc2.data();
+                var tr = document.createElement("tr");
+                var nitTD = document.createElement("td");
+                nitTD.innerHTML = datos.nit;
+                var RazonSocialTD = document.createElement("td");
+                RazonSocialTD.innerHTML = datos.RazonSocial;
+                var DireccionTD = document.createElement("td");
+                DireccionTD.innerHTML = datos.Direccion;
+                var vendedorTD = document.createElement("td");
+                vendedorTD.innerHTML = `${vendedor.nombre} ${vendedor.apellido}`;
+                var ciudadTD = document.createElement("td");
+                ciudadTD.innerHTML = datos.ciudad;
+                var telefonoTD = document.createElement("td");
+                telefonoTD.innerHTML = datos.telefono;
+                var barrioTD = document.createElement("td");
+                barrioTD.innerHTML = datos.barrio;
+                var plazoTD = document.createElement("td");
+                plazoTD.innerHTML = datos.plazo;
+                var cartera = document.createElement("td");
+                cartera.innerHTML = `<a id="${doc.id}" class="cursor" onclick="cartera(this)"><img src="img/cartera.png" width=30></a></td>`;
+                var historialTD = document.createElement("td");
+                historialTD.innerHTML = `<a class="cursor" id="${doc.id}" onclick="historialCompra(this)"><img src="img/cuadrado.png" width=30></a>`;
+                tr.appendChild(nitTD);
+                tr.appendChild(RazonSocialTD);
+                tr.appendChild(DireccionTD);
+                tr.appendChild(vendedorTD);
+                tr.appendChild(ciudadTD);
+                tr.appendChild(telefonoTD);
+                tr.appendChild(barrioTD);
+                tr.appendChild(plazoTD);
+                tr.appendChild(cartera);
+                tr.appendChild(historialTD);
+                tabla8.appendChild(tr);
+
+            } catch (E) {
+                console.log(E);
+            }
+        }else if(codigo.indexOf(texto) !== -1){
+            try {
+                console.log(datos)
+                var doc2 = await obtenerVendedor(datos.vendedor);
+                vendedor = doc2.data();
+                var tr = document.createElement("tr");
+                var nitTD = document.createElement("td");
+                nitTD.innerHTML = datos.nit;
+                var RazonSocialTD = document.createElement("td");
+                RazonSocialTD.innerHTML = datos.RazonSocial;
+                var DireccionTD = document.createElement("td");
+                DireccionTD.innerHTML = datos.Direccion;
+                var vendedorTD = document.createElement("td");
+                vendedorTD.innerHTML = `${vendedor.nombre} ${vendedor.apellido}`;
+                var ciudadTD = document.createElement("td");
+                ciudadTD.innerHTML = datos.ciudad;
+                var telefonoTD = document.createElement("td");
+                telefonoTD.innerHTML = datos.telefono;
+                var barrioTD = document.createElement("td");
+                barrioTD.innerHTML = datos.barrio;
+                var plazoTD = document.createElement("td");
+                plazoTD.innerHTML = datos.plazo;
+                var cartera = document.createElement("td");
+                cartera.innerHTML = `<a id="${doc.id}" class="cursor" onclick="cartera(this)"><img src="img/cartera.png" width=30></a></td>`;
+                var historialTD = document.createElement("td");
+                historialTD.innerHTML = `<a class="cursor" id="${doc.id}" onclick="historialCompra(this)"><img src="img/cuadrado.png" width=30></a>`;
+                tr.appendChild(nitTD);
+                tr.appendChild(RazonSocialTD);
+                tr.appendChild(DireccionTD);
+                tr.appendChild(vendedorTD);
+                tr.appendChild(ciudadTD);
+                tr.appendChild(telefonoTD);
+                tr.appendChild(barrioTD);
+                tr.appendChild(plazoTD);
+                tr.appendChild(cartera);
+                tr.appendChild(historialTD);
+                tabla8.appendChild(tr);
+
+            } catch (E) {
+                console.log(E);
+            }
+        }
+    })
 
 }
 const ventaseditar = (id) => db.collection("ventas").doc(id).get();
