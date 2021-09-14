@@ -234,15 +234,15 @@ async function cargarProductosLista() {
 
 
 }
-function filtroAgotados2(){
+function filtroAgotados2() {
     var tabla3 = document.getElementById("tabla3");
-    tabla3.innerHTML="";
+    tabla3.innerHTML = "";
     var suma1 = 0;
-    let entrada=false;
+    let entrada = false;
     productos1.forEach((doc) => {
         datos = doc.data();
-        if (datos.STOCK==0) {
-            entrada=true;
+        if (datos.STOCK == 0) {
+            entrada = true;
 
             if ((datos.STOCK * datos.PRECIO_VENTA) != NaN) {
                 suma1 += datos.STOCK * datos.PRECIO_VENTA;
@@ -299,20 +299,20 @@ function filtroAgotados2(){
     var ValorInventario = document.getElementById("ValorInventario");
 
     ValorInventario.innerHTML = `<p id="Aviso">Valor global del inventario: ${ingresar(suma1)}<br><hr></p>`
-    if(!entrada){
+    if (!entrada) {
         cargarLista();
     }
 
 }
 function filtroAgotados() {
     var tabla3 = document.getElementById("tabla3");
-    tabla3.innerHTML="";
+    tabla3.innerHTML = "";
     var suma1 = 0;
-    let entrada=false
+    let entrada = false
     productos1.forEach((doc) => {
         datos = doc.data();
         if (datos.LIMITE_INFERIOR >= datos.STOCK) {
-            entrada=true;
+            entrada = true;
 
             if ((datos.STOCK * datos.PRECIO_VENTA) != NaN) {
                 suma1 += datos.STOCK * datos.PRECIO_VENTA;
@@ -368,7 +368,7 @@ function filtroAgotados() {
     var ValorInventario = document.getElementById("ValorInventario");
 
     ValorInventario.innerHTML = `<p id="Aviso">Valor global del inventario: ${ingresar(suma1)}<br><hr></p>`
-    if(!entrada){
+    if (!entrada) {
         cargarLista();
     }
 }
@@ -834,7 +834,7 @@ function pintarTabla(ventaGarray) {
                 <tr>
                     <td>${datos.CODIGO}</td>
                     <td>${datos.DESCRIPCION}</td>
-                    <td>${datos.STOCK}</td>
+                    <td>${datos.STOCK - datos.reservado}</td>
                     <td>${datos.PRECIO_VENTA}</td>
                     <td><a id="${datos.CODIGO}" class="cursor" onclick="CambiarCantidad(this)">${ventaGarray[i].cantidad}</a></td>
                     <td><a id="${datos.CODIGO}" class="cursor" onclick="CambiarDescuento(this)">${ventaGarray[i].Descuento}%</a></td>
@@ -2059,6 +2059,95 @@ function Devolver() {
 
             Swal.fire('Guardado!', '', 'success');
 
+        })
+    }
+
+
+}
+
+const devolverPedido = async (element) => {
+    Swal.fire({
+        icon: 'info',
+        title: 'Cambiando estado...',
+        showConfirmButton: false,
+    })
+    let id = element.id;
+    console.log(id)
+    let venta = await obtenerVenta(id);
+    console.log(venta)
+    var datos = venta.data();
+    var entregado = datos.entregado;
+    console.log(entregado);
+    if (entregado) {
+        entregado = false;
+        var vendedor = datos.vendedor;
+        var fecha = datos.fecha;
+        var pagado = datos.pagado;
+        var suma = datos.suma;
+        var debe = datos.debe;
+        var cliente = datos.cliente;
+        var NumeroFactura = datos.NumeroFactura
+        var descuentos = datos.descuentos;
+        var rentabilidad = datos.rentabilidad
+        var plazo = datos.plazo;
+        var fechaVencimiento = datos.fechaVencimiento;
+        var cantidades = datos.cantidades;
+        var idProducto = datos.idProducto;
+        await db.collection("ventas").doc(id).set({
+            cantidades,
+            idProducto,
+            entregado,
+            vendedor,
+            fecha,
+            pagado,
+            suma,
+            debe,
+            cliente,
+            NumeroFactura,
+            descuentos,
+            plazo,
+            rentabilidad,
+            fechaVencimiento
+        })
+        for (let i = 0; i < cantidades.length; i++) {
+            var producto = await obtenerProducto1(idProducto[i]);
+            producto = producto.data();
+            var CODIGO = producto.CODIGO;
+            var DESCRIPCION = producto.DESCRIPCION;
+            var PRECIO_COMPRA = producto.PRECIO_COMPRA;
+            var PRECIO_VENTA = producto.PRECIO_VENTA;
+            var STOCK = producto.STOCK;
+            var CATEGORIA = producto.CATEGORIA;
+            var LIMITE_INFERIOR = producto.LIMITE_INFERIOR;
+            var registradoPor = producto.registradoPor;
+            var VOLUMEN_GANANCIA = producto.VOLUMEN_GANANCIA;
+            var PORCENTAJE = producto.PORCENTAJE;
+            var urlProfile = producto.urlProfile;
+            var reservado = producto.reservado;
+            reservado = reservado + cantidades[i];
+            STOCK = STOCK + cantidades[i];
+            await db.collection("productos").doc(CODIGO).set({
+                CODIGO,
+                DESCRIPCION,
+                PRECIO_COMPRA,
+                PRECIO_VENTA,
+                STOCK,
+                CATEGORIA,
+                LIMITE_INFERIOR,
+                registradoPor,
+                VOLUMEN_GANANCIA,
+                PORCENTAJE,
+                urlProfile,
+                reservado
+            })
+        }
+        Swal.fire('Estado de entrega cambiado!', '', 'success');
+    } else {
+        Swal.fire({
+            icon: 'info',
+            title: 'El pedido ya había sido devuelto...',
+            showConfirmButton: false,
+            timer: 1500
         })
     }
 

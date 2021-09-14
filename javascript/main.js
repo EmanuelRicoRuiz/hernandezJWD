@@ -641,8 +641,9 @@ function tabTwoVentasG(mes, año) {
     
     <div>
     <p id="aviso1">no hay abonos este mes.</p>
+    <div class="delimitado">
         <table id="tablaRecaudo" class="table table-striped table-bordered">
-        <tr><th colspan=7><center>Lista de Abonos</center></th></tr>
+        <tr><th colspan=8><center>Lista de Abonos</center></th></tr>
             <tr>
                 <th>Número de factura</th>
                 <th>Cantidad del abono</th>
@@ -654,6 +655,7 @@ function tabTwoVentasG(mes, año) {
                 <th>Acciones</th>
             </tr>
         </table>
+        </div>
     </div>`;
     var suma = 0;
     var promedio = 0;
@@ -692,7 +694,8 @@ function tabTwoVentasG(mes, año) {
                                         <td>${nombre} ${apellido}</td>
                                         <td>${(datos.rentabilidad / 100 * datos.cantidad_abono).toFixed(2)}</td>
                                         <td id="recibo${doc.id}">${datos.recibo}</td>
-                                        <td id="container1${doc.id}"><a class="cursor" id="${doc.id}" onclick="EditarAbono(this)"><img src="img/editar.png" width=20 title="Editar"></a></td>
+                                        <td id="container1${doc.id}"><a class="cursor" id="${doc.id}" onclick="EditarAbono(this)"><img src="img/editar.png" width=20 title="Editar"></a>
+                                        <a class="cursor" id="${doc.id}" onclick="ReciboCaja(this)"><img src="img/factura.png" width=20 title="ReciboCaja"></a></td>
                                     </tr>
                                     `
                                     
@@ -806,7 +809,8 @@ function tabOneVentasG(mes, año) {
                     <td>${nombre} ${apellido}</td>
                     <td><a class="cursor" id="${doc.id}" onclick="AbonarPedido(this)"><img src="img/abono.png" width=30></a><br>
                     <a class="cursor" id="${doc.id}" onclick="facturaPdf(this)"><img src="img/factura.png" width=30></a><br>
-                    <a class="cursor" id="${doc.id}" onclick="contenidoPedido(this)"><img src="img/contenido.png" width=30></a></td>
+                    <a class="cursor" id="${doc.id}" onclick="contenidoPedido(this)"><img src="img/contenido.png" width=30></a>
+                    <a class="cursor" id="${doc.id}" onclick="devolverPedido(this)"><img src="img/restore.png" width=30></a></td>
                     
                 </tr>
                 <tr>
@@ -973,7 +977,7 @@ function pedidosGenerales() {
             var datos = doc.data();
             var option = document.createElement("option");
             option.value = datos.CODIGO;
-            option.text = `Nombre: ${datos.DESCRIPCION}\n Cantidad: ${datos.STOCK}`;
+            option.text = `Nombre: ${datos.DESCRIPCION}\n Disponible: ${datos.STOCK-datos.reservado}`;
             listaProductos.appendChild(option);
         });
     })
@@ -1358,7 +1362,7 @@ function VentasInterface() {
             var datos = doc.data();
             var option = document.createElement("option");
             option.value = datos.CODIGO;
-            option.text = `Nombre: ${datos.DESCRIPCION}\n Cantidad: ${datos.STOCK}`;
+            option.text = `Nombre: ${datos.DESCRIPCION}\n Disponible: ${datos.STOCK-datos.reservado}`;
             listaProductos.appendChild(option);
         });
     })

@@ -1617,3 +1617,6 @@ const reporteCarteraVendedor = async () => {
     doc.save(`Reporte${carteraVendedorA[0].vendedor}`);
 
 }
+const ReciboCaja=(element)=>{
+    
+}
