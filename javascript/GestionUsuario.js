@@ -530,7 +530,7 @@ function eliminarTipoDeUsuario(Tusuario) {
 
 }
 function listaDeUsuarios() {
-  toggle();
+  ventaGarray=[];
   var feed = document.getElementById("main");
   var login = document.getElementById("login-page");
   login.innerHTML = "";

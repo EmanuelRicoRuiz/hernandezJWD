@@ -191,7 +191,8 @@ function SubirXLSX() {
 const obtenerProductos = () => db.collection("productos").get();
 var productos1;
 async function cargarProductosLista() {
-
+    
+    ventaGarray=[];
     var tabTree = document.getElementById("main");
     tabTree.innerHTML = "";
     tabTree.innerHTML = `
@@ -1057,7 +1058,7 @@ async function GuardarPedido() {
             query.forEach(doc => {
                 datos = doc.data();
                 var disponible = datos.STOCK - datos.reservado
-                if (disponible < cantidades[i]) {
+                if (disponible - cantidades[i] < 0) {
                     entrada = false;
                 }
             })
@@ -1225,7 +1226,8 @@ async function guadarCambiosPedido(element) {
                 datos = query.data();
 
                 var disponible = (datos.STOCK - datos.reservado);
-                if (disponible < cantidades[i]) {
+                console.log(disponible, cantidades[i])
+                if ((disponible - cantidades[i]) < 0) {
                     entrada = false;
                 }
 
@@ -1235,7 +1237,8 @@ async function guadarCambiosPedido(element) {
                 datos = query.data();
 
                 var disponible = datos.STOCK - datos.reservado + cantidadesVenta[index];
-                if (disponible < cantidades[i]) {
+                console.log(disponible, cantidades[i]);
+                if ((disponible - cantidades[i]) < 0) {
                     entrada = false;
                 }
 
@@ -1392,7 +1395,8 @@ async function guadarCambiosPedido(element) {
 
 
 }
-function GuardarCambiosProducto() {
+const obtenerProducto26 = (id) => db.collection("productos").doc(id).get();
+async function GuardarCambiosProducto() {
     event.preventDefault();
     var CODIGO = document.getElementById("codidoPR").value;
     var DESCRIPCION = document.getElementById("nombrePR").value;
@@ -1416,86 +1420,98 @@ function GuardarCambiosProducto() {
     var VOLUMEN_GANANCIA = PRECIO_VENTA - PRECIO_COMPRA
     if (CODIGO != "" && DESCRIPCION != "" && PRECIO_VENTA != NaN && PRECIO_COMPRA != NaN && stockPr != NaN && LIMITE_INFERIOR != NaN && CATEGORIA != "") {
         if (entrada && NumeroFactura != "") {
+            let producto1 = await obtenerProducto26(CODIGO);
+            producto1 = producto1.data();
+            if (STOCK >= producto1.reservado) {
 
-            var productos = [];
-            var cantidades = [];
-            var costos = [];
-            var fecha1 = [];
 
-            var entrada3 = false;
-            db.collection("compras").where("NumeroFactura", "==", NumeroFactura).get().then((querySnapshot) => {
-                querySnapshot.forEach((doc) => {
-                    entrada3 = true;
-                    datos = doc.data();
-                    productos = datos.productos;
-                    cantidades = datos.cantidades;
-                    costos = datos.costos;
-                    fecha1 = datos.fecha1;
-                    Proveedor = datos.Proveedor;
-                    valorFactura = datos.valorFactura;
-                    estado = datos.estado;
-                    deuda = datos.deuda;
-                })
-                if (entrada3) {
-                    productos.push(CODIGO);
-                    cantidades.push(NuevaCantidad);
-                    costos.push(PRECIO_COMPRA);
-                    var fecha = new Date();
-                    var fecha2 = `${fecha.getDate()}/${fecha.getMonth() + 1}/${fecha.getFullYear()}`;
-                    fecha1.push(fecha2);
+                var productos = [];
+                var cantidades = [];
+                var costos = [];
+                var fecha1 = [];
 
-                    db.collection("compras").doc(NumeroFactura).set({
-                        NumeroFactura,
-                        Proveedor,
-                        valorFactura,
-                        productos,
-                        cantidades,
-                        costos,
-                        fecha1,
-                        estado,
-                        deuda
+                var entrada3 = false;
+
+                db.collection("compras").where("NumeroFactura", "==", NumeroFactura).get().then((querySnapshot) => {
+                    querySnapshot.forEach((doc) => {
+                        entrada3 = true;
+                        datos = doc.data();
+                        productos = datos.productos;
+                        cantidades = datos.cantidades;
+                        costos = datos.costos;
+                        fecha1 = datos.fecha1;
+                        Proveedor = datos.Proveedor;
+                        valorFactura = datos.valorFactura;
+                        estado = datos.estado;
+                        deuda = datos.deuda;
                     })
-                    db.collection("productos").where("CODIGO", "==", CODIGO).get()
-                        .then((querySnapshot) => {
-                            querySnapshot.forEach((doc1) => {
+                    if (entrada3) {
+                        productos.push(CODIGO);
+                        cantidades.push(NuevaCantidad);
+                        costos.push(PRECIO_COMPRA);
+                        var fecha = new Date();
+                        var fecha2 = `${fecha.getDate()}/${fecha.getMonth() + 1}/${fecha.getFullYear()}`;
+                        fecha1.push(fecha2);
 
-                                var datos = doc1.data();
-                                var registradoPor = datos.registradoPor;
-                                STOCK = STOCK + NuevaCantidad;
-                                var PORCENTAJE = (VOLUMEN_GANANCIA / PRECIO_VENTA) * 100
-                                var urlProfile = datos.urlProfile;
-                                var reservado = datos.reservado;
-                                db.collection("productos").doc(doc1.id).set({
-                                    CODIGO,
-                                    DESCRIPCION,
-                                    PRECIO_COMPRA,
-                                    PRECIO_VENTA,
-                                    STOCK,
-                                    CATEGORIA,
-                                    LIMITE_INFERIOR,
-                                    registradoPor,
-                                    VOLUMEN_GANANCIA,
-                                    PORCENTAJE,
-                                    urlProfile,
-                                    reservado
+                        db.collection("compras").doc(NumeroFactura).set({
+                            NumeroFactura,
+                            Proveedor,
+                            valorFactura,
+                            productos,
+                            cantidades,
+                            costos,
+                            fecha1,
+                            estado,
+                            deuda
+                        })
+                        db.collection("productos").where("CODIGO", "==", CODIGO).get()
+                            .then((querySnapshot) => {
+                                querySnapshot.forEach((doc1) => {
+
+                                    var datos = doc1.data();
+                                    var registradoPor = datos.registradoPor;
+                                    STOCK = STOCK + NuevaCantidad;
+                                    var PORCENTAJE = (VOLUMEN_GANANCIA / PRECIO_VENTA) * 100
+                                    var urlProfile = datos.urlProfile;
+                                    var reservado = datos.reservado;
+                                    db.collection("productos").doc(doc1.id).set({
+                                        CODIGO,
+                                        DESCRIPCION,
+                                        PRECIO_COMPRA,
+                                        PRECIO_VENTA,
+                                        STOCK,
+                                        CATEGORIA,
+                                        LIMITE_INFERIOR,
+                                        registradoPor,
+                                        VOLUMEN_GANANCIA,
+                                        PORCENTAJE,
+                                        urlProfile,
+                                        reservado
+                                    })
+                                    Swal.fire('Guardado!', '', 'success');
+
                                 })
-                                Swal.fire('Guardado!', '', 'success');
+
 
                             })
-
-
+                    } else {
+                        Swal.fire({
+                            icon: 'info',
+                            title: 'El número de factura no existe.',
+                            showConfirmButton: false,
+                            timer: 1500
                         })
-                } else {
-                    Swal.fire({
-                        icon: 'info',
-                        title: 'El número de factura no existe.',
-                        showConfirmButton: false,
-                        timer: 1500
-                    })
-                }
+                    }
 
 
 
+                })
+            }
+            Swal.fire({
+                icon: 'info',
+                title: 'El stock no puede ser menor al reservado...',
+                showConfirmButton: false,
+                timer: 1500
             })
         } else if (!entrada || NumeroFactura == "") {
             Swal.fire({
@@ -1509,42 +1525,53 @@ function GuardarCambiosProducto() {
                 showDenyButton: true,
                 confirmButtonText: `Guardar`,
                 denyButtonText: `No Guardar`,
-            }).then((result) => {
+            }).then(async (result) => {
                 if (result.isConfirmed) {
-                    db.collection("productos").where("CODIGO", "==", CODIGO).get()
-                        .then((querySnapshot) => {
-                            querySnapshot.forEach((doc1) => {
-                                var datos = doc1.data()
+                    let producto1 = await obtenerProducto26(CODIGO);
+                    producto1 = producto1.data();
+                    console.log(producto1)
+                    if (STOCK >= producto1.reservado) {
+                        db.collection("productos").where("CODIGO", "==", CODIGO).get()
+                            .then((querySnapshot) => {
+                                querySnapshot.forEach((doc1) => {
+                                    var datos = doc1.data()
 
-                                var registradoPor = datos.registradoPor;
-                                var reservado = datos.reservado;
-                                var PORCENTAJE = (VOLUMEN_GANANCIA / PRECIO_VENTA) * 100
+                                    var registradoPor = datos.registradoPor;
+                                    var reservado = datos.reservado;
+                                    var PORCENTAJE = (VOLUMEN_GANANCIA / PRECIO_VENTA) * 100
 
-                                if (urlProfile == undefined) {
-                                    urlProfile = "img/usuario.png";
-                                }
-                                db.collection("productos").doc(doc1.id).set({
-                                    CODIGO,
-                                    DESCRIPCION,
-                                    PRECIO_COMPRA,
-                                    PRECIO_VENTA,
-                                    STOCK,
-                                    CATEGORIA,
-                                    LIMITE_INFERIOR,
-                                    registradoPor,
-                                    VOLUMEN_GANANCIA,
-                                    PORCENTAJE,
-                                    urlProfile,
-                                    reservado
+                                    if (urlProfile == undefined) {
+                                        urlProfile = "img/usuario.png";
+                                    }
+                                    db.collection("productos").doc(doc1.id).set({
+                                        CODIGO,
+                                        DESCRIPCION,
+                                        PRECIO_COMPRA,
+                                        PRECIO_VENTA,
+                                        STOCK,
+                                        CATEGORIA,
+                                        LIMITE_INFERIOR,
+                                        registradoPor,
+                                        VOLUMEN_GANANCIA,
+                                        PORCENTAJE,
+                                        urlProfile,
+                                        reservado
+                                    })
+                                    Swal.fire('Guardado!', '', 'success');
+
                                 })
-                                Swal.fire('Guardado!', '', 'success');
+
 
                             })
-
-
+                    }else{
+                        Swal.fire({
+                            icon: 'info',
+                            title: 'El stock debe ser mayor a la cantidad reservada',
+                            showConfirmButton: false,
+                            timer: 1500
                         })
+                    }
                 }
-
             })
         }
     } else {
@@ -1672,67 +1699,90 @@ async function cambiarEstado(element) {
         })
         var cantidades = datos.cantidades;
         var idProducto = datos.idProducto;
+        let estado=true
         for (let i = 0; i < idProducto.length; i++) {
             var producto = await obtenerProducto1(idProducto[i])
-            var datos2 = producto.data();
-            var CODIGO = datos2.CODIGO;
-            var DESCRIPCION = datos2.DESCRIPCION;
-            var STOCK = datos2.STOCK;
-            var LIMITE_INFERIOR = datos2.LIMITE_INFERIOR;
-            var PRECIO_VENTA = datos2.PRECIO_VENTA;
-            var VOLUMEN_GANANCIA = datos2.VOLUMEN_GANANCIA;
-            var PRECIO_COMPRA = datos2.PRECIO_COMPRA;
-            var registradoPor = datos2.registradoPor;
-            var PORCENTAJE = datos2.PORCENTAJE;
-            var CATEGORIA = datos2.CATEGORIA;
-            var urlProfile = datos2.urlProfile;
+            datos2=producto.data()
             var reservado = datos2.reservado;
+            var STOCK = datos2.STOCK;
             reservado = reservado - cantidades[i]
             STOCK = STOCK - cantidades[i];
-            await db.collection("productos").doc(producto.id).set({
-                CODIGO,
-                DESCRIPCION,
-                PRECIO_COMPRA,
-                PRECIO_VENTA,
-                STOCK,
-                CATEGORIA,
-                LIMITE_INFERIOR,
-                registradoPor,
-                VOLUMEN_GANANCIA,
-                PORCENTAJE,
-                urlProfile,
-                reservado
+            if(STOCK<0 || reservado<0){
+                estado=false
+            }
+
+        }
+        if(estado){
+            for (let i = 0; i < idProducto.length; i++) {
+                var producto = await obtenerProducto1(idProducto[i])
+                var datos2 = producto.data();
+                var CODIGO = datos2.CODIGO;
+                var DESCRIPCION = datos2.DESCRIPCION;
+                var STOCK = datos2.STOCK;
+                var LIMITE_INFERIOR = datos2.LIMITE_INFERIOR;
+                var PRECIO_VENTA = datos2.PRECIO_VENTA;
+                var VOLUMEN_GANANCIA = datos2.VOLUMEN_GANANCIA;
+                var PRECIO_COMPRA = datos2.PRECIO_COMPRA;
+                var registradoPor = datos2.registradoPor;
+                var PORCENTAJE = datos2.PORCENTAJE;
+                var CATEGORIA = datos2.CATEGORIA;
+                var urlProfile = datos2.urlProfile;
+                var reservado = datos2.reservado;
+                reservado = reservado - cantidades[i]
+                STOCK = STOCK - cantidades[i];
+                await db.collection("productos").doc(producto.id).set({
+                    CODIGO,
+                    DESCRIPCION,
+                    PRECIO_COMPRA,
+                    PRECIO_VENTA,
+                    STOCK,
+                    CATEGORIA,
+                    LIMITE_INFERIOR,
+                    registradoPor,
+                    VOLUMEN_GANANCIA,
+                    PORCENTAJE,
+                    urlProfile,
+                    reservado
+                })
+            }
+            var entregado = true;
+            var vendedor = datos.vendedor;
+            var fecha = datos.fecha;
+            var pagado = datos.pagado;
+            var suma = datos.suma;
+            var debe = datos.debe;
+            var cliente = datos.cliente;
+            var NumeroFactura = datos.NumeroFactura
+            var descuentos = datos.descuentos;
+            var rentabilidad = datos.rentabilidad
+            var plazo = datos.plazo;
+            var fechaVencimiento = datos.fechaVencimiento;
+            await db.collection("ventas").doc(Ventaid).set({
+                cantidades,
+                idProducto,
+                entregado,
+                vendedor,
+                fecha,
+                pagado,
+                suma,
+                debe,
+                cliente,
+                NumeroFactura,
+                descuentos,
+                plazo,
+                rentabilidad,
+                fechaVencimiento
+            })
+            Swal.fire('Entregado!', '', 'success');
+        }else{
+            Swal.fire({
+                icon: 'info',
+                title: 'Stocks y reservados negativos, contacte a soporte para solucionar inmendiatamente.',
+                showConfirmButton: false,
+                timer: 1500
             })
         }
-        var entregado = true;
-        var vendedor = datos.vendedor;
-        var fecha = datos.fecha;
-        var pagado = datos.pagado;
-        var suma = datos.suma;
-        var debe = datos.debe;
-        var cliente = datos.cliente;
-        var NumeroFactura = datos.NumeroFactura
-        var descuentos = datos.descuentos;
-        var rentabilidad = datos.rentabilidad
-        var plazo = datos.plazo;
-        var fechaVencimiento = datos.fechaVencimiento;
-        await db.collection("ventas").doc(Ventaid).set({
-            cantidades,
-            idProducto,
-            entregado,
-            vendedor,
-            fecha,
-            pagado,
-            suma,
-            debe,
-            cliente,
-            NumeroFactura,
-            descuentos,
-            plazo,
-            rentabilidad,
-            fechaVencimiento
-        })
-        Swal.fire('Entregado!', '', 'success');
+        
 
     } else {
         Swal.fire({

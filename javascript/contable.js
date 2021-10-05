@@ -1,4 +1,5 @@
 function contabilidad() {
+    ventaGarray=[];
     var _0x3ab4x2 = document['getElementById']('main');
     var _0x3ab4x3 = document['getElementById']('login-page');
     _0x3ab4x2['innerHTML'] = '';
@@ -1050,6 +1051,7 @@ async function cartera(element) {
     })
 }
 async function CalcularNomina() {
+    ventaGarray=[];
     var login = document.getElementById("login-page");
     login.innerHTML = "";
     var main = document.getElementById("main");

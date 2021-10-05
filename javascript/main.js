@@ -1,5 +1,5 @@
 function RegistrarUsuario() {
-    toggle();
+    ventaGarray=[];
     var main = document.getElementById("main");
     main.innerHTML = "";
     main = document.getElementById("login-page");
@@ -30,7 +30,7 @@ function RegistrarUsuario() {
 }
 function gestionarusuario() {
 
-    toggle();
+    ventaGarray = []
     var login = document.getElementById("login-page");
     login.innerHTML = "";
     var main = document.getElementById("main");
@@ -142,6 +142,7 @@ function menuInicio(permisos) {
     if (permisos[0]) {
         menu.innerHTML += `<a class="list-group-item list-group-item-action bg-light" onclick="Proveedores()"
         href="#">Gestión de proveedores</a>`;
+        
 
     }
     if (permisos[1]) {
@@ -209,6 +210,7 @@ function menuInicio(permisos) {
 
 }
 async function ListaPosicionVentasMes(){
+    ventaGarray=[];
     var fecha=new Date();
     var mes=fecha.getMonth()+1;
     var año=fecha.getFullYear();
@@ -216,7 +218,7 @@ async function ListaPosicionVentasMes(){
 }
 let arrayClientes;
 async function misClientes() {
-
+    ventaGarray=[];
     var login = document.getElementById("login-page");
     login.innerHTML = "";
     var main = document.getElementById("main");
@@ -577,6 +579,7 @@ async function editarPedido(element) {
 }
 function ventasGenerales() {
     event.preventDefault();
+    ventaGarray=[];
     var login = document.getElementById("login-page");
     login.innerHTML = "";
     var main = document.getElementById("main");
@@ -950,7 +953,7 @@ function tabOneVentasG(mes, año) {
 }
 
 function Proveedores() {
-
+    ventaGarray = []
     var login = document.getElementById("login-page");
     login.innerHTML = "";
     var main = document.getElementById("main");
@@ -991,6 +994,7 @@ function Proveedores() {
     ListarProveedores();
 }
 function pedidosGenerales() {
+    ventaGarray=[];
     var main = document.getElementById("main");
     main.innerHTML = ``;
     var login = document.getElementById("login-page");
@@ -1258,7 +1262,7 @@ function comprasInterface() {
 }
 
 function ingresarProductosInterface() {
-    toggle();
+    ventaGarray = []
 
     var login = document.getElementById("login-page");
     login.innerHTML = "";
@@ -1374,7 +1378,7 @@ function cargarLasTabs() {
 
 }
 function VentasInterface() {
-
+    ventaGarray=[];
     var main = document.getElementById("main");
     main.innerHTML = ``;
     var login = document.getElementById("login-page");
@@ -1566,6 +1570,7 @@ function VentasInterface() {
 var clientesLista;
 const obtenerClientes = () => db.collection("clientes").get();
 async function cargarClientes() {
+    ventaGarray=[];
     var login = document.getElementById("login-page");
     login.innerHTML = "";
     var main = document.getElementById("main");
@@ -1879,7 +1884,7 @@ const obtenerVendedor = (id) => db.collection("usuarios").doc(id).get();
 const obtenerVendedores1 = () => db.collection("usuarios").where("tipoDeUsuario", "==", "vendedor").get();
 function ventas() {
     event.preventDefault();
-
+    ventaGarray=[];
     var login = document.getElementById("login-page");
     login.innerHTML = "";
     var main = document.getElementById("main");
@@ -2438,7 +2443,7 @@ function ocultarFactura(element) {
 const obtenerProductosglobal = () => db.collection("productos").get();
 var productos1;
 async function InventarioGlobal() {
-
+    ventaGarray=[];
     var tabTree = document.getElementById("main");
     tabTree.innerHTML = "";
     tabTree.innerHTML = `
@@ -2563,6 +2568,7 @@ function cargarListaglobal() {
 
 }
 function RealizarDevoluciones() {
+    ventaGarray=[];
     var login = document.getElementById("login-page");
     login.innerHTML = "";
     var main = document.getElementById("main");
