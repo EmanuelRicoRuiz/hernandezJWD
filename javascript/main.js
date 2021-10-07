@@ -649,17 +649,22 @@ function tabTreeVentasG(mes, año) {
     meses.value = mes;
     años.value = año;
 
-    db.collection("ventas").get().then((querySnapshot) => {
+    db.collection("ventas").orderBy("NumeroFactura", "desc").get().then((querySnapshot) => {
         querySnapshot.forEach((doc) => {
             var datos = doc.data();
 
             db.collection("usuarios").doc(datos.vendedor).get().then(doc2 => {
+                try{
+
+                
                 var datos2 = doc2.data();
                 nombre = datos2.nombre;
                 apellido = datos2.apellido;
                 var fechaVencimiento = new Date(datos.fechaVencimiento[2], datos.fechaVencimiento[1] - 1, datos.fechaVencimiento[0])
                 var fechaActual = new Date();
-
+            }catch{
+                console.log("usuario no encontrado")
+            }
                 if (fechaActual >= fechaVencimiento && datos.entregado && mes == datos.fecha[1] && año == datos.fecha[2] && datos.debe > 0) {
 
 
@@ -714,6 +719,7 @@ function tabTreeVentasG(mes, año) {
                         })
                     })
                 }
+                
             })
 
 
@@ -877,11 +883,15 @@ function tabOneVentasG(mes, año) {
     </div>
     <hr>
     `
-
-    db.collection("ventas").get().then((querySnapshot) => {
+    
+    
+    db.collection("ventas").where("entregado","==",true).orderBy("NumeroFactura", "desc").get().then((querySnapshot) => {
         querySnapshot.forEach((doc) => {
             var datos = doc.data();
             db.collection("usuarios").doc(datos.vendedor).get().then(doc2 => {
+                try{
+                    console.log("entró")
+                
                 var datos2 = doc2.data();
                 nombre = datos2.nombre;
                 apellido = datos2.apellido;
@@ -943,6 +953,11 @@ function tabOneVentasG(mes, año) {
                         })
                     })
                 }
+                
+
+            }catch{
+                console.log("usuario no encontrado")
+            }
             })
 
 
@@ -1118,7 +1133,7 @@ function pedidosGenerales() {
 
 }
 function listaPedidos1() {
-    db.collection("ventas").where("entregado", "==", false).get().then((querySnapshot) => {
+    db.collection("ventas").where("entregado", "==", false).orderBy("NumeroFactura", "desc").get().then((querySnapshot) => {
         querySnapshot.forEach((doc) => {
             var datos = doc.data();
             tabTwo.innerHTML += `<div class="overflow-auto"><table  class="table table-striped table-bordered" id="Cabecera${doc.id}">
@@ -2151,7 +2166,7 @@ function tabOneVentas(mes, año) {
     `
     var user = firebase.auth().currentUser;
     user = user.uid;
-    db.collection("ventas").where("vendedor", "==", user).get().then((querySnapshot) => {
+    db.collection("ventas").orderBy("NumeroFactura", "desc").where("vendedor", "==", user).get().then((querySnapshot) => {
         querySnapshot.forEach((doc) => {
             var datos = doc.data();
 
@@ -2602,7 +2617,7 @@ function RealizarDevoluciones() {
                </select>
                </td>
                <td> <input id="cantidades" class="form-control" placeholder="cantidad"></td>
-               
+               <td> <input id="factura" class="form-control" placeholder="Número de factura"></td>
                
             </tr>
             <tr>
