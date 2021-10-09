@@ -677,14 +677,24 @@ function EmitirEditar() {
                 cantidad = parseInt(cantidad, 10);
                 Descuento = parseFloat(Descuento, 10);
                 cantidadInicial = parseInt(cantidad, 10);
-                viejo = false
-                idVenta = null
-                var ventaG = {
-                    cantidad, idProducto, Descuento, cantidadInicial, viejo, idVenta
-                }
-                ventaGarray.push(ventaG);
+                if (cantidad > 0) {
+                    viejo = false
+                    idVenta = null
+                    var ventaG = {
+                        cantidad, idProducto, Descuento, cantidadInicial, viejo, idVenta
+                    }
+                    ventaGarray.push(ventaG);
 
-                pintartablaEditada(ventaGarray);
+                    pintartablaEditada(ventaGarray);
+                }else{
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Especificar descuento',
+                        text: 'Si el producto no tiene descuento, debe colocar 0',
+    
+                    })
+                }
+
             } else {
                 Swal.fire({
                     icon: 'error',
@@ -1254,7 +1264,7 @@ async function guadarCambiosPedido(element) {
                         entrada = false;
                     }
                 } catch (e) {
-                    
+
                 }
 
 
@@ -1291,7 +1301,7 @@ async function guadarCambiosPedido(element) {
                         var reservado = datos1.reservado;
                         reservado = reservado - cantidadesVenta[j];
                         reservado = reservado + cantidades[i];
-                       
+
                         var CATEGORIA = datos1.CATEGORIA;
                         var urlProfile = datos1.urlProfile;
                         await db.collection("productos").doc(query.id).set({
@@ -2038,12 +2048,12 @@ async function Devolver() {
         let devolver1;
         var CODIGO = productos;
         cantidades1 = parseInt(cantidades1, 10)
-        
+
         NumeroFactura = parseInt(NumeroFactura, 10)
         let venta = await getVenta(NumeroFactura);
 
         venta.forEach(async docV => {
-          
+
             var datosV = docV.data()
             var vendedor = datosV.vendedor;
             var fecha = datosV.fecha;
@@ -2063,7 +2073,7 @@ async function Devolver() {
                 let posicion = idProducto.indexOf(CODIGO);
                 let producto = await getProducto(CODIGO);
                 producto = producto.data();
-               
+
                 if (posicion > -1) {
                     if (cantidades[posicion] < cantidades1) {
                         Swal.fire({
@@ -2074,10 +2084,10 @@ async function Devolver() {
                         })
                         devolver1 = false;
                     } else if (cantidades[posicion] == cantidades1) {
-                        
-                        suma -= ((producto.PRECIO_VENTA-(producto.PRECIO_VENTA * (descuentos[posicion] / 100))) * cantidades1);
-                        debe -= ((producto.PRECIO_VENTA-(producto.PRECIO_VENTA * (descuentos[posicion] / 100))) * cantidades1);
-                      
+
+                        suma -= ((producto.PRECIO_VENTA - (producto.PRECIO_VENTA * (descuentos[posicion] / 100))) * cantidades1);
+                        debe -= ((producto.PRECIO_VENTA - (producto.PRECIO_VENTA * (descuentos[posicion] / 100))) * cantidades1);
+
                         if (debe < 0) {
                             debe = 0;
                         }
@@ -2086,10 +2096,10 @@ async function Devolver() {
                         descuentos.splice(posicion, 1)
                         devolver1 = true;
                     } else if (cantidades[posicion] > cantidades1) {
-                        
-                        suma -= ((producto.PRECIO_VENTA-(producto.PRECIO_VENTA * (descuentos[posicion] / 100))) * cantidades1);
-                        debe -= ((producto.PRECIO_VENTA-(producto.PRECIO_VENTA * (descuentos[posicion] / 100))) * cantidades1);
-                       
+
+                        suma -= ((producto.PRECIO_VENTA - (producto.PRECIO_VENTA * (descuentos[posicion] / 100))) * cantidades1);
+                        debe -= ((producto.PRECIO_VENTA - (producto.PRECIO_VENTA * (descuentos[posicion] / 100))) * cantidades1);
+
                         if (debe < 0) {
                             debe = 0;
                         }
@@ -2353,7 +2363,7 @@ async function ajustarReservas() {
                         querySnapshot.forEach(element => {
                             var datos = element.data();
                             if (!datos.entregado) {
-                               
+
                                 var indice;
                                 for (let i = 0; i < datos.idProducto.length; i++) {
                                     if (datos.idProducto[i] == doc.id) {
