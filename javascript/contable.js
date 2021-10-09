@@ -1,11 +1,11 @@
 function contabilidad() {
-    ventaGarray=[];
+    ventaGarray = [];
     var _0x3ab4x2 = document['getElementById']('main');
     var _0x3ab4x3 = document['getElementById']('login-page');
     _0x3ab4x2['innerHTML'] = '';
     _0x3ab4x3['innerHTML'] = '';
     var _0x3ab4x4 = new Date();
-    _0x3ab4x2['innerHTML'] = `${'<div class="wrap">\x0D\x0A    <center>\x0D\x0A    <ul class="tabs">\x0D\x0A        <li><a href="#tab1"><span class="fa fa-home"></span><span class="tab-text">Gastos</span></a></li>\x0D\x0A        <li><a href="#tab2"><span class="fa fa-group"></span><span class="tab-text">Deudas</span></a></li>\x0D\x0A        <li><a href="#tab3"><span class="fa fa-group"></span><span class="tab-text">Cartera vendedor</span></a></li>\x0D\x0A  <li><a href="#tab4"><span class="fa fa-home"></span><span class="tab-text">Cartera</span></a></li>\x0D\x0A  </ul>\x0D\x0A    </center>\x0D\x0A    <div class="secciones">\x0D\x0A        <article id="tab1">\x0D\x0A\x0D\x0A            <div id="tabOne">\x0D\x0A              \x0D\x0A            <form>\x0D\x0A                <div class="col-md-8">\x0D\x0A                    <div class="form-group">\x0D\x0A                        <input type="text" class="form-control" placeholder="Valor del gasto" id="valor">\x0D\x0A                    </div>\x0D\x0A                    <div class="form-group">\x0D\x0A                        <input type="text" class="form-control" placeholder="Descripci\xF3n del gasto" id="Descripcion">\x0D\x0A                    </div>\x0D\x0A                    <div class="form-group">\x0D\x0A                        <button class="btn btn-success" onclick="GuardarGasto()">Guardar Gasto</button>\x0D\x0A                    </div>\x0D\x0A                </div>\x0D\x0A            </form>\x0D\x0A            <div id="ListaGastos">\x0D\x0A\x0D\x0A            </div>\x0D\x0A            \x0D\x0A            \x0D\x0A            </div>\x0D\x0A        </article>\x0D\x0A        <article id="tab2">\x0D\x0A            <div id="tabTwo">\x0D\x0A            \x0D\x0A            </div>\x0D\x0A        </article>\x0D\x0A        <article id="tab3">\x0D\x0A            <div id="tabTree">\x0D\x0A            \x0D\x0A            </div>\x0D\x0A        </article>\x0D\x0A\x0D\x0A   <article id="tab4">\x0D\x0A            <div id="tabFour">\x0D\x0A            \x0D\x0A            </div>\x0D\x0A        </article>\x0D\x0A\x0D\x0A     \x0D\x0A    </div>\x0D\x0A</div>'}`;
+    _0x3ab4x2['innerHTML'] = `${'<div class="wrap">\x0D\x0A    <center>\x0D\x0A    <ul class="tabs">\x0D\x0A        <li><a href="#tab1"><span class="fa fa-home"></span><span class="tab-text">Gastos</span></a></li>\x0D\x0A        <li><a href="#tab2"><span class="fa fa-group"></span><span class="tab-text">Deudas</span></a></li>\x0D\x0A        <li><a href="#tab3"><span class="fa fa-group"></span><span class="tab-text">Cartera vendedor</span></a></li>\x0D\x0A  <li><a href="#tab4"><span class="fa fa-home"></span><span class="tab-text">Cartera</span></a></li>\x0D\x0A  </ul>\x0D\x0A    </center>\x0D\x0A    <div class="secciones">\x0D\x0A        <article id="tab1">\x0D\x0A\x0D\x0A            <div id="tabOne">\x0D\x0A              \x0D\x0A            <form>\x0D\x0A                <div class="col-md-8">\x0D\x0A                    <div class="form-group">\x0D\x0A                        <input type="text" class="form-control" placeholder="Valor del gasto" id="valor">\x0D\x0A                    </div>\x0D\x0A                    <div class="form-group">\x0D\x0A                        <input type="text" class="form-control" placeholder="Descripci\xF3n del gasto" id="Descripcion">\x0D\x0A                    </div>\x0D\x0A                    <div class="form-group">\x0D\x0A                        <button class="btn btn-success" onclick="GuardarGasto()">Guardar Gasto</button>\x0D\x0A                    </div>\x0D\x0A                </div>\x0D\x0A            </form>\x0D\x0A            <div id="ListaGastos">\x0D\x0A\x0D\x0A            </div>\x0D\x0A            \x0D\x0A            \x0D\x0A            </div>\x0D\x0A        </article>\x0D\x0A        <article id="tab2">\x0D\x0A            <div id="tabTwo">\x0D\x0A            \x0D\x0A            </div>\x0D\x0A        </article>\x0D\x0A        <article id="tab3">\x0D\x0A            <div id="tabTree">\x0D\x0A            \x0D\x0A            </div>\x0D\x0A        </article>\x0D\x0A\x0D\x0A   <article class="delimitado" id="tab4">\x0D\x0A            <div id="tabFour">\x0D\x0A            \x0D\x0A            </div>\x0D\x0A        </article>\x0D\x0A\x0D\x0A     \x0D\x0A    </div>\x0D\x0A</div>'}`;
     cargarTabs();
     listarGastos();
     deudas();
@@ -150,10 +150,13 @@ const VisualizarCartera = async (element) => {
                             `*/
         }
     })
-    console.log(carteraVendedorA);
+    
 
 }
 let carteraGeneralA = [];
+
+
+const obtenerTodasVentasDebe = () => db.collection("ventas").where("debe", ">", 1).get()
 async function carteraGeneral() {
     var tabFour = document.getElementById("tab4");
     tabFour.innerHTML = `<h3 id="titulo">No hay facturas pendientes.</h3>
@@ -175,11 +178,12 @@ async function carteraGeneral() {
             </tr>
         </table></div>`;
     CarteraCliente = document.getElementById("CarteraCliente");
-    querySnapshot = await obtenerTodasVentas();
+    querySnapshot = await obtenerTodasVentasDebe();
     querySnapshot.forEach(async doc => {
         var datos = doc.data();
 
-        if (datos.debe > 0) {
+
+        try {
             var titulo = document.getElementById("titulo")
             titulo.innerHTML = "";
 
@@ -212,7 +216,11 @@ async function carteraGeneral() {
             </tr>
             
                 `
+        } catch {
+            console.log("Usuario no encontrado: ", datos.cliente)
         }
+
+
 
 
 
@@ -842,7 +850,7 @@ async function ListaPosicionVentas(mes, año1) {
     var posiciones = [];
     var lista = [];
     var nombres = [];
-    var cuota=[];
+    var cuota = [];
     querySnapshot1.forEach(async (doc) => {
         var suma = 0;
         var datos2 = doc.data()
@@ -869,15 +877,15 @@ async function ListaPosicionVentas(mes, año1) {
                         aux = lista[i];
                         aux2 = posiciones[i];
                         aux3 = nombres[i]
-                        aux4= cuota[i]
+                        aux4 = cuota[i]
                         lista[i] = lista[i + 1];
                         posiciones[i] = posiciones[i + 1]
                         nombres[i] = nombres[i + 1]
-                        cuota[i]=cuota[i+1]
+                        cuota[i] = cuota[i + 1]
                         lista[i + 1] = aux;
                         posiciones[i + 1] = aux2;
                         nombres[i + 1] = aux3;
-                        cuota[i+1]=aux4
+                        cuota[i + 1] = aux4
                     }
                 }
             }
@@ -925,11 +933,11 @@ async function ListaPosicionVentas(mes, año1) {
             </table>
             `
             var meses = document.getElementById("meses4");
-            let cumplio=[];
-            for (let i=0;i<cuota.length;i++){
-                if(lista[i]>=cuota[i]){
+            let cumplio = [];
+            for (let i = 0; i < cuota.length; i++) {
+                if (lista[i] >= cuota[i]) {
                     cumplio.push(true)
-                }else{
+                } else {
                     cumplio.push(false)
                 }
             }
@@ -1051,7 +1059,7 @@ async function cartera(element) {
     })
 }
 async function CalcularNomina() {
-    ventaGarray=[];
+    ventaGarray = [];
     var login = document.getElementById("login-page");
     login.innerHTML = "";
     var main = document.getElementById("main");
@@ -1467,79 +1475,85 @@ const reporteCarteraPDF = async (element) => {
 }
 
 const reporteCarteraGeneral = async (element) => {
-    for (let i = 0; i < carteraGeneralA.length; i++) {
-        cliente = carteraGeneralA[i].cliente
-        if (cliente.length > 30) {
-            carteraGeneralA[i].cliente = ""
-            for (let j = 0; j < 30; j++) {
-                carteraGeneralA[i].cliente += cliente[j]
+
+    try{
+        for (let i = 0; i < carteraGeneralA.length; i++) {
+            cliente = carteraGeneralA[i].cliente
+            if (cliente.length > 30) {
+                carteraGeneralA[i].cliente = ""
+                for (let j = 0; j < 30; j++) {
+                    carteraGeneralA[i].cliente += cliente[j]
+                }
+            }
+    
+        }
+    
+        var fecha = new Date();
+    
+        var doc = jsPDF('p', 'mm', [279.4, 216]);
+        var x = 5;
+        var y = 30;
+        doc.setFontType("bold");
+        doc.text(x, y, `Reporte de cartera general ${fecha.getDate()}/${fecha.getMonth() + 1}/${fecha.getFullYear()}`)
+        y += 15;
+        doc.setFontSize(7);
+        doc.text(x, y, "Numero factura");
+        x += 20;
+        doc.text(x, y, "Cliente");
+        x += 50;
+        doc.text(x, y, "Debe");
+        x += 20;
+        doc.text(x, y, "entregado");
+        x += 20;
+        doc.text(x, y, "plazo");
+        x += 15;
+        doc.text(x, y, "Suma");
+        x += 20;
+        doc.text(x, y, `Fecha de venta`);
+        x += 20;
+        doc.text(x, y, `Fecha de vencimiento`);
+        x = 5
+        y += 5
+        doc.setFontType("normal");
+        var cont = 0;
+        let suma = 0;
+        for (let i = 0; i < carteraGeneralA.length; i++) {
+    
+            doc.text(x, y, carteraGeneralA[i].NumeroFactura.toString());
+            x += 20;
+            doc.text(x, y, carteraGeneralA[i].cliente);
+            x += 50;
+            doc.text(x, y, ingresar(carteraGeneralA[i].debe));
+            x += 20;
+            doc.text(x, y, carteraGeneralA[i].entregado.toString());
+            x += 20;
+            doc.text(x, y, carteraGeneralA[i].plazo.toString());
+            x += 15;
+            doc.text(x, y, ingresar(carteraGeneralA[i].suma));
+            x += 20;
+            doc.text(x, y, `${carteraGeneralA[i].fecha[0]}/${carteraGeneralA[i].fecha[1]}/${carteraGeneralA[i].fecha[2]}`);
+            x += 20;
+            doc.text(x, y, `${carteraGeneralA[i].fechaVencimiento[0]}/${carteraGeneralA[i].fechaVencimiento[1]}/${carteraGeneralA[i].fechaVencimiento[2]}`);
+            x += 20;
+            y += 5;
+            x = 5
+            cont += 1
+            suma += carteraGeneralA[i].debe;
+            if (cont % 40 == 0) {
+                console.log(y);
+                doc.addPage();
+                y = 30
             }
         }
-
+    
+    
+        doc.setFontSize(15);
+        doc.text(120, 250, `Total de cartera: ${ingresar(suma)}`);
+        doc.save(`ReporteGeneralCartera${fecha.getDate()}/${fecha.getMonth() + 1}/${fecha.getFullYear()}`);
+    }catch(E){
+        console.log(E)
     }
-
-    var fecha = new Date();
-
-    var doc = jsPDF('p', 'mm', [279.4, 216]);
-    var x = 5;
-    var y = 30;
-    doc.setFontType("bold");
-    doc.text(x, y, `Reporte de cartera general ${fecha.getDate()}/${fecha.getMonth() + 1}/${fecha.getFullYear()}`)
-    y += 15;
-    doc.setFontSize(7);
-    doc.text(x, y, "Numero factura");
-    x += 20;
-    doc.text(x, y, "Cliente");
-    x += 50;
-    doc.text(x, y, "Debe");
-    x += 20;
-    doc.text(x, y, "entregado");
-    x += 20;
-    doc.text(x, y, "plazo");
-    x += 15;
-    doc.text(x, y, "Suma");
-    x += 20;
-    doc.text(x, y, `Fecha de venta`);
-    x += 20;
-    doc.text(x, y, `Fecha de vencimiento`);
-    x = 5
-    y += 5
-    doc.setFontType("normal");
-    var cont = 0;
-    let suma = 0;
-    for (let i = 0; i < carteraGeneralA.length; i++) {
-
-        doc.text(x, y, carteraGeneralA[i].NumeroFactura.toString());
-        x += 20;
-        doc.text(x, y, carteraGeneralA[i].cliente);
-        x += 50;
-        doc.text(x, y, ingresar(carteraGeneralA[i].debe));
-        x += 20;
-        doc.text(x, y, carteraGeneralA[i].entregado.toString());
-        x += 20;
-        doc.text(x, y, carteraGeneralA[i].plazo.toString());
-        x += 15;
-        doc.text(x, y, ingresar(carteraGeneralA[i].suma));
-        x += 20;
-        doc.text(x, y, `${carteraGeneralA[i].fecha[0]}/${carteraGeneralA[i].fecha[1]}/${carteraGeneralA[i].fecha[2]}`);
-        x += 20;
-        doc.text(x, y, `${carteraGeneralA[i].fechaVencimiento[0]}/${carteraGeneralA[i].fechaVencimiento[1]}/${carteraGeneralA[i].fechaVencimiento[2]}`);
-        x += 20;
-        y += 5;
-        x = 5
-        cont += 1
-        suma += carteraGeneralA[i].debe;
-        if (cont % 40 == 0) {
-            console.log(y);
-            doc.addPage();
-            y = 30
-        }
-    }
-
-
-    doc.setFontSize(15);
-    doc.text(120, 250, `Total de cartera: ${ingresar(suma)}`);
-    doc.save(`ReporteGeneralCartera${fecha.getDate()}/${fecha.getMonth() + 1}/${fecha.getFullYear()}`);
+    
 }
 const obtenerVendedor1 = (id) => db.collection("usuarios").doc(id).get();
 const reporteCarteraVendedor = async () => {
@@ -1619,6 +1633,6 @@ const reporteCarteraVendedor = async () => {
     doc.save(`Reporte${carteraVendedorA[0].vendedor}`);
 
 }
-const ReciboCaja=(element)=>{
-    
+const ReciboCaja = (element) => {
+
 }

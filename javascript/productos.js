@@ -869,6 +869,17 @@ function EliminarItemEditado(element) {
     }
     pintartablaEditada(ventaGarray);
 }
+function EliminarItem(element) {
+    var idElemento = element.id;
+    for (let i = 0; i < ventaGarray.length; i++) {
+
+        if (idElemento == ventaGarray[i].idProducto) {
+            ventaGarray.splice(i, 1);
+
+        }
+    }
+    pintartablaEditada(ventaGarray);
+}
 const obtenerCompra = (id) => db.collection("compras").doc(id).get();
 const obtenerProveedor = (id) => db.collection("proveedores").doc(id).get();
 async function eliminarPCompra(element) {
@@ -1243,7 +1254,7 @@ async function guadarCambiosPedido(element) {
                         entrada = false;
                     }
                 } catch (e) {
-                    console.log(e)
+                    
                 }
 
 
@@ -1280,7 +1291,7 @@ async function guadarCambiosPedido(element) {
                         var reservado = datos1.reservado;
                         reservado = reservado - cantidadesVenta[j];
                         reservado = reservado + cantidades[i];
-                        console.log(reservado)
+                       
                         var CATEGORIA = datos1.CATEGORIA;
                         var urlProfile = datos1.urlProfile;
                         await db.collection("productos").doc(query.id).set({
@@ -2014,7 +2025,7 @@ function mirarObsAdmin(element) {
         })
     })
 }
-const getVenta = (id) => db.collection("ventas").where("NumeroFactuta", "==", id).get();
+const getVenta = (id) => db.collection("ventas").where("NumeroFactura", "==", id).get();
 const getProducto = (id) => db.collection("productos").doc(id).get();
 async function Devolver() {
     var productos = document.getElementById("productos1").value;
@@ -2023,144 +2034,71 @@ async function Devolver() {
     var cantidades1 = document.getElementById("cantidades").value;
     var NumeroFactura = document.getElementById("factura").value;
 
-    if (productos != "" && clientes != "" && tipoDeDevolucion != "" && NumeroFactura != "") {
-
+    if (productos != "" && clientes != "" && tipoDeDevolucion != "" && NumeroFactura != "" && cantidades1 != "") {
+        let devolver1;
         var CODIGO = productos;
         cantidades1 = parseInt(cantidades1, 10)
-        var cliente = [];
-        var cantidad = [];
-        var tipo = [];
-        var fecha = [];
+        
+        NumeroFactura = parseInt(NumeroFactura, 10)
+        let venta = await getVenta(NumeroFactura);
 
-
-        db.collection("devoluciones").where("CODIGO", "==", CODIGO).get().then(async (querySnapshot) => {
-
-            querySnapshot.forEach(async (doc) => {
-                var datos = doc.data();
-                cliente = datos.cliente;
-                cantidad = datos.cantidad;
-                tipo = datos.tipo
-                fecha = datos.fecha;
-
-            })
-
-
-            cliente.push(clientes);
-            cantidad.push(cantidades1);
-
-
-            tipo.push(tipoDeDevolucion);
-            var hoy = new Date();
-            dia = hoy.getDate()
-            mes = hoy.getMonth() + 1
-            if (dia < 10) {
-                dia = dia.toString();
-                var cero = "0";
-                cero += dia
-                dia = cero;
-            }
-            if (mes < 10) {
-                mes = mes.toString();
-                var cero = "0";
-                cero += mes
-                mes = cero;
-            }
-            dia = dia.toString();
-            mes = mes.toString();
-            fecha1 = `${dia}/${mes}/${hoy.getFullYear()}`
-            fecha.push(fecha1);
-
-
-            db.collection("devoluciones").doc(CODIGO).set({
-                CODIGO,
-                cliente,
-                cantidad,
-                tipo,
-                fecha,
-
-            })
-            if (tipoDeDevolucion == "inventario") {
-                var PRECIO_VENTA;
-                db.collection("productos").where("CODIGO", "==", CODIGO).get()
-                    .then((querySnapshot) => {
-                        querySnapshot.forEach((doc2) => {
-
-                            var datos2 = doc2.data();
-                            var CODIGO = datos2.CODIGO;
-                            var DESCRIPCION = datos2.DESCRIPCION;
-                            var STOCK = datos2.STOCK;
-                            var LIMITE_INFERIOR = datos2.LIMITE_INFERIOR;
-                            PRECIO_VENTA = datos2.PRECIO_VENTA;
-                            var VOLUMEN_GANANCIA = datos2.VOLUMEN_GANANCIA;
-                            var PRECIO_COMPRA = datos2.PRECIO_COMPRA;
-                            var registradoPor = datos2.registradoPor;
-                            var PORCENTAJE = datos2.PORCENTAJE;
-                            var urlProfile = datos2.urlProfile;
-                            STOCK = STOCK + cantidades1;
-                            var CATEGORIA = datos2.CATEGORIA;
-                            var reservado = datos2.reservado;
-                            db.collection("productos").doc(doc2.id).set({
-                                CODIGO,
-                                DESCRIPCION,
-                                PRECIO_COMPRA,
-                                PRECIO_VENTA,
-                                STOCK,
-                                CATEGORIA,
-                                LIMITE_INFERIOR,
-                                registradoPor,
-                                VOLUMEN_GANANCIA,
-                                PORCENTAJE,
-                                urlProfile,
-                                reservado
-                            })
+        venta.forEach(async docV => {
+          
+            var datosV = docV.data()
+            var vendedor = datosV.vendedor;
+            var fecha = datosV.fecha;
+            var pagado = datosV.pagado;
+            var suma = datosV.suma;
+            var debe = datosV.debe;
+            var cliente = datosV.cliente;
+            var NumeroFactura = datosV.NumeroFactura
+            var descuentos = datosV.descuentos;
+            var rentabilidad = datosV.rentabilidad
+            var plazo = datosV.plazo;
+            var fechaVencimiento = datosV.fechaVencimiento;
+            var cantidades = datosV.cantidades;
+            var idProducto = datosV.idProducto;
+            var entregado = datosV.entregado;
+            if (entregado) {
+                let posicion = idProducto.indexOf(CODIGO);
+                let producto = await getProducto(CODIGO);
+                producto = producto.data();
+               
+                if (posicion > -1) {
+                    if (cantidades[posicion] < cantidades1) {
+                        Swal.fire({
+                            icon: 'info',
+                            title: 'La cantidad en la venta supera la cantidad a devolver...',
+                            showConfirmButton: false,
+                            timer: 2500
                         })
-
-
-                    })
-
-
-            }
-            let venta = await getVenta(NumeroFactura);
-
-            venta.forEach(async docV => {
-
-                var datosV = docV.data()
-                var vendedor = datosV.vendedor;
-                var fecha = datosV.fecha;
-                var pagado = datosV.pagado;
-                var suma = datosV.suma;
-                var debe = datosV.debe;
-                var cliente = datosV.cliente;
-                var NumeroFactura = datosV.NumeroFactura
-                var descuentos = datosV.descuentos;
-                var rentabilidad = datosV.rentabilidad
-                var plazo = datosV.plazo;
-                var fechaVencimiento = datosV.fechaVencimiento;
-                var cantidades = datosV.cantidades;
-                var idProducto = datosV.idProducto;
-                var entregado = datosV.entregado;
-                for (let i = 0; i < idProducto.length; i++) {
-
-                    if (idProducto[i] == CODIGO) {
-
-                        let producto = await getProducto(CODIGO);
-                        producto = producto.data();
-                        let costo = producto.PRECIO_COMPRA;
-                        let PRECIO_VENTA = producto.PRECIO_VENTA;
-                        suma -= ((PRECIO_VENTA * cantidades[i]) - ((PRECIO_VENTA * cantidades[i]) * descuentos[i] / 100))
-                        rentabilidad = suma - (costo * cantidades[i])
-                        rentabilidad = rentabilidad * 100 / suma
-                        debe -= ((PRECIO_VENTA * cantidades[i]) - ((PRECIO_VENTA * cantidades[i]) * descuentos[i] / 100))
+                        devolver1 = false;
+                    } else if (cantidades[posicion] == cantidades1) {
+                        
+                        suma -= ((producto.PRECIO_VENTA-(producto.PRECIO_VENTA * (descuentos[posicion] / 100))) * cantidades1);
+                        debe -= ((producto.PRECIO_VENTA-(producto.PRECIO_VENTA * (descuentos[posicion] / 100))) * cantidades1);
+                      
                         if (debe < 0) {
                             debe = 0;
                         }
-                        idProducto.splice(i, 1)
-                        cantidades.splice(i, 1)
-                        descuentos.splice(i, 1)
+                        cantidades.splice(posicion, 1)
+                        idProducto.splice(posicion, 1)
+                        descuentos.splice(posicion, 1)
+                        devolver1 = true;
+                    } else if (cantidades[posicion] > cantidades1) {
+                        
+                        suma -= ((producto.PRECIO_VENTA-(producto.PRECIO_VENTA * (descuentos[posicion] / 100))) * cantidades1);
+                        debe -= ((producto.PRECIO_VENTA-(producto.PRECIO_VENTA * (descuentos[posicion] / 100))) * cantidades1);
+                       
+                        if (debe < 0) {
+                            debe = 0;
+                        }
+                        cantidades[posicion] -= cantidades1
+                        devolver1 = true;
                     }
                 }
 
-                db.collection("ventas").doc(docV).set({
+                await db.collection("ventas").doc(docV.id).set({
                     cantidades,
                     idProducto,
                     entregado,
@@ -2176,12 +2114,116 @@ async function Devolver() {
                     rentabilidad,
                     fechaVencimiento
                 })
+            } else {
+                Swal.fire({
+                    icon: 'info',
+                    title: 'El pedido no ha sido entregado, debe entregarlo primero para proceder con la devolución.',
+                    showConfirmButton: false,
+                    timer: 2500
+                })
+            }
+            if (devolver1) {
 
-            })
 
-            Swal.fire('Guardado!', '', 'success');
+                db.collection("devoluciones").where("CODIGO", "==", CODIGO).get().then(async (querySnapshot) => {
+                    var cliente = [];
+                    var cantidad = [];
+                    var tipo = [];
+                    var fecha = [];
+                    querySnapshot.forEach(async (doc) => {
+                        var datos = doc.data();
+                        cliente = datos.cliente;
+                        cantidad = datos.cantidad;
+                        tipo = datos.tipo
+                        fecha = datos.fecha;
+
+                    })
+
+
+                    cliente.push(clientes);
+                    cantidad.push(cantidades1);
+
+
+                    tipo.push(tipoDeDevolucion);
+                    var hoy = new Date();
+                    dia = hoy.getDate()
+                    mes = hoy.getMonth() + 1
+                    if (dia < 10) {
+                        dia = dia.toString();
+                        var cero = "0";
+                        cero += dia
+                        dia = cero;
+                    }
+                    if (mes < 10) {
+                        mes = mes.toString();
+                        var cero = "0";
+                        cero += mes
+                        mes = cero;
+                    }
+                    dia = dia.toString();
+                    mes = mes.toString();
+                    fecha1 = `${dia}/${mes}/${hoy.getFullYear()}`
+                    fecha.push(fecha1);
+
+
+                    db.collection("devoluciones").doc(CODIGO).set({
+                        CODIGO,
+                        cliente,
+                        cantidad,
+                        tipo,
+                        fecha,
+
+                    })
+                    if (tipoDeDevolucion == "inventario") {
+                        var PRECIO_VENTA;
+                        db.collection("productos").where("CODIGO", "==", CODIGO).get()
+                            .then((querySnapshot) => {
+                                querySnapshot.forEach((doc2) => {
+
+                                    var datos2 = doc2.data();
+                                    var CODIGO = datos2.CODIGO;
+                                    var DESCRIPCION = datos2.DESCRIPCION;
+                                    var STOCK = datos2.STOCK;
+                                    var LIMITE_INFERIOR = datos2.LIMITE_INFERIOR;
+                                    PRECIO_VENTA = datos2.PRECIO_VENTA;
+                                    var VOLUMEN_GANANCIA = datos2.VOLUMEN_GANANCIA;
+                                    var PRECIO_COMPRA = datos2.PRECIO_COMPRA;
+                                    var registradoPor = datos2.registradoPor;
+                                    var PORCENTAJE = datos2.PORCENTAJE;
+                                    var urlProfile = datos2.urlProfile;
+                                    STOCK = STOCK + cantidades1;
+                                    var CATEGORIA = datos2.CATEGORIA;
+                                    var reservado = datos2.reservado;
+                                    db.collection("productos").doc(doc2.id).set({
+                                        CODIGO,
+                                        DESCRIPCION,
+                                        PRECIO_COMPRA,
+                                        PRECIO_VENTA,
+                                        STOCK,
+                                        CATEGORIA,
+                                        LIMITE_INFERIOR,
+                                        registradoPor,
+                                        VOLUMEN_GANANCIA,
+                                        PORCENTAJE,
+                                        urlProfile,
+                                        reservado
+                                    })
+                                })
+
+
+                            })
+
+
+                    }
+
+
+                    Swal.fire('Guardado!', '', 'success');
+
+                })
+            }
 
         })
+
     }
 
 
@@ -2279,57 +2321,75 @@ const obtenerPedido = () => db.collection("ventas").where("entregado", "==", fal
 const obtenerProducto34 = (id) => db.collection("productos").doc(id).get();
 
 async function ajustarReservas() {
-    db.collection("productos").get().then(querySnapshot => {
-        querySnapshot.forEach(async doc => {
-          var datos2 = doc.data();
-          var CODIGO = datos2.CODIGO;
-          var DESCRIPCION = datos2.DESCRIPCION;
-          var STOCK = datos2.STOCK;
-          var LIMITE_INFERIOR = datos2.LIMITE_INFERIOR;
-          var PRECIO_VENTA = datos2.PRECIO_VENTA;
-          var VOLUMEN_GANANCIA = datos2.VOLUMEN_GANANCIA;
-          var PRECIO_COMPRA = datos2.PRECIO_COMPRA;
-          var registradoPor = datos2.registradoPor;
-          var PORCENTAJE = datos2.PORCENTAJE;
-          var CATEGORIA = datos2.CATEGORIA;
-          var urlProfile = datos2.urlProfile;
-          var reservado = 0;
-          if(STOCK<0){
-            STOCK=0;
-          }
-          await db.collection("ventas").where("entregado", "==", false).where("idProducto", "array-contains", doc.id).get().then(querySnapshot => {
-            querySnapshot.forEach(element => {
-              var datos = element.data();
-              if (!datos.entregado) {
-                console.log(datos2);
-                var indice;
-                for (let i = 0; i < datos.idProducto.length; i++) {
-                  if(datos.idProducto[i]==doc.id){
-                    indice=i
-                    break
-                  }
-                }
-                reservado=reservado+datos.cantidades[indice]
-              }
-      
-            });
-          })
-          await db.collection("productos").doc(doc.id).set({
-            CODIGO,
-            DESCRIPCION,
-            PRECIO_COMPRA,
-            PRECIO_VENTA,
-            STOCK,
-            CATEGORIA,
-            LIMITE_INFERIOR,
-            registradoPor,
-            VOLUMEN_GANANCIA,
-            PORCENTAJE,
-            urlProfile,
-            reservado
-          })
-        })
-      })
+    Swal.fire({
+        title: '¿Ajustar las reservas?',
+        text: "Solo se recomienda hacer esto cuando algún pedido haya sido modificado!",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        confirmButtonText: 'Sí, ajustar reservas!'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            db.collection("productos").get().then(querySnapshot => {
+                querySnapshot.forEach(async doc => {
+                    var datos2 = doc.data();
+                    var CODIGO = datos2.CODIGO;
+                    var DESCRIPCION = datos2.DESCRIPCION;
+                    var STOCK = datos2.STOCK;
+                    var LIMITE_INFERIOR = datos2.LIMITE_INFERIOR;
+                    var PRECIO_VENTA = datos2.PRECIO_VENTA;
+                    var VOLUMEN_GANANCIA = datos2.VOLUMEN_GANANCIA;
+                    var PRECIO_COMPRA = datos2.PRECIO_COMPRA;
+                    var registradoPor = datos2.registradoPor;
+                    var PORCENTAJE = datos2.PORCENTAJE;
+                    var CATEGORIA = datos2.CATEGORIA;
+                    var urlProfile = datos2.urlProfile;
+                    var reservado = 0;
+                    if (STOCK < 0) {
+                        STOCK = 0;
+                    }
+                    await db.collection("ventas").where("entregado", "==", false).where("idProducto", "array-contains", doc.id).get().then(querySnapshot => {
+                        querySnapshot.forEach(element => {
+                            var datos = element.data();
+                            if (!datos.entregado) {
+                               
+                                var indice;
+                                for (let i = 0; i < datos.idProducto.length; i++) {
+                                    if (datos.idProducto[i] == doc.id) {
+                                        indice = i
+                                        break
+                                    }
+                                }
+                                reservado = reservado + datos.cantidades[indice]
+                            }
+
+                        });
+                    })
+                    await db.collection("productos").doc(doc.id).set({
+                        CODIGO,
+                        DESCRIPCION,
+                        PRECIO_COMPRA,
+                        PRECIO_VENTA,
+                        STOCK,
+                        CATEGORIA,
+                        LIMITE_INFERIOR,
+                        registradoPor,
+                        VOLUMEN_GANANCIA,
+                        PORCENTAJE,
+                        urlProfile,
+                        reservado
+                    })
+                })
+            })
+            Swal.fire(
+                'Reservas ajustadas!',
+                'Todos los productos han sido ajustados.',
+                'success'
+            )
+        }
+    })
+
 
 }
 

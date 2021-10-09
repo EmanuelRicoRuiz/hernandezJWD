@@ -32,7 +32,7 @@ async function hacerRegistroCliente() {
     }
 
 }
-async function hacerRegistroMiCliente(){
+async function hacerRegistroMiCliente() {
     event.preventDefault();
     var nit = document.getElementById("nit").value;
     var RazonSocial = document.getElementById("RazonSocial").value;
@@ -43,8 +43,8 @@ async function hacerRegistroMiCliente(){
     var plazo = document.getElementById("plazo").value;
     plazo = parseInt(plazo, 10);
     if (nit != "" && RazonSocial != "" && Direccion != "" && plazo != NaN && telefono != "" && ciudad != "" && barrio != "") {
-        vendedor=firebase.auth().currentUser;
-        vendedor=vendedor.uid;
+        vendedor = firebase.auth().currentUser;
+        vendedor = vendedor.uid;
         db.collection("clientes").doc(nit).set({
             nit,
             RazonSocial,
@@ -136,7 +136,7 @@ async function EditarCliente(element) {
         vendedores.appendChild(option);
     })
 
-    
+
     var nit = document.getElementById("nit");
     var RazonSocial = document.getElementById("RazonSocial");
     var Direccion = document.getElementById("Direccion");
@@ -144,7 +144,7 @@ async function EditarCliente(element) {
     var ciudad = document.getElementById("ciudad");
     var barrio = document.getElementById("barrio");
     var plazo = document.getElementById("plazo");
-    var vendedor=document.getElementById("vendedor");
+    var vendedor = document.getElementById("vendedor");
     db.collection("clientes").where("nit", "==", element.id).get().then((querySnapshot) => {
         querySnapshot.forEach((doc) => {
             var datos = doc.data();
@@ -155,7 +155,7 @@ async function EditarCliente(element) {
             ciudad.value = datos.ciudad;
             barrio.value = datos.barrio;
             plazo.value = datos.plazo;
-            vendedor.value=datos.vendedor;
+            vendedor.value = datos.vendedor;
         })
     })
 }
@@ -210,4 +210,75 @@ function EliminarCliente(element) {
             Swal.fire('Borrado!', '', 'success');
         }
     })
+}
+const clienteVendedor = (id) => db.collection("clientes").where("vendedor", "==", id).get();
+const CambiarVendedor = async () => {
+    Swal.fire({
+        title: 'Estas segur@?',
+        text: "Los clientes del emisor, pasarán a ser del receptor.",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        confirmButtonText: 'Sí, Trasladar!'
+    }).then(async (result) => {
+        if (result.isConfirmed) {
+            let emisores = document.getElementsByName("Emisores");
+            let Receptores = document.getElementsByName("Receptores");
+            let emisor;
+            let Receptor;
+            for (let i = 0; i < emisores.length; i++) {
+                let e = document.getElementById(emisores[i].id);
+                console.log(e)
+                if (e.checked) {
+                    emisor = e.value;
+                }
+            }
+            for (let i = 0; i < Receptores.length; i++) {
+                let r = document.getElementById(Receptores[i].id);
+                console.log(r)
+                if (r.checked) {
+                    Receptor = r.value;
+                }
+            }
+            if (emisor != undefined && Receptor != undefined) {
+
+
+                let clientes = await clienteVendedor(emisor);
+                clientes.forEach(doc => {
+                    let datos = doc.data();
+                    let nit = datos.nit;
+                    let RazonSocial = datos.RazonSocial;
+                    let Direccion = datos.Direccion;
+                    let vendedor = Receptor;
+                    let telefono = datos.telefono;
+                    let ciudad = datos.ciudad;
+                    let barrio = datos.barrio;
+                    let plazo = datos.plazo;
+                    db.collection("clientes").doc(nit).set({
+                        nit,
+                        RazonSocial,
+                        Direccion,
+                        vendedor,
+                        telefono,
+                        ciudad,
+                        barrio,
+                        plazo
+                    })
+                })
+                Swal.fire(
+                    'Trasladado!',
+                    'Los clientes han sido trasladados de vendedor.',
+                    'success'
+                )
+            } else {
+                Swal.fire(
+                    'Seleccionar Emisor y Receptor!',
+                    'Para poder realizar este proceso debe seleccionar el emisor y el receptor.',
+                    'info'
+                )
+            }
+        }
+    })
+
 }

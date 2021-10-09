@@ -1093,7 +1093,13 @@ function pedidosGenerales() {
         </article>
         <article id="tab2">
             <div id="tabTwo">
+            <center>
             <h3>Lista de pedidos: </h3>
+            <button onclick="ajustarReservas()" class="btn btn-danger">Ajustar Reservas</button>  
+            <br>
+            <hr>
+            <br>
+            </center>
             </div>
         </article>
         
@@ -1584,6 +1590,7 @@ function VentasInterface() {
 }
 var clientesLista;
 const obtenerClientes = () => db.collection("clientes").get();
+const getVendedores1=()=>db.collection("usuarios").where("cuota",">",0).get();
 async function cargarClientes() {
     ventaGarray=[];
     var login = document.getElementById("login-page");
@@ -1594,7 +1601,7 @@ async function cargarClientes() {
     <ul class="tabs">
         <li><a href="#tab1"><span class="fa fa-home"></span><span class="tab-text">Lista de clientes</span></a></li>
         <li><a href="#tab2"><span class="fa fa-group"></span><span class="tab-text">Registrar nuevo cliente</span></a></li>
-        
+        <li><a href="#tab3"><span class="fa fa-group"></span><span class="tab-text">Trasladar clientes</span></a></li>
     </ul>
     </center>
     <div class="secciones">
@@ -1618,6 +1625,14 @@ async function cargarClientes() {
             <div id="tabTwo">
             
             <div id="RegistroClientes">
+            
+            </div>
+            </div>
+        </article>
+        <article id="tab3">
+            <div id="tabTree">
+            
+            <div id="cambioClientes">
             
             </div>
             </div>
@@ -1787,7 +1802,38 @@ async function cargarClientes() {
         option.text = `${datos.nombre}` + ` ` + `${datos.apellido}`
         vendedores.appendChild(option);
     })
+    let cambioClientes=document.getElementById("cambioClientes");
+    cambioClientes.innerHTML=`
+    
+    <table class="table table-striped table-bordered" id="clientes1">
+        <tr>
+            <th>Emisor</th>
+            <th>Receptor</th>
+        </tr>
+    </table>
+    <center>
+        <button class="btn btn-success" onclick="CambiarVendedor()">Guardar Cambios</button>
+    </center>
+    `
+    let Vendedores1=await getVendedores1();
+    let tabla=document.getElementById("clientes1");
+    Vendedores1.forEach(doc=>{
+        let datos=doc.data();
+        tabla.innerHTML+=`
+            <tr>
+                <td>
+                    <input type="radio" id="${doc.id}/E" name="Emisores" value="${doc.id}">
+                    <label for="${doc.id}/E">${datos.nombre} ${datos.apellido}</label>
+                </td>
+                <td>
+                    <input type="radio" id="${doc.id}/R" name="Receptores" value="${doc.id}">
+                    <label for="${doc.id}/R">${datos.nombre} ${datos.apellido}</label>
+                </td>
+            </tr>
+        `
+    })
 }
+
 function BuscarClienteGlobal() {
     console.log("entró")
     var texto = document.getElementById("BuscadorClienteGlobal").value;
