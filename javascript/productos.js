@@ -737,12 +737,15 @@ async function Emitir() {
                 if (Descuento != "") {
                     cantidad = parseInt(cantidad, 10);
                     Descuento = parseFloat(Descuento, 10);
-                    var ventaG = {
-                        cantidad, idProducto, Descuento
+                    if(cantidad>0){
+                        var ventaG = {
+                            cantidad, idProducto, Descuento
+                        }
+                        ventaGarray.push(ventaG);
+    
+                        pintarTabla(ventaGarray);
                     }
-                    ventaGarray.push(ventaG);
-
-                    pintarTabla(ventaGarray);
+                    
 
                 } else {
                     Swal.fire({
