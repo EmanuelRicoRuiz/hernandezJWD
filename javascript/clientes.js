@@ -229,14 +229,14 @@ const CambiarVendedor = async () => {
             let Receptor;
             for (let i = 0; i < emisores.length; i++) {
                 let e = document.getElementById(emisores[i].id);
-                console.log(e)
+           
                 if (e.checked) {
                     emisor = e.value;
                 }
             }
             for (let i = 0; i < Receptores.length; i++) {
                 let r = document.getElementById(Receptores[i].id);
-                console.log(r)
+               
                 if (r.checked) {
                     Receptor = r.value;
                 }

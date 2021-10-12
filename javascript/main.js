@@ -380,7 +380,7 @@ const BuscarMiCliente=()=>{
         var codigo =datos.nit.toLowerCase();
         if (razon.indexOf(texto) !== -1) {
             try {
-                console.log(datos)
+            
                 var doc2 = await obtenerVendedor(datos.vendedor);
                 vendedor = doc2.data();
                 var tr = document.createElement("tr");
@@ -417,11 +417,11 @@ const BuscarMiCliente=()=>{
                 tabla8.appendChild(tr);
 
             } catch (E) {
-                console.log(E);
+            
             }
         }else if(codigo.indexOf(texto) !== -1){
             try {
-                console.log(datos)
+            
                 var doc2 = await obtenerVendedor(datos.vendedor);
                 vendedor = doc2.data();
                 var tr = document.createElement("tr");
@@ -458,7 +458,7 @@ const BuscarMiCliente=()=>{
                 tabla8.appendChild(tr);
 
             } catch (E) {
-                console.log(E);
+             
             }
         }
     })
@@ -663,7 +663,7 @@ function tabTreeVentasG(mes, año) {
                 var fechaVencimiento = new Date(datos.fechaVencimiento[2], datos.fechaVencimiento[1] - 1, datos.fechaVencimiento[0])
                 var fechaActual = new Date();
             }catch{
-                console.log("usuario no encontrado")
+               
             }
                 if (fechaActual >= fechaVencimiento && datos.entregado && mes == datos.fecha[1] && año == datos.fecha[2] && datos.debe > 0) {
 
@@ -890,7 +890,7 @@ function tabOneVentasG(mes, año) {
             var datos = doc.data();
             db.collection("usuarios").doc(datos.vendedor).get().then(doc2 => {
                 try{
-                    console.log("entró")
+                   
                 
                 var datos2 = doc2.data();
                 nombre = datos2.nombre;
@@ -956,7 +956,7 @@ function tabOneVentasG(mes, año) {
                 
 
             }catch{
-                console.log("usuario no encontrado")
+           
             }
             })
 
@@ -1730,7 +1730,7 @@ async function cargarClientes() {
             tabla8.appendChild(tr);
 
         } catch (E) {
-            console.log(nit);
+          
         }
 
     })
@@ -1835,7 +1835,7 @@ async function cargarClientes() {
 }
 
 function BuscarClienteGlobal() {
-    console.log("entró")
+    
     var texto = document.getElementById("BuscadorClienteGlobal").value;
     var tabla8 = document.getElementById("tabla8");
     tabla8.innerHTML="";
@@ -1846,7 +1846,7 @@ function BuscarClienteGlobal() {
         var codigo =datos.nit.toLowerCase();
         if (razon.indexOf(texto) !== -1) {
             try {
-                console.log(datos)
+               
                 var doc2 = await obtenerVendedor(datos.vendedor);
                 vendedor = doc2.data();
                 var tr = document.createElement("tr");
@@ -1889,11 +1889,11 @@ function BuscarClienteGlobal() {
                 tabla8.appendChild(tr);
 
             } catch (E) {
-                console.log(E);
+               
             }
         }else if(codigo.indexOf(texto) !== -1){
             try {
-                console.log(datos)
+               
                 var doc2 = await obtenerVendedor(datos.vendedor);
                 vendedor = doc2.data();
                 var tr = document.createElement("tr");
@@ -1936,7 +1936,7 @@ function BuscarClienteGlobal() {
                 tabla8.appendChild(tr);
 
             } catch (E) {
-                console.log(E);
+               
             }
         }
     })
@@ -2293,7 +2293,7 @@ function Filtrar(element) {
         var meses = document.getElementById("meses2").value;
         var años = document.getElementById("años2").value;
         if (meses != "" && años != "") {
-            console.log(meses,años)
+       
             tabTwoVentas(meses, años);
             LlenarFechas(false, true, false);
         }

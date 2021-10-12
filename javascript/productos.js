@@ -1356,7 +1356,7 @@ async function guadarCambiosPedido(element) {
 
                     }
                 } catch (error) {
-                    console.log(error)
+                  
                 }
 
             }

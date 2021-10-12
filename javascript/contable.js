@@ -217,7 +217,7 @@ async function carteraGeneral() {
             
                 `
         } catch {
-            console.log("Usuario no encontrado: ", datos.cliente)
+          
         }
 
 
@@ -685,7 +685,7 @@ async function eliminarCompra(element) {
     var deuda2 = datos2.deuda;
     var codigo = datos2.codigo;
     var nombre = datos2.nombre;
-    console.log(deuda, deuda2)
+ 
     deuda2 -= deuda;
 
     db.collection("compras").doc(doc.id).delete();
@@ -1411,7 +1411,7 @@ const obtenerVentaReporte = (id) => db.collection("ventas").where("cliente", "==
 const reporteCarteraPDF = async (element) => {
 
     var id = element.id;
-    console.log(id)
+  
     var cliente = await obtenerCliente(id);
     var query = await obtenerVentaReporte(id);
     cliente = cliente.data();
@@ -1540,7 +1540,7 @@ const reporteCarteraGeneral = async (element) => {
             cont += 1
             suma += carteraGeneralA[i].debe;
             if (cont % 40 == 0) {
-                console.log(y);
+                
                 doc.addPage();
                 y = 30
             }
@@ -1551,7 +1551,7 @@ const reporteCarteraGeneral = async (element) => {
         doc.text(120, 250, `Total de cartera: ${ingresar(suma)}`);
         doc.save(`ReporteGeneralCartera${fecha.getDate()}/${fecha.getMonth() + 1}/${fecha.getFullYear()}`);
     }catch(E){
-        console.log(E)
+     
     }
     
 }
@@ -1621,7 +1621,7 @@ const reporteCarteraVendedor = async () => {
             x = 5
             cont += 1
             if (cont % 40 == 0) {
-                console.log(y);
+               
                 doc.addPage();
                 y = 30
             }
