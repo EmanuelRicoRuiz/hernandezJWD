@@ -701,7 +701,8 @@ function tabTreeVentasG(mes, año) {
                     <td>${nombre} ${apellido}</td>
                     <td><a class="cursor" id="${doc.id}" onclick="AbonarPedido(this)"><img src="img/abono.png" width=30></a><br>
                     <a class="cursor" id="${doc.id}" onclick="facturaPdf(this)"><img src="img/factura.png" width=30></a><br>
-                    <a class="cursor" id="${doc.id}" onclick="contenidoPedido(this)"><img src="img/contenido.png" width=30></a></td>
+                    <a class="cursor" id="${doc.id}" onclick="contenidoPedido(this)"><img src="img/contenido.png" width=30>
+                    <a class="cursor" id="${doc.id}" onclick="devolverPedido(this)"><img src="img/restore.png" width=30></a></a></td>
                     
                 </tr>
                 <tr>
