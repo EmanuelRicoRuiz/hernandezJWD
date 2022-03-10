@@ -40,7 +40,7 @@ function facturaPdf(element) {
                                                         y = 30;
                                                         var datos3 = doc3.data();
                                                         doc.setFontType("bold");
-                                                        var titulo = "GRUPO SINCRO\nNúmero: 3135824961";
+                                                        var titulo = "GRUPO SINCRO\nNúmero: 314 4579060";
                                                         doc.setFontType("normal");
                                                         var datosCliente = `Nombre: ${datos2.RazonSocial}\nNit: ${datos2.nit}\nDirección: ${datos2.Direccion}\nTeléfono: ${datos2.telefono}\nCiudad: ${datos2.ciudad}\nBarrio: ${datos2.barrio}`
                                                         var datosFactura = `Remisión: #${datos.NumeroFactura}\nPago: ${datos.plazo} Días\nFecha: ${datos.fecha[0]}/${datos.fecha[1]}/${datos.fecha[2]}\nFecha de vencimiento: ${datos.fechaVencimiento[0]}/${datos.fechaVencimiento[1]}/${datos.fechaVencimiento[2]}\nVendedor: ${datos3.nombre} ${datos3.apellido}`
