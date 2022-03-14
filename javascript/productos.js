@@ -1064,6 +1064,13 @@ function CambiarDescuentoEditado(element) {
 const obtenerProducto = (id) => db.collection("productos").doc(id).get();
 const obtenerProducto25 = (id) => db.collection("productos").where("CODIGO", "==", id).get();
 async function GuardarPedido() {
+    Swal.fire({
+        position: 'top-end',
+        icon: 'info',
+        title: 'Guardando...',
+        showConfirmButton: false,
+        
+      })
     var cliente = document.getElementById("clientes1").value;
     if (cliente != "") {
         var cantidades = [];
@@ -1090,7 +1097,7 @@ async function GuardarPedido() {
         if (entrada) {
             for (let i = 0; i < idProducto.length; i++) {
                 var query = await obtenerProducto25(idProducto[i]);
-                query.forEach(doc => {
+                await query.forEach(async doc => {
                     datos = doc.data();
                     suma = suma + (cantidades[i] * (datos.PRECIO_VENTA - (datos.PRECIO_VENTA * (descuentos[i]) / 100)))
                     sumaCosto = sumaCosto + (cantidades[i] * datos.PRECIO_COMPRA)
@@ -1108,7 +1115,7 @@ async function GuardarPedido() {
                     reservado += cantidades[i];
                     var CATEGORIA = datos.CATEGORIA;
                     var urlProfile = datos.urlProfile;
-                    db.collection("productos").doc(doc.id).set({
+                    await db.collection("productos").doc(doc.id).set({
                         CODIGO,
                         DESCRIPCION,
                         PRECIO_COMPRA,
@@ -1127,7 +1134,7 @@ async function GuardarPedido() {
 
 
             }
-            firebase.auth().onAuthStateChanged((user) => {
+            firebase.auth().onAuthStateChanged(async (user) => {
                 var vendedor = user.uid;
                 var date = new Date();
                 var fecha = [date.getDate(), date.getMonth() + 1, date.getFullYear()]
@@ -1137,25 +1144,25 @@ async function GuardarPedido() {
                 var rentabilidad = suma - sumaCosto;
                 rentabilidad = rentabilidad * 100 / suma;
                 var NumeroFactura = 0;
-                db.collection("consecutivo").get().then((querySnapshot) => {
-                    querySnapshot.forEach((doc2) => {
+                await db.collection("consecutivo").get().then(async (querySnapshot) => {
+                    querySnapshot.forEach(async (doc2) => {
                         var datos2 = doc2.data();
                         var numero = datos2.numero;
                         NumeroFactura = numero + 1;
                         numero = NumeroFactura;
-                        db.collection("consecutivo").doc(doc2.id).set({
+                        await db.collection("consecutivo").doc(doc2.id).set({
                             numero
                         })
                     })
                     var plazo;
-                    db.collection("clientes").where("nit", "==", cliente).get().then((querySnapshot) => {
-                        querySnapshot.forEach((doc) => {
+                    await db.collection("clientes").where("nit", "==", cliente).get().then(async (querySnapshot) => {
+                        querySnapshot.forEach(async (doc) => {
                             var datos3 = doc.data();
                             plazo = datos3.plazo;
                         })
                         var fechaAux = new Date(fecha[2], fecha[1], fecha[0] + plazo)
                         var fechaVencimiento = [fechaAux.getDate(), fechaAux.getMonth(), fechaAux.getFullYear()]
-                        db.collection("ventas").doc().set({
+                        await db.collection("ventas").doc().set({
                             cantidades,
                             idProducto,
                             descuentos,
@@ -1339,7 +1346,7 @@ async function guadarCambiosPedido(element) {
                         reservado += cantidades[i];
                         var CATEGORIA = datos.CATEGORIA;
                         var urlProfile = datos.urlProfile;
-                        db.collection("productos").doc(query.id).set({
+                        await db.collection("productos").doc(query.id).set({
                             CODIGO,
                             DESCRIPCION,
                             PRECIO_COMPRA,
@@ -1383,7 +1390,7 @@ async function guadarCambiosPedido(element) {
             var plazo = datosCliente.plazo;
             var NumeroFactura = datosVenta.NumeroFactura;
             var fechaVencimiento = datosVenta.fechaVencimiento;
-            db.collection("ventas").doc(idVenta).set({
+            await db.collection("ventas").doc(idVenta).set({
                 cantidades,
                 idProducto,
                 descuentos,
