@@ -1,11 +1,11 @@
 const firebaseConfig = {
-  apiKey: "AIzaSyDwEIo1vy-N1WC0EFYPZsJjjXn2PRHQAFg",
-  authDomain: "hernandezjwd.firebaseapp.com",
-  projectId: "hernandezjwd",
-  storageBucket: "hernandezjwd.appspot.com",
-  messagingSenderId: "615453878393",
-  appId: "1:615453878393:web:4b027fdb02cd191cd6cca8",
-  measurementId: "G-SJRTK7NWFZ"
+  apiKey: "AIzaSyAlNQgjIv1VbX96GvM1oMg5v2QKhcIB4vw",
+  authDomain: "sincro-48d07.firebaseapp.com",
+  projectId: "sincro-48d07",
+  storageBucket: "sincro-48d07.appspot.com",
+  messagingSenderId: "769349018960",
+  appId: "1:769349018960:web:cdb36290e54c4adfe73855",
+  measurementId: "G-3Z9ZETYRVN"
 };
 firebase.initializeApp(firebaseConfig);
 firebase.analytics();
